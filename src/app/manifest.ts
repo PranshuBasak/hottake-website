@@ -4,7 +4,7 @@ import { site } from "@/lib/site";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "HotTake — party games",
+    name: "HotTake: party games",
     short_name: site.name,
     description: site.description,
     start_url: "/?source=pwa",

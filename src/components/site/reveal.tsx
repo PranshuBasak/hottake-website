@@ -46,7 +46,7 @@ export function Reveal({
   );
 }
 
-/** Headline that rises in word by word (SplitText) — on load, or on scroll with `onScroll`. */
+/** Headline that rises in word by word (SplitText), on load, or on scroll with `onScroll`. */
 export function SplitHeading({
   children,
   className,

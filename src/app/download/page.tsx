@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AlertTriangle, Check, Cpu, Download, HardDrive, Monitor, Wifi } from "lucide-react";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   title: "Download HotTake for Windows (free)",
   description: "Download the free HotTake installer for Windows 10 and 11. Version, file size, SHA-256 checksum and what to expect on first launch.",
   alternates: { canonical: "/download" },
-  openGraph: { url: "/download", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], title: "Download HotTake for Windows" },
+  ...share({ path: "/download", title: "Download HotTake for Windows", description: "Free for Windows 10 and 11. One installer, 32 party games, phones as controllers." }),
 };
 
 export default async function DownloadPage({ searchParams }: PageProps<"/download">) {
@@ -35,7 +36,7 @@ export default async function DownloadPage({ searchParams }: PageProps<"/downloa
               Download HotTake.
             </SplitHeading>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              One installer, 32 games inside. Phones need nothing — they join through the browser.
+              One installer, 32 games inside. Phones need nothing: they join through the browser.
             </p>
             <Suspense fallback={null}>
               <UnavailableNotice searchParams={searchParams} />

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Pencil } from "lucide-react";
 import { DocsToc } from "@/components/docs/docs-toc";
 import { docHref, docNeighbours, type DocPage } from "@/lib/docs";
-import { JsonLd, breadcrumbLd } from "@/lib/seo";
+import { JsonLd, breadcrumbLd, ids } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
 const REPO = "https://github.com/PranshuBasak/hottake-website";
@@ -21,7 +21,8 @@ export function DocArticle({ page, children }: { page: DocPage; children: React.
             description: page.description,
             url: absoluteUrl(docHref(page.slug)),
             articleSection: page.section,
-            author: { "@id": `${absoluteUrl("/creator")}#person` },
+            author: { "@id": ids.person },
+            isPartOf: { "@id": ids.website },
           },
           breadcrumbLd([
             { name: "Home", path: "/" },

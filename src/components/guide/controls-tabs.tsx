@@ -16,7 +16,7 @@ const PANELS: Record<string, { rows: [string, string][]; note: string }> = {
   pad: {
     note: "USB or Bluetooth pads with the standard mapping work out of the box. Mix them with phones in the same game.",
     rows: [
-      ["Join", "Press Start (or A in the lobby) — you join as “Pad N”"],
+      ["Join", "Press Start (or A in the lobby) to join as “Pad N”"],
       ["Leave", "Hold Select/Back for 0.8 s"],
       ["Move / aim", "Left stick or d-pad / right stick"],
       ["Buttons", "A, B, X, Y → buttons 1–4"],

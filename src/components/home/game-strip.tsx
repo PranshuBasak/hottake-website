@@ -12,7 +12,9 @@ import { playersLabel } from "@/lib/games";
 registerGsap();
 
 /** Two rows of covers drifting in opposite directions; scroll speed nudges them. */
-export function GameStrip({ games }: { games: Game[] }) {
+export type StripGame = Pick<Game, "id" | "name" | "cover" | "players">;
+
+export function GameStrip({ games }: { games: StripGame[] }) {
   const root = useRef<HTMLElement>(null);
   const half = Math.ceil(games.length / 2);
   const rows = [games.slice(0, half), games.slice(half)];
@@ -21,6 +23,19 @@ export function GameStrip({ games }: { games: Game[] }) {
     () => {
       if (!shouldAnimate()) return;
       const tracks = gsap.utils.toArray<HTMLElement>("[data-track-row]");
+      // The loop needs each row twice. The copy is cloned here instead of server-rendered, which keeps the HTML small.
+      tracks.forEach((t) => {
+        if (t.dataset.cloned) return;
+        t.dataset.cloned = "1";
+        Array.from(t.children).forEach((card) => {
+          const copy = card.cloneNode(true) as HTMLElement;
+          copy.dataset.clone = "1";
+          copy.setAttribute("aria-hidden", "true");
+          copy.setAttribute("tabindex", "-1");
+          copy.querySelectorAll("img").forEach((img) => img.setAttribute("alt", ""));
+          t.appendChild(copy);
+        });
+      });
       const tweens = tracks.map((t, i) =>
         gsap.fromTo(t, { xPercent: i % 2 ? -50 : 0 }, { xPercent: i % 2 ? 0 : -50, duration: 60, ease: "none", repeat: -1, paused: true }),
       );
@@ -46,6 +61,11 @@ export function GameStrip({ games }: { games: Game[] }) {
         t.addEventListener("focusout", play);
       });
       return () => {
+        // hand the rows back to React exactly as it rendered them
+        tracks.forEach((t) => {
+          t.querySelectorAll("[data-clone]").forEach((c) => c.remove());
+          delete t.dataset.cloned;
+        });
         st.kill();
         tracks.forEach((t) => {
           t.removeEventListener("pointerenter", pause);
@@ -74,12 +94,10 @@ export function GameStrip({ games }: { games: Game[] }) {
       <div className="space-y-5 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
         {rows.map((row, r) => (
           <div key={r} className="flex w-max" data-track-row>
-            {[...row, ...row].map((g, i) => (
+            {row.map((g) => (
               <Link
-                key={`${g.id}-${i}`}
+                key={g.id}
                 href={`/games/${g.id}`}
-                tabIndex={i >= row.length ? -1 : undefined}
-                aria-hidden={i >= row.length ? true : undefined}
                 className="group relative mr-5 block w-[240px] shrink-0 overflow-hidden rounded-2xl border border-border bg-bg-1 sm:w-[300px]"
               >
                 <div className="relative aspect-[16/9] overflow-hidden">

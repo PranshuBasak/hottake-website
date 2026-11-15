@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Link from "next/link";
 import { AlertTriangle, Download, Globe, ShieldCheck, Trophy, Wifi } from "lucide-react";
 import { ControlsTabs } from "@/components/guide/controls-tabs";
@@ -10,11 +11,11 @@ import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "How to play — set up a HotTake party in 2 minutes",
+  title: "How to play: set up a HotTake party in 2 minutes",
   description:
     "Install HotTake on a Windows laptop, have friends scan the QR code, and play. Setup steps, phone/gamepad/keyboard controls, tournaments, online play and troubleshooting.",
   alternates: { canonical: "/how-to-play" },
-  openGraph: { url: "/how-to-play", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], title: "How to play HotTake" },
+  ...share({ path: "/how-to-play", title: "How to play HotTake", description: "Install on a Windows laptop, friends scan the QR code, play. Setup, controls and troubleshooting." }),
 };
 
 const sections = [
@@ -31,7 +32,7 @@ const sections = [
 
 const setup = [
   { t: "Install and open HotTake", d: `Run ${site.installerName}. HotTake opens fullscreen on the lobby. Plug the laptop into a TV for the full effect.` },
-  { t: "Allow network access", d: "The first time, Windows asks whether HotTake may use the network. Click Allow — otherwise phones can't reach the laptop." },
+  { t: "Allow network access", d: "The first time, Windows asks whether HotTake may use the network. Click Allow, otherwise phones can't reach the laptop." },
   { t: "Everyone joins the same Wi-Fi", d: "Phones scan the QR code on screen, or open the address shown and type the four-letter room code." },
   { t: "The first phone in is the leader", d: "The leader picks a game with their phone (it works as a remote) or the laptop's arrow keys, then presses Play." },
   { t: "Play", d: "Each phone turns into that game's controller. When the round ends, everyone lands back in the lobby with the results." },
@@ -163,7 +164,7 @@ export default function HowToPlayPage() {
               {[
                 {
                   t: "Phones say the address is unreachable",
-                  d: "Your router probably keeps Wi-Fi devices apart (AP or client isolation — common on guest, office and ISP Wi-Fi). Turn it off in the router, or switch on Windows Mobile Hotspot on the laptop and have phones join that. HotTake spots the hotspot within seconds; pick it under Options › Network. Online play also works around it.",
+                  d: "Your router probably keeps Wi-Fi devices apart (AP or client isolation, common on guest, office and ISP Wi-Fi). Turn it off in the router, or switch on Windows Mobile Hotspot on the laptop and have phones join that. HotTake spots the hotspot within seconds; pick it under Options › Network. Online play also works around it.",
                 },
                 { t: "Nobody can connect at all", d: "Check that you clicked Allow on the Windows firewall prompt. If you missed it, allow HotTake under Windows Security › Firewall › Allow an app." },
                 { t: "Windows protected your PC", d: "The installer isn't code-signed yet. Click More info, then Run anyway. Only download HotTake from this site." },

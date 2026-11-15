@@ -1,8 +1,8 @@
-// Renders the PWA icons from src/app/icon.svg (run: node scripts/make-icons.mjs).
+// Renders the PWA icons from src/app/icon1.svg (run: node scripts/make-icons.mjs).
 import sharp from "sharp";
 import { readFile } from "node:fs/promises";
 
-const svg = await readFile(new URL("../src/app/icon.svg", import.meta.url));
+const svg = await readFile(new URL("../src/app/icon1.svg", import.meta.url));
 const out = (n) => new URL(`../public/icons/${n}`, import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1");
 
 for (const size of [192, 512]) {

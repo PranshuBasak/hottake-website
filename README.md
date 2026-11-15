@@ -23,7 +23,7 @@ npm run build
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_URL` | `https://fvkkwsmrgvlcvgapalyn.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` |
-| `SUPABASE_SECRET_KEY` | `sb_secret_…` — server only (tracking, sign-ups, downloads, health) |
+| `SUPABASE_SECRET_KEY` | `sb_secret_…`, server only (tracking, sign-ups, downloads, health) |
 | `NEXT_PUBLIC_SITE_URL` | the public URL, e.g. `https://hottake.example` (canonical links, sitemap, OG) |
 
 Without the secret key the site still works; it just records nothing.

@@ -59,24 +59,41 @@ export function AsciiArt({ piece, size = 10, speed, look, bg, still, className, 
     return () => io.disconnect();
   }, [eager]);
 
-  // cover: measure the piece's natural size and scale it up (centred) until it fills the box.
+  // cover: fill the box like object-fit: cover.
+  // - Default: re-render the piece at a bigger font size, so it stays sharp (no stretched pixels).
+  // - eager (the page-transition overlay): scale with a CSS transform instead, which is instant.
   useEffect(() => {
     if (!cover || !visible || !box.current) return;
     const outer = box.current;
-    let el: HTMLElement | null = null;
+    let perPx: { w: number; h: number } | null = null; // natural size per 1px of font size
+    let watched: HTMLElement | null = null;
     const fit = () => {
-      el = outer.querySelector("ascii-art");
+      const el = outer.querySelector<HTMLElement>("ascii-art");
       if (!el) return;
-      el.style.transform = "none";
-      const w = el.scrollWidth, h = el.scrollHeight;
-      if (!w || !h) return;
-      const s = Math.max(outer.clientWidth / w, outer.clientHeight / h);
-      el.style.transform = `translate(-50%, -50%) scale(${s})`;
+      // Watch the piece itself too: it gets its size only once the runtime has drawn the first frame.
+      if (watched !== el) {
+        watched = el;
+        ro.observe(el);
+      }
+      if (!perPx) {
+        const w = el.scrollWidth, h = el.scrollHeight;
+        if (!w || !h) return;
+        perPx = { w: w / size, h: h / size };
+      }
+      const cw = outer.clientWidth, ch = outer.clientHeight;
+      if (eager) {
+        const s = Math.max(cw / (perPx.w * size), ch / (perPx.h * size));
+        el.style.transform = `translate(-50%, -50%) scale(${s})`;
+      } else {
+        const target = (Math.ceil(Math.max(cw / perPx.w, ch / perPx.h) * 100) / 100).toFixed(2);
+        // Changing an attribute restarts the piece, so only touch it when the size really changes.
+        if (el.getAttribute("size") !== target) el.setAttribute("size", target);
+        el.style.transform = "translate(-50%, -50%)";
+      }
     };
     const ro = new ResizeObserver(fit);
     ro.observe(outer);
-    // The runtime fills the element a moment after it upgrades (and redraws every frame), so re-measure a
-    // few times instead of watching mutations.
+    // The runtime fills the element a moment after it upgrades, so measure once it is defined and has drawn.
     let timers: ReturnType<typeof setTimeout>[] = [];
     let alive = true;
     void ensureAsciiRuntime().then(() => {
@@ -87,7 +104,7 @@ export function AsciiArt({ piece, size = 10, speed, look, bg, still, className, 
       ro.disconnect();
       timers.forEach(clearTimeout);
     };
-  }, [cover, visible]);
+  }, [cover, visible, eager, size]);
 
   const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -101,7 +118,7 @@ export function AsciiArt({ piece, size = 10, speed, look, bg, still, className, 
           ...(look ? { look } : {}),
           ...(bg ? { bg } : {}),
           ...(still || reduce ? { still: "" } : {}),
-          class: cover ? "absolute top-1/2 left-1/2 block origin-center" : "block h-full w-full",
+          class: cover ? "absolute top-1/2 left-1/2 block w-max max-w-none origin-center" : "block h-full w-full",
         })}
     </div>
   );

@@ -78,8 +78,8 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
             Your laptop is the console. <span className="text-gradient-ember">Every phone</span> is a controller.
           </h1>
           <p data-hero-copy className="mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl">
-            HotTake turns game night into a scan-and-play party. Friends point their camera at a QR code and they&apos;re in —
-            no app, no account, no cloud server. 32 games for up to 8 players, built in.
+            HotTake turns game night into a scan-and-play party. Friends point their camera at a QR code and they&apos;re in.
+            No app, no account, no cloud server. 32 games for up to 8 players, built in.
           </p>
           <div data-hero-cta className="mt-9 flex flex-wrap items-center gap-3">
             <a

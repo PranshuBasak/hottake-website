@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Link from "next/link";
 import { CookiePrefsButton } from "@/components/site/cookie-prefs-button";
 import { LegalPage } from "@/components/site/legal-page";
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   title: "Cookies",
   description: `Every cookie the ${site.name} website sets, what it is for, how long it lasts, and how to change your choice.`,
   alternates: { canonical: "/cookies" },
+  ...share({ path: "/cookies", title: `Cookies · ${site.name}`, description: "Every cookie the HotTake website sets, what it does, how long it lasts and how to change your choice." }),
 };
 
 const sections = [

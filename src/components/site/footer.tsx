@@ -21,6 +21,7 @@ const columns = [
     links: [
       { href: "/creator", label: "The creator" },
       { href: site.creator.linkedin, label: "LinkedIn", external: true },
+      { href: site.creator.x, label: "X (Twitter)", external: true },
       { href: "/docs", label: "Documentation" },
       { href: "/docs/making-games", label: "Make your own game" },
       { href: "https://github.com/PranshuBasak/hottake-website", label: "Website source", external: true },

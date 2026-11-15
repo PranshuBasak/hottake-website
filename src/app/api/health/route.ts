@@ -8,7 +8,7 @@ const startedAt = new Date();
 const CRITICAL = ["database"] as const;
 
 /**
- * GET /api/health — open (no auth), safe to open in a browser.
+ * GET /api/health: open (no auth), safe to open in a browser.
  * Checks the database, storage, the published release, the catalogue and configuration,
  * then records the check (count + time) and returns the result.
  */
@@ -19,7 +19,7 @@ export async function GET() {
 
   checks.config = {
     status: process.env.SUPABASE_URL && process.env.SUPABASE_SECRET_KEY && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? "ok" : "degraded",
-    detail: admin ? "supabase keys present" : "SUPABASE_SECRET_KEY missing — tracking, sign-ups and health logging are off",
+    detail: admin ? "supabase keys present" : "SUPABASE_SECRET_KEY missing, so tracking, sign-ups and health logging are off",
   };
 
   const catalogue = getGames().length;

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Image from "next/image";
 import { Mail } from "lucide-react";
 import { AsciiArt } from "@/components/site/ascii-art";
-import { GithubIcon, LinkedinIcon } from "@/components/site/brand-icons";
+import { GithubIcon, LinkedinIcon, XIcon } from "@/components/site/brand-icons";
 import { Reveal, SplitHeading } from "@/components/site/reveal";
 import { ShaderBg } from "@/components/site/shader-bg";
 import { SubscribeForm } from "@/components/site/subscribe-form";
@@ -12,10 +13,10 @@ import { JsonLd, breadcrumbLd, personLd } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: `${creator.name} — the developer behind HotTake`,
+  title: `${creator.name}, the developer behind HotTake`,
   description: `Meet ${creator.name}, who built HotTake: a Rust + WebRTC party-game console that turns any Windows laptop and a room full of phones into game night.`,
   alternates: { canonical: "/creator" },
-  openGraph: { url: "/creator", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], type: "profile", title: `${creator.name} · HotTake` },
+  ...share({ path: "/creator", type: "profile", title: `${creator.name} · HotTake`, description: `Meet ${creator.name}, who built HotTake: a party-game console made from a laptop and the phones in your room.` }),
 };
 
 export default function CreatorPage() {
@@ -43,6 +44,9 @@ export default function CreatorPage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <a href={site.creator.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center gap-2 rounded-full bg-[#0a66c2] px-6 font-semibold text-white transition-transform hover:-translate-y-0.5">
                 <LinkedinIcon className="size-4" /> LinkedIn
+              </a>
+              <a href={site.creator.x} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center gap-2 rounded-full border border-border px-6 font-semibold hover:border-white/30">
+                <XIcon className="size-4" /> X
               </a>
               <a href={site.creator.github} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center gap-2 rounded-full border border-border px-6 font-semibold hover:border-white/30">
                 <GithubIcon className="size-4" /> GitHub

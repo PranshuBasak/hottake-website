@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import { notFound } from "next/navigation";
 import { DocArticle } from "@/components/docs/doc-article";
 import { docPage, docsPages } from "@/lib/docs";
@@ -17,13 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/docs/[slug]">): P
     title: `${page.title} · Docs`,
     description: page.description,
     alternates: { canonical: `/docs/${slug}` },
-    openGraph: {
-      url: `/docs/${slug}`,
-      type: "article",
-      title: `${page.title} · HotTake docs`,
-      description: page.description,
-      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }],
-    },
+    ...share({ path: `/docs/${slug}`, type: "article", title: `${page.title} · HotTake docs`, description: page.description }),
   };
 }
 

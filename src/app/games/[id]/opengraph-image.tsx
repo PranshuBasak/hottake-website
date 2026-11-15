@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
-import { getGame, getGames, playersLabel } from "@/lib/games";
-import { OG_SIZE, OgCard, publicDataUrl } from "@/lib/og";
+import { controlsLabel, getGame, getGames, playersLabel } from "@/lib/games";
+import { GameOg, HomeOg, OG_SIZE, ogFonts, publicDataUrl } from "@/lib/og";
 
 export const size = OG_SIZE;
 export const contentType = "image/png";
@@ -12,11 +12,15 @@ export function generateStaticParams() {
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const fonts = await ogFonts();
   const g = getGame(id);
-  if (!g) return new ImageResponse(<OgCard eyebrow="HotTake" title="Party games" subtitle="Phones are the controllers." />, size);
-  const art = await publicDataUrl(g.cover);
+  if (!g) {
+    const covers = await Promise.all(["/games/coin-clash.svg", "/games/sushi-paws.svg", "/games/night-siege.svg"].map(publicDataUrl));
+    return new ImageResponse(<HomeOg covers={covers} />, { ...size, fonts });
+  }
+  const cover = await publicDataUrl(g.cover);
   return new ImageResponse(
-    <OgCard eyebrow={`${playersLabel(g)} players${g.coop ? " · co-op" : ""}`} title={g.name} subtitle={g.tagline} art={art} />,
-    size,
+    <GameOg name={g.name} tagline={g.tagline} players={playersLabel(g)} controls={controlsLabel(g)} coop={g.coop} cover={cover} />,
+    { ...size, fonts },
   );
 }

@@ -10,6 +10,13 @@ const gamesDir = join(site, "..", "games");
 const outCovers = join(site, "public", "games");
 mkdirSync(outCovers, { recursive: true });
 
+/** House style: no em dashes. A pair becomes brackets, a single one a colon. */
+const EM = "\u2014";
+const tidy = (t) =>
+  typeof t === "string"
+    ? t.replace(new RegExp(` ${EM} ([^${EM}]+?) ${EM} `, "g"), " ($1) ").replace(new RegExp(` ${EM} `, "g"), ": ").replace(new RegExp(EM, "g"), ", ")
+    : t;
+
 const stickLabel = { dpad: "D-pad", joystick: "Joystick", none: "Buttons only", "": "Twin stick" };
 
 const games = readdirSync(gamesDir, { withFileTypes: true })
@@ -22,13 +29,13 @@ const games = readdirSync(gamesDir, { withFileTypes: true })
     const stick = m.controller?.stick ?? "";
     const buttons = m.controller?.buttons ?? [];
     const credit = m.credits
-      ? { author: m.credits.author ?? null, url: m.credits.url ?? null, license: m.credits.license ?? null, notes: m.credits.notes ?? null }
+      ? { author: m.credits.author ?? null, url: m.credits.url ?? null, license: m.credits.license ?? null, notes: tidy(m.credits.notes) ?? null }
       : null;
     return {
       id: m.id,
       name: m.name,
-      tagline: m.tagline,
-      description: m.description ?? m.tagline,
+      tagline: tidy(m.tagline),
+      description: tidy(m.description ?? m.tagline),
       tags: m.tags ?? [],
       players: { min: m.players.min, max: m.players.max },
       coop: (m.tags ?? []).includes("co-op"),

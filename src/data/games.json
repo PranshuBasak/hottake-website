@@ -545,14 +545,14 @@
       "author": "AbyssWhalen",
       "url": "https://github.com/AbyssWhalen/tank-trouble",
       "license": "MIT",
-      "notes": "Ricochet Tanks — gameplay ported from tank-trouble by AbyssWhalen"
+      "notes": "Ricochet Tanks: gameplay ported from tank-trouble by AbyssWhalen"
     }
   },
   {
     "id": "roll-call",
     "name": "Roll Call",
     "tagline": "Five dice, three rolls, nine ways to score. Everyone rolls at once!",
-    "description": "Everyone rolls at once on their own felt tray. Each round your first roll is automatic; hold the dice you like and roll the rest, up to 3 rolls. Then pick one of nine categories — Low, High, Three alike, Four alike, Full house, Short run, Long run, Anything or Five alike — to score your dice in. Each category counts once, and you get only 6 rounds, so 3 stay unused: choose well. 35 seconds a round; most points wins.",
+    "description": "Everyone rolls at once on their own felt tray. Each round your first roll is automatic; hold the dice you like and roll the rest, up to 3 rolls. Then pick one of nine categories (Low, High, Three alike, Four alike, Full house, Short run, Long run, Anything or Five alike) to score your dice in. Each category counts once, and you get only 6 rounds, so 3 stay unused: choose well. 35 seconds a round; most points wins.",
     "tags": [
       "party",
       "dice",
@@ -715,7 +715,7 @@
       "author": "Clyde Junior",
       "url": "https://github.com/clydejuniorscripts/sushi-paws-conveyor-clash",
       "license": "MIT",
-      "notes": "Sushi Paws — ported from Sushi Paws: Conveyor Clash by Clyde Junior (@clydejuniordev). 3D with three.js (MIT)."
+      "notes": "Sushi Paws: ported from Sushi Paws: Conveyor Clash by Clyde Junior (@clydejuniordev). 3D with three.js (MIT)."
     }
   },
   {
@@ -743,7 +743,7 @@
       "author": "Eigil Nikolajsen",
       "url": "https://github.com/eigilnikolajsen/achtung-die-kurve",
       "license": "MIT",
-      "notes": "Tangle — based on achtung-die-kurve by Eigil Nikolajsen"
+      "notes": "Tangle: based on achtung-die-kurve by Eigil Nikolajsen"
     }
   },
   {

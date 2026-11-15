@@ -9,7 +9,7 @@ export default function OfflinePage() {
         <p className="eyebrow">No connection</p>
         <h1 className="mt-3 text-5xl font-extrabold">You&apos;re offline.</h1>
         <p className="mt-4 text-muted-foreground">
-          Pages you&apos;ve already opened still work. Good news: HotTake itself doesn&apos;t need the internet — phones talk to your
+          Pages you&apos;ve already opened still work. Good news: HotTake itself doesn&apos;t need the internet. Phones talk to your
           laptop over your own Wi-Fi.
         </p>
         {/* A full page load on purpose: it retries the network instead of a client-side transition. */}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Link from "next/link";
 import { LegalPage } from "@/components/site/legal-page";
 import { site } from "@/lib/site";
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
   title: "Privacy policy",
   description: `What the ${site.name} website collects, why, how long it is kept, and how to control it.`,
   alternates: { canonical: "/privacy" },
+  ...share({ path: "/privacy", title: `Privacy policy · ${site.name}`, description: "What the HotTake website collects, why, how long it is kept, and how to control it." }),
 };
 
 const sections = [

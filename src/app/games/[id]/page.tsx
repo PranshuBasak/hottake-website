@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -22,11 +23,12 @@ export async function generateMetadata({ params }: PageProps<"/games/[id]">): Pr
   if (!g) return {};
   const players = `${playersLabel(g)} players`;
   return {
-    title: `${g.name} — ${g.coop ? "co-op" : "party"} game for ${players}`,
+    title: `${g.name}: ${g.coop ? "co-op" : "party"} game for ${players}`,
     description: clip(`${g.tagline} Play ${g.name} in HotTake with phones as controllers (${players}, ${controlsLabel(g)}).`, 158),
     alternates: { canonical: `/games/${g.id}` },
     keywords: [g.name, ...g.tags, "phone controller game", "HotTake"],
-    openGraph: { url: `/games/${g.id}`, title: `${g.name} · HotTake`, description: g.tagline, type: "article" },
+    // the per-game opengraph-image file supplies the picture
+    ...share({ path: `/games/${g.id}`, title: `${g.name} · HotTake`, description: g.tagline, type: "article", image: false }),
   };
 }
 

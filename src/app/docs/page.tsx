@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Content from "@/content/docs/index.mdx";
 import { DocArticle } from "@/components/docs/doc-article";
 import { docPage } from "@/lib/docs";
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   title: "Documentation",
   description: page.description,
   alternates: { canonical: "/docs" },
-  openGraph: { url: "/docs", title: "HotTake documentation", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }] },
+  ...share({ path: "/docs", title: "HotTake documentation", description: page.description }),
 };
 
 export default function DocsIndex() {

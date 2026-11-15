@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import Link from "next/link";
 import { LegalPage } from "@/components/site/legal-page";
 import { site } from "@/lib/site";
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
   title: "Terms of use",
   description: `The terms for using the ${site.name} app and website: licence, third-party games, warranty, liability and governing law.`,
   alternates: { canonical: "/terms" },
+  ...share({ path: "/terms", title: `Terms of use · ${site.name}`, description: "The terms for the HotTake app and website: licence, third-party games, warranty and liability." }),
 };
 
 const sections = [
