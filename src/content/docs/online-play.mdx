@@ -1,0 +1,166 @@
+export const meta = { title: "Online play with your own domain", description: "Let remote phones join HotTake through a Cloudflare Tunnel on your own domain, with an optional TURN relay for players on mobile data.", section: "Build & contribute", order: 2 };
+
+Online play lets people who are not on your Wi-Fi join a HotTake room from their phone. You bring a domain on Cloudflare, HotTake starts a Cloudflare Tunnel to it, and remote phones open `https://play.example.com/` and type the room code. Everything still runs on the laptop: Cloudflare only carries the traffic.
+
+## What online play does (and doesn't)
+
+- **It carries input, not video.** Remote players see the game the same way as before: on a video call or a stream of the laptop's screen. HotTake does not stream the host screen.
+- **The tunnel carries the controller page and the phone's WebSocket.** `cloudflared` runs on the laptop and forwards `https://play.example.com/` to `http://127.0.0.1:47801`.
+- **Input then moves to WebRTC if it can.** The phone tries a direct WebRTC data channel to the laptop, using Cloudflare's free STUN server (`stun:stun.cloudflare.com:3478`) to get through home routers.
+- **A TURN relay is optional.** Mobile carriers often block direct links (carrier-grade NAT). With a Cloudflare TURN key configured, those phones relay their WebRTC input through Cloudflare, still over UDP. Without one, they fall back to the tunnelled WebSocket. That works, but it lags badly on mobile data, because TCP waits for every lost packet.
+
+All of this works on Cloudflare's free plan. The networking details are in [Networking](/docs/networking).
+
+## Requirements
+
+- A domain whose DNS is managed by Cloudflare. The examples use `play.example.com`; replace it with a hostname on your domain.
+- `cloudflared` installed on the laptop that runs HotTake.
+- HotTake closed while you edit its settings file.
+
+## One-time setup
+
+### 1. Install cloudflared
+
+```powershell
+winget install --id Cloudflare.cloudflared -e
+```
+
+HotTake looks for `cloudflared` in this order:
+
+1. The path in the `HOTTAKE_CLOUDFLARED` environment variable, if set (it must point at the file itself).
+2. Every folder on `PATH`.
+3. `cloudflared\cloudflared.exe` under `Program Files (x86)` and `Program Files`.
+
+HotTake reads `PATH` when it starts. If you install `cloudflared` while HotTake is open, restart HotTake (and sign out and in again if the installer changed `PATH`).
+
+### 2. Log in, create the tunnel and route the hostname
+
+```powershell
+cloudflared tunnel login
+cloudflared tunnel create hottake
+cloudflared tunnel route dns hottake play.example.com
+```
+
+- `tunnel login` opens a browser. Pick your domain and click **Authorize**. This saves a certificate for your account in cloudflared's user folder.
+- `tunnel create hottake` creates a named tunnel and its credentials file. The name is up to you; it goes in `online.json` below.
+- `tunnel route dns` adds a CNAME for `play.example.com` that points at the tunnel.
+
+You don't need a cloudflared `config.yml`. HotTake starts the tunnel itself with:
+
+```text
+cloudflared tunnel --no-autoupdate run --url http://127.0.0.1:47801 hottake
+```
+
+### 3. Write online.json
+
+Create `%APPDATA%\HotTake\online.json` (or `online.json` in the folder named by `HOTTAKE_CONFIG_DIR`, if you set that):
+
+```json
+{
+  "hostname": "play.example.com",
+  "tunnel": "hottake",
+  "enabled": false
+}
+```
+
+With a TURN relay (see below), add the two optional fields:
+
+```json
+{
+  "hostname": "play.example.com",
+  "tunnel": "hottake",
+  "enabled": false,
+  "turnKeyId": "YOUR_TURN_KEY_ID",
+  "turnApiToken": "YOUR_TURN_API_TOKEN"
+}
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| `hostname` | yes | The public hostname phones open. HotTake builds the invite link as `https://` plus this. |
+| `tunnel` | yes | The tunnel name (or ID) from `cloudflared tunnel create`. |
+| `enabled` | no, default `false` | Start online play when HotTake starts. HotTake rewrites this field when you flip the switch. |
+| `turnKeyId` | no | Cloudflare Realtime TURN key ID. |
+| `turnApiToken` | no | The API token for that key. The relay is on only when both TURN fields are set. |
+
+Notes on the file:
+
+- A UTF-8 byte-order mark is fine (Notepad and PowerShell like to add one).
+- If the JSON is invalid, HotTake logs `online.json is not valid; online play is off` and hides online play.
+- HotTake reads the file once at startup. When you toggle the switch it writes the file back (pretty-printed, TURN fields kept). **Close HotTake before editing**, or your changes may be overwritten.
+- Treat the file as a secret if it holds a TURN token. Don't commit it or share screenshots of it.
+
+### 4. Switch it on
+
+Start HotTake, press **O** for Options, open **Network** and switch on **Online play**. The status line moves from "Connecting to play.example.com…" to:
+
+> Players anywhere can join at play.example.com with the room code, or with the invite link.
+
+HotTake marks the tunnel online when `cloudflared` reports a registered connection. **Copy invite link** then appears; send that link to remote players, or have them open the site and type the room code. The setting is remembered for the next start.
+
+## Setting up the TURN relay
+
+1. In the Cloudflare dashboard, go to **Realtime → TURN Server** and create a key.
+2. Copy the key ID and the API token into `turnKeyId` and `turnApiToken` in `online.json`.
+3. Restart HotTake. The online status line now ends with "Relay on for mobile data." Without a key it says "No relay set up: mobile data may lag."
+
+How HotTake uses the key:
+
+- The key stays in `online.json` on the laptop. Phones only ever get short-lived credentials.
+- When a phone joins over the tunnel, HotTake asks Cloudflare's TURN API for credentials. They last 24 hours, are cached, and are renewed 2 hours before they expire. HotTake also fetches them as soon as the tunnel comes up, so the first remote phone doesn't wait.
+- Phones get the STUN and TURN URLs minus port 53, which tends to time out in browsers. The laptop's own WebRTC stack keeps only STUN and UDP TURN, since it relays over UDP.
+- If the request fails, HotTake logs `could not get TURN credentials; phones get STUN only` and carries on without the relay.
+- Phones on the same Wi-Fi never use STUN or TURN; they connect directly.
+
+### Cost
+
+Cloudflare's TURN service is free up to 1,000 GB a month. HotTake uses roughly 30 MB per relayed player per hour, so the free allowance covers on the order of 30,000 relayed player-hours a month. Only phones that can't make a direct link use the relay. Check Cloudflare's current pricing before relying on it for anything large.
+
+## Which path is a phone using?
+
+The phone's status bar shows the path and the ping:
+
+| Phone shows | Meaning |
+|---|---|
+| `WebRTC` | Direct data channel to the laptop (same Wi-Fi, or STUN worked). Best case. |
+| `WebRTC relay` | Data channel through Cloudflare's TURN relay. Still UDP, a little more latency. |
+| `WebSocket` | Fallback: input goes over the tunnelled WebSocket. Works, but stutters on lossy networks. |
+
+On the laptop, press **F3** for path, ping and input age per player. The debug dock's **Players** tab (Developer mode) shows the same thing. A phone loaded over HTTPS knows it came through the tunnel, so it asks for STUN and waits longer for candidates (3 s instead of 1.5 s).
+
+## What is refused through the tunnel
+
+The tunnel exposes only the phone side of port 47801:
+
+- **Reachable:** the controller page (`/`, `/controller/*`), shared files and vendored libraries the controller uses, the web app manifest, and the phone WebSocket `/ws`.
+- **Refused:** everything under `/host/`. That covers the host screen and its socket `/host/ws`, `room.json` (which holds the join key), the QR code, the catalog and covers, and every library route (import, dev folder, remove). Any request that carries Cloudflare's `cf-connecting-ip` or `cf-ray` header gets a 403, even though `cloudflared` connects from loopback.
+- **Not tunnelled at all:** the games origin on port 47802. It listens on loopback only and also checks the `Host` header.
+
+HotTake trusts `cf-connecting-ip` as the phone's real address only when the request comes from loopback (that is, from `cloudflared`). A phone on the LAN can't pretend to be a remote one by sending the header.
+
+## Testing it
+
+With online play switched on and `npm run dev` (or the app) running, bot phones can join through the tunnel:
+
+```bash
+node tests/e2e/bots.mjs 3 15 http://127.0.0.1:47801 --join=https://play.example.com --doh
+```
+
+The room key still comes from the local address; `--join` sends the bots through the public hostname. `--doh` resolves that hostname with Cloudflare DNS-over-HTTPS, which skips a stale local DNS cache right after `tunnel route dns`.
+
+For a real test, put one phone on mobile data with Wi-Fi off and check which path it shows.
+
+## Troubleshooting
+
+| Symptom | Likely cause and fix |
+|---|---|
+| No **Online play** switch in Options › Network | `online.json` is missing, in the wrong folder, or not valid JSON. Check the log for `online.json is not valid`. |
+| "Online play unavailable: cloudflared is not installed" | HotTake found the settings but not the executable. Put it on `PATH`, install it in the standard folder, or set `HOTTAKE_CLOUDFLARED`. Restart HotTake. |
+| Stuck on "Connecting to …" | `cloudflared` started but hasn't registered a connection. Corporate or school networks sometimes block its outbound traffic (Cloudflare documents port 7844). Try another network. |
+| "Couldn't go online: …" | `cloudflared` exited. The message is its last error line. Common causes: a wrong `tunnel` name, a missing credentials file, or a missing login certificate. Run `cloudflared tunnel list` and `cloudflared tunnel info hottake`, then switch online play off and on to retry. |
+| The site doesn't load on phones | DNS not routed yet or cached. Re-run `cloudflared tunnel route dns hottake play.example.com` and check the CNAME in the dashboard. |
+| Remote phones show `WebSocket` and lag | No relay configured, or the TURN request failed. Add a TURN key and look for `could not get TURN credentials` in the log. |
+| Opening `https://play.example.com/host/` gives 403 | Expected. The host screen is never served through the tunnel. |
+| A `cloudflared` process is left running | Shouldn't happen on Windows: HotTake puts it in a job object that dies with the app, even on a forced close. |
+
+The full logs are in the console of a debug build (`npm run app:dev`) or the headless host (`npm run dev`). Set `RUST_LOG=info` to keep the online messages.

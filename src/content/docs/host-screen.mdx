@@ -1,0 +1,121 @@
+export const meta = { title: "Host screen", description: "The shell in web/shell: lobby and shelf, players, options, keyboard and gamepad players, the game frame and its watchdog, tournaments and debug tools.", section: "Architecture", order: 4 };
+
+The host screen, or "shell", is the page the desktop window shows at `http://127.0.0.1:47801/host/`. It is plain JavaScript modules with no framework and no build step, in `web/shell/`. It owns everything the TV shows except the game itself, and it is the only thing that talks to a game.
+
+Because it is an ordinary page, the same code runs in the Tauri window and in any browser on the laptop, which is how `npm run dev` works. See [/docs/contributing#getting-the-source](/docs/contributing#getting-the-source) for the code.
+
+## Structure
+
+`app.js` is the hub. It owns the link to the host core, the game lifecycle, the library requests, keyboard routing and option side effects. The UI parts are modules with a `mount(root, store, actions)` function that subscribe to a small observable store.
+
+| Module | Role |
+|---|---|
+| `host-link.js` | `HostLink`: the `/host/ws` socket; decodes input frames and dispatches host messages. |
+| `store.js` | Shared state and persisted options (`hottake:options`). |
+| `nav.js` | Arrow, Enter and Escape routing; decides when keys belong to keyboard players. |
+| `lobby.js`, `shelf.js` | The Spotlight hero and the game shelf. |
+| `players.js`, `join-card.js`, `hud.js` | Player strip, QR card, in-game HUD pill. |
+| `game-frame.js` | `GameFrame`: the sandboxed iframe and the SDK protocol. |
+| `pause.js`, `options.js`, `toasts.js` | Pause card, Options card, toast queue. |
+| `tournament.js`, `tournament-flow.js`, `tournament-view.js` | Tournament logic, state machine and screens. |
+| `keyboard.js`, `gamepads.js`, `bots.js` | Local players. |
+| `developer.js`, `debug-dock.js` | Options › Developer and the debug dock. |
+| `background.js` | The animated lobby background, released while a game runs. |
+
+Pure parts of most modules are tested in Node (`tests/js/`).
+
+## Lobby and shelf
+
+The lobby is a "Spotlight" layout. The selected game's cover fills the screen behind a fade, and the hero shows its name, tagline, player count, tags, credits and the **Play** button. Play is disabled with a hint ("Needs 2 players to start") until enough players are connected, and a game whose manifest fails validation shows "Can't start: …". After a game the last round's scores, best first, sit under Play.
+
+The shelf below is one row of game cards. Arrow keys, a gamepad or the leader's phone move the selection; clicking the selected card or pressing Enter plays it. Library games carry a tag: "Imported", "Dev · rev N" or "Error". The list comes from `/host/catalog.json`.
+
+The selected game is mirrored to the host with `select`, so the leader's phone can show "Up next".
+
+## Players strip and join card
+
+The strip shows one chip per seat: colour dot, name, and a second line with the path and ping (`WebRTC · 23 ms`, `WebSocket`, `Keyboard`, `Gamepad`, `Bot`, or "reconnecting…"). Then an "open seats" chip and buttons to add keyboard players.
+
+Holding the **×** on a chip for 800 ms removes the player. Keyboard, pad and bot players are removed with `removeLocal`. Phones are kicked with `kick`, which also rotates the room key and code, so the QR and the code change; everyone still in the room stays connected.
+
+The join card in the top-right corner shows the QR (`/host/qr.svg`), the room code and a short address with "Same Wi-Fi" or "From anywhere". While nobody is connected it grows into a large centred panel. During play the HUD pill in a corner shows the room code and one dot per player; it fades after 3 s without a join, leave or pause.
+
+## Options
+
+**O** opens the Options card in the lobby or on the pause card; opening it during a game pauses first. Tabs:
+
+| Tab | Contents |
+|---|---|
+| Sound | Volume, game sound on or off, phone vibration |
+| Display | Fullscreen (F11 too), UI size (Auto, TV, Laptop), reduce motion |
+| Players | Rename, colour and seat per player (lobby only), keyboard players |
+| Network | Online play switch and invite link, which address the QR shows, a test-controller link, and the Connections table |
+| Developer | The Developer mode switch and the tools below it |
+
+**F3** opens Network directly. Its Connections table lists player, link, ping and last-input age, refreshed four times a second. Options are saved in local storage; vibration and the selected game are re-sent to the host whenever the socket reconnects.
+
+## Keyboard players and gamepads
+
+Two keyboard players can be added from Options › Players: **WASD** with J, K, L, I as buttons 1–4, and **Arrows** with `.`, `,`, `/`, `;`. They are local seats created with `addLocal` and fed through `KeyboardPad`, which produces the same frame shape as a phone. Keys go to them only while a game runs and no card is open; Escape is always the shell's.
+
+USB or Bluetooth gamepads with the standard mapping are read through the browser Gamepad API once per animation frame (`GamepadSeats` in `gamepads.js`). **Start**, or **A** in the lobby, joins as "Pad N"; holding **Select/Back** for 0.8 s leaves. Left stick or d-pad is the stick, right stick the second stick, A/B/X/Y buttons 1–4, Start pauses. Pads also drive the lobby and cards.
+
+Local frames are sent only on change, so the shell resends them every 50 ms while a game runs. When the window loses focus, local players' held keys are released, because the key-up events would be lost.
+
+## The game frame
+
+`launch(manifest)` in `app.js`:
+
+1. Sets the view to `playing`, sends `phase` and `setLayout` (the manifest's `controller` block, with `type: "gamepad"`) to the host, and shows the loader.
+2. Creates a `GameFrame`: an iframe with `sandbox="allow-scripts allow-same-origin"` and `allow="autoplay; gamepad; fullscreen"`, pointing at `<gamesOrigin>/games/<id>/<entry>`.
+3. On iframe load, posts `hottake:connect` with a fresh `MessageChannel` port. Everything after goes over that port.
+4. When the SDK sends `connect`, replies `hello` with the players, the layout, the leader, and the debug and tournament flags, then flushes any player events queued while loading.
+
+From then on the shell forwards input (`in`), player events (`join`, `leave`, `reconnect`), phone messages, `pause`/`resume`, `volume` and `leader`. It accepts `loading` (progress bar), `ready`, `pong`, `setController`, `send`, `end` and `log` from the game.
+
+### Watchdog
+
+| Rule | Value | Constant |
+|---|---|---|
+| The game must call `ready()` | within 30 s of the frame being created | `READY_TIMEOUT_MS` |
+| The shell pings the ready game | every 2 s | `HEARTBEAT_MS` |
+| No `pong` for | 5 s means hung | `HUNG_AFTER_MS` |
+
+The SDK answers pings automatically. A game that misses either deadline is torn down, a toast says why ("… did not become ready in time. Back to the lobby." or "… stopped responding"), and everyone returns to the lobby with phones still connected. In Developer mode the dock also logs a "Watchdog:" line.
+
+## Pause card
+
+**Esc** on the laptop, a pad's Start, or holding ⏸ on any phone pauses. The shell releases all held input, sends the game `pause`, and tells the host phase `paused` with who paused. Controller layouts are kept for the resume.
+
+The card shows **Resume**, **Restart**, **Quit to lobby** and **Options**. On the laptop every button works. From phones, anyone can resume; restart and quit are for the leader only, enforced in Rust. Restart starts the same game again with whoever is in the room now, unless too few players are left.
+
+## Tournament flow
+
+With 2 or more players connected, the lobby offers **Tournament**. `tournament-flow.js` is a DOM-free state machine with phases `setup`, `intro`, `playing`, `standings`, `waiting`, `stopped`, `final` and `between`:
+
+- **Setup:** 3 to 12 games (default 6), drawn at random from games that fit the players; **Reroll** and **Start**.
+- **Intro:** a 3 s round card, then the game launches with `party.tournament` set.
+- **Standings:** about 6 s after each game. Places from the game's scores earn 3, 2 and 1 points; the average decides the order.
+- **Stopped:** a game that ended without a result offers Retry or Skip. **Waiting:** fewer than 2 players connected.
+- **Final:** podium and confetti, then Play again or Back to lobby.
+
+While a tournament runs the pause card swaps Quit for **Skip game** and **End tournament**. The leader's phone gets controls for the setup and standings cards through the `tournamentCard` field of the lobby phase.
+
+## Toasts
+
+`toasts.js` shows one pill at the bottom centre for 3 s, with at most 3 queued and duplicates dropped. Toasts cover joins, drops and leaves during a game, watchdog stops, start problems and library reloads.
+
+## Developer tools
+
+Options › Developer has the **Developer mode** switch (off by default). With it on:
+
+- **Import game (.zip)**, also by dropping a zip anywhere on the window, plus **New game template**.
+- **Dev folder**: a path, **Load**, and **Browse…** in the desktop app. Edits restart the game in place with the same players and a "Reloaded … (rev N)" toast.
+- **Installed games** with Reload now, Replace… and a hold-to-confirm Remove.
+- The host page's `?gameQuery=` parameter is appended to the game URL.
+
+The **debug dock** (backtick or **F2**) has Console, Players, Bots and Perf tabs: logs and platform events, live input per player, "Bot N" seats driven at 30 Hz, and FPS with Reload, speed, Freeze and Step. See [/docs/testing-games](/docs/testing-games).
+
+## When the host link drops
+
+If `/host/ws` closes, a banner says the host service connection was lost and the shell retries every second. If another host screen opened (the host keeps only one), this one shows **Use this screen** instead of fighting for the socket, and ends any running game. When the shell disconnects, the host puts phones back in the lobby.

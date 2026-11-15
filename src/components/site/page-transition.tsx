@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { gsap, registerGsap, shouldAnimate } from "@/lib/motion";
-import { AsciiArt } from "./ascii-art";
+import { AsciiArt, ensureAsciiRuntime } from "./ascii-art";
 
 const LABELS: Record<string, string> = {
   "/": "LOBBY",
@@ -11,6 +11,7 @@ const LABELS: Record<string, string> = {
   "/how-to-play": "HOW TO PLAY",
   "/download": "DOWNLOAD",
   "/creator": "THE CREATOR",
+  "/docs": "DOCS",
   "/privacy": "PRIVACY",
   "/terms": "TERMS",
   "/cookies": "COOKIES",
@@ -19,6 +20,7 @@ const LABELS: Record<string, string> = {
 function labelFor(path: string): string {
   if (LABELS[path]) return LABELS[path];
   if (path.startsWith("/games/")) return path.slice(7).replace(/-/g, " ").toUpperCase();
+  if (path.startsWith("/docs/")) return `DOCS · ${path.slice(6).replace(/-/g, " ").toUpperCase()}`;
   return "LOADING";
 }
 
@@ -34,6 +36,19 @@ export function PageTransition() {
   const label = useRef<HTMLSpanElement>(null);
   const [active, setActive] = useState(false);
   const pending = useRef<string | null>(null);
+
+  // Have the ASCII runtime ready before the first navigation: on the first hover/touch of a link, or when idle.
+  useEffect(() => {
+    const warm = () => void ensureAsciiRuntime();
+    const idle = "requestIdleCallback" in window ? requestIdleCallback(warm, { timeout: 4000 }) : setTimeout(warm, 2500);
+    addEventListener("pointerover", warm, { once: true, passive: true });
+    addEventListener("touchstart", warm, { once: true, passive: true });
+    return () => {
+      if ("cancelIdleCallback" in window && typeof idle === "number") cancelIdleCallback(idle);
+      removeEventListener("pointerover", warm);
+      removeEventListener("touchstart", warm);
+    };
+  }, []);
 
   useEffect(() => {
     registerGsap();
@@ -81,10 +96,12 @@ export function PageTransition() {
       className="pointer-events-none fixed inset-0 z-[100] invisible grid place-items-center overflow-hidden bg-bg-0"
     >
       {active && (
-        <AsciiArt eager piece="pixel-fire" size={14} speed={1.6} className="absolute inset-0 block h-full w-full opacity-80" />
+        <AsciiArt eager cover piece="pixel-fire" size={14} speed={1.6} className="absolute inset-0 overflow-hidden opacity-70" />
       )}
-      <div className="relative flex flex-col items-center gap-3">
-        <span className="eyebrow text-amber/80">now loading</span>
+      {/* keep the label readable over the brightest flames */}
+      <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_50%,rgba(18,13,11,0.85),rgba(18,13,11,0.25)_70%,transparent)]" />
+      <div className="relative flex flex-col items-center gap-3 rounded-3xl border border-white/10 bg-bg-0/80 px-8 py-6 shadow-2xl backdrop-blur-md sm:px-12">
+        <span className="eyebrow text-amber">now loading</span>
         <span ref={label} className="font-mono text-3xl font-bold tracking-[0.3em] text-foreground sm:text-5xl">
           &nbsp;
         </span>

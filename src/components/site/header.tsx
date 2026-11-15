@@ -46,7 +46,7 @@ export function Header() {
         ref={bar}
         className="mx-auto flex h-16 max-w-[1216px] items-center justify-between gap-4 rounded-full border border-transparent px-4 backdrop-blur-md sm:px-5"
       >
-        <Link href="/" aria-label="HotTake home" className="shrink-0">
+        <Link href="/" aria-label="HotTake home" className="shrink-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-amber focus-visible:ring-offset-4 focus-visible:ring-offset-bg-0">
           <Logo />
         </Link>
         <nav aria-label="Main" className="hidden md:block">

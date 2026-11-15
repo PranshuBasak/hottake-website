@@ -123,7 +123,7 @@ export function HowItWorks() {
             </div>
             {/* step 3: play */}
             <div data-step-visual className="absolute inset-0 overflow-hidden rounded-[2rem]">
-              <AsciiArt piece="fireworks" size={11} className="absolute inset-0 block h-full w-full" />
+              <AsciiArt cover piece="fireworks" size={11} className="absolute inset-0 overflow-hidden h-full w-full" />
               <div className="absolute inset-x-8 bottom-8 rounded-2xl border border-border bg-bg-0/80 p-4 backdrop-blur">
                 <p className="eyebrow">Round 2 of 6</p>
                 <p className="font-heading text-2xl font-bold">Coin Clash · 90 s</p>

@@ -1,0 +1,113 @@
+export const meta = { title: "Architecture", description: "How HotTake fits together: the desktop app, the Rust host core, the host screen, phone controllers, sandboxed games and the SDK.", section: "Architecture", order: 1 };
+
+HotTake turns one computer into a party-game console. The laptop runs everything: it serves the phone controller page, keeps the room, relays input and hosts the games. Phones are only browsers holding a web page that came from the laptop.
+
+This page is the map. The other Architecture pages go one level deeper into each part. To follow along in the code, see [/docs/contributing#getting-the-source](/docs/contributing#getting-the-source).
+
+## The pieces
+
+| Piece | Where | What it does |
+|---|---|---|
+| Desktop app | `apps/desktop` | A Tauri 2 app. Starts the host core in-process and opens one fullscreen window on the host screen. |
+| Host core | `crates/host-core` | Rust (axum, tokio, webrtc-rs). Rooms and seats, phone WebSockets and WebRTC, the shell bridge, serving files on two origins, the game library, online tunnel. |
+| Host screen ("shell") | `web/shell` | The page in the desktop window: lobby, shelf, player strip, options, pause card, tournament screens, and the game iframe. |
+| Phone controller | `web/controller` | The page phones load: join form, lobby remote for the leader, and the touch gamepad. |
+| Games | `games/<id>/` | Independent web bundles, each with a `manifest.json`. They run in a sandboxed iframe on their own origin. |
+| Screen SDK | `web/sdk/screen-sdk.js` | The only API a game uses: `Party.connect()`, `party.input(id)`, `setController`, `send`, `end`… |
+| Shared codec | `web/shared/codec.js` | Binary packet formats, mirrored by `crates/host-core/src/protocol.rs`. |
+
+The host core is a library. The desktop app links it and calls `host_core::start`; the headless dev server (`hottake-server`) and the Rust integration tests call the same function. That is why the shell is an ordinary web page: you can open it in any browser on the laptop and get exactly what the desktop window shows.
+
+## How it fits together
+
+```text
+                       laptop (everything runs here)
+ ┌──────────────────────────────────────────────────────────────────────────┐
+ │                                                                          │
+ │  ┌───────────────────────── host core (Rust) ──────────────────────────┐ │
+ │  │ :47801  /  /controller/*  /ws        (LAN)                          │ │
+ │  │         /host/  /host/ws  /host/*    (loopback only)                │ │
+ │  │ :47802  /games/<id>/*  /sdk/*        (loopback only, strict CSP)    │ │
+ │  │ udp 47810-47899  WebRTC answerer                                    │ │
+ │  └───────▲──────────────────────▲───────────────────────▲─────────────┘ │
+ │          │ JSON + binary input  │ files                 │ files          │
+ │          │ over /host/ws        │                       │                │
+ │  ┌───────┴──────────────────────┴───┐        ┌──────────┴─────────────┐  │
+ │  │ host screen (web/shell)          │ Message│ game iframe            │  │
+ │  │ Tauri window, 127.0.0.1:47801    ├──Port──► 127.0.0.1:47802        │  │
+ │  └──────────────────────────────────┘        │ sandboxed, uses SDK    │  │
+ │                                              └────────────────────────┘  │
+ └──────────────▲─────────────────────────▲─────────────────────────────────┘
+                │ WebSocket /ws           │ WebRTC data channel "input"
+                │ (join, layouts, msgs,   │ (input + ping, unreliable,
+                │  input fallback)        │  unordered)
+          ┌─────┴─────────────────────────┴─────┐
+          │ phone browser: web/controller        │
+          │ loaded from http://<lan-ip>:47801/   │
+          └──────────────────────────────────────┘
+```
+
+Two rules hold everywhere:
+
+- Phones never load or talk to games. They get controller layouts and messages over `/ws`; the game sees phones only through the SDK.
+- Game logic runs only inside the game iframe. The host core and the shell move input and messages; they never simulate anything.
+
+## A session, end to end
+
+1. **Start.** The desktop app calls `host_core::start`. It binds port 47801 on all interfaces and 47802 on loopback, creates a `Room` with a random 4-letter code (no I or O) and a 128-bit key, picks the laptop's LAN addresses, and returns the shell URL `http://127.0.0.1:47801/host/`. Tauri opens a fullscreen window on it.
+2. **QR.** The shell opens the loopback socket `/host/ws` and receives a `room` message with the code, the key, join URLs such as `http://192.168.1.20:47801/#k=<key>` and the player list. The join card shows `/host/qr.svg`, rendered by the host core.
+3. **Join.** A phone scans the QR, loads the controller page from the laptop and opens `/ws`. It sends `hello` with its name and either the key from the URL fragment or the typed room code. The host admits it to a seat (0–7) and replies `welcome` with a player id, seat and colour.
+4. **Upgrade.** The phone creates a WebRTC offer for a data channel named `input` and sends it as `rtcOffer`. The host answers; once the channel opens, input and pings use it. The WebSocket stays open for everything else and as the fallback.
+5. **Pick a game.** The leader (the connected phone in the lowest seat) gets a remote on their phone. Its arrow keys reach the shell as `phoneAction` messages and move the selection on the shelf. Start, on the phone or Enter on the laptop, launches the selected game.
+6. **Play.** The shell creates the game iframe on the games origin, hands it a `MessagePort`, tells the host the phase is `playing` and sets the default controller layout from the manifest. The host pushes the layout to every phone, which swaps its lobby screen for the gamepad. Every input packet goes phone, host core (adds the seat byte), shell, then the game's port.
+7. **Results.** The game calls `party.end({ scores })`. The shell destroys the iframe, shows the scores under Play, and sends phase `lobby`. Phones return to the lobby screen.
+
+Pause, restart, quit, tournament rounds and reconnects are variations on steps 5–7; they are covered in [/docs/host-screen](/docs/host-screen) and [/docs/networking](/docs/networking).
+
+## Two origins, three port ranges
+
+| Port | Bound to | Serves | Why |
+|---|---|---|---|
+| `47801/tcp` | `0.0.0.0` | Controller site (`/`, `/controller/*`, `/shared/*`, `/vendor/*`), phone socket `/ws`, host screen `/host/*` | Phones on the LAN must reach it. The `/host/*` routes refuse anything that is not loopback. |
+| `47802/tcp` | `127.0.0.1` | Games (`/games/<id>/*`) and the SDK (`/sdk/*`) | A separate origin from the shell, so a game in its iframe cannot touch the shell's DOM, storage or socket. Only the shell frames games, so nothing outside the laptop needs it. |
+| `47810–47899/udp` | LAN addresses | WebRTC ICE | A fixed range, so a single firewall rule covers every phone's data channel. |
+
+Both TCP ports are constants in `crates/host-core/src/lib.rs` (`DEFAULT_HTTP_PORT`, `DEFAULT_GAMES_PORT`); the headless server lets you override them with `HOTTAKE_HTTP_PORT` and `HOTTAKE_GAMES_PORT` to run a second host beside the app. The UDP range is `UDP_PORT_MIN`/`UDP_PORT_MAX` in `rtc.rs`.
+
+## Local-first
+
+There is no game server and nothing in the cloud. The laptop serves the controller page, so phones on the same Wi-Fi need no internet connection at all. Built-in games, the SDK, fonts and vendored libraries are compiled into the executable in release builds (`rust-embed`), and the games origin's CSP (`connect-src 'self'`) stops games from fetching anything elsewhere.
+
+Online play is an opt-in exception: a Cloudflare Tunnel carries the controller page and the phone's WebSocket to the laptop, but the game still runs only on the laptop and remote players watch its screen. See [/docs/online-play](/docs/online-play).
+
+## Security model
+
+The trust model is "you can see the screen": the QR carries the room key, and the 4-letter code shown on the TV also admits a player. Everything else is about keeping games, web pages and LAN devices away from the host's privileged routes.
+
+**Games are sandboxed.** The iframe has `sandbox="allow-scripts allow-same-origin"`. Because the game lives on `127.0.0.1:47802` and the shell on `127.0.0.1:47801`, "same origin" means the game's own origin, not the shell's. Every game response carries this CSP:
+
+```text
+default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self';
+frame-ancestors http://127.0.0.1:*
+```
+
+The game talks to the shell only through the `MessagePort` the shell hands it. The shell checks every message: `send` is capped at 16 kB and 30 messages per second per target, scores are kept only for real player ids and finite numbers, and unknown messages are logged and dropped.
+
+**The host screen is loopback-only.** `host_guard` in `http.rs` wraps every `/host/*` route and refuses a request unless the peer is loopback, the `Host` header names this computer (defeating DNS rebinding), and no Cloudflare header is present (so the tunnel cannot reach it). A browser `Origin`, when sent, must be the host screen itself, so neither a web page nor a game can open `/host/ws`. Responses get `X-Frame-Options: DENY` and a CSP whose `frame-src` names only the games port.
+
+**The games origin checks its Host header.** `games_host_guard` accepts only `127.0.0.1:<games port>` or `localhost:<games port>`.
+
+**Phones are untrusted input.** The host validates every packet by type and exact length, closes a connection after 200 malformed messages, caps JSON messages at 16 KiB and 30 per second, and allows 8 failed joins per IP per minute before answering `slow-down`. Leader-only requests (start, restart, quit, tournament controls) are checked in Rust against the room's leader and the current phase.
+
+**The desktop window has no IPC.** The Tauri capability file grants no permissions to page scripts; fullscreen and the folder picker are Rust hooks the host core calls when the shell asks over its socket.
+
+> **Developer mode is a switch, not a lock.** It only changes what the host screen shows. While HotTake runs, any process on the laptop, including another Windows user's, can call the loopback `/host/library` routes, and every registered dev folder is served on `127.0.0.1:47802` to anything on the laptop. Imported games share that origin, so they can read each other's local storage and dev-folder files. Register only folders you don't mind other local programs reading, and import only games you trust.
+
+## Where to go next
+
+- [/docs/host-core](/docs/host-core): the Rust crate, module by module.
+- [/docs/networking](/docs/networking): packets, WebRTC, fallback, latency and reconnects.
+- [/docs/host-screen](/docs/host-screen): the shell and the game frame.
+- [/docs/controller](/docs/controller): the phone side.
+- [/docs/making-games](/docs/making-games) and [/docs/sdk-reference](/docs/sdk-reference): building a game.

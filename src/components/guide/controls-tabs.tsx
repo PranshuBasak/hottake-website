@@ -46,7 +46,7 @@ export function ControlsTabs() {
         { value: "keyboard", label: "Keyboard" },
       ]}
       className="w-full"
-      panelClassName="pt-5"
+      panelClassName="p-5 sm:p-6"
       renderPanel={(v) => {
         const p = PANELS[v];
         return (
@@ -56,7 +56,7 @@ export function ControlsTabs() {
               <tbody>
                 {p.rows.map(([k, val]) => (
                   <tr key={k} className="border-t border-border">
-                    <th scope="row" className="w-40 py-3 pr-4 text-left font-semibold">
+                    <th scope="row" className="w-36 py-3 pr-4 text-left align-top font-semibold sm:w-40">
                       {k}
                     </th>
                     <td className="py-3 text-muted-foreground">{val}</td>

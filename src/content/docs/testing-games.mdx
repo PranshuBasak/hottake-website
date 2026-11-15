@@ -1,0 +1,186 @@
+export const meta = { title: "Testing games", description: "Test a HotTake game without a room full of phones: Developer mode, dev folders, the debug dock, keyboard players, gamepads, the bot harness and unit tests.", section: "Making games", order: 4 };
+
+You don't need eight friends and eight phones to test a party game. HotTake has keyboard players, USB gamepads, in-app bots, a command-line bot harness and a debug dock, and the patterns the built-in games use make the rules testable in plain Node.
+
+## Developer mode
+
+Open **Options › Developer** and switch on **Developer mode**. It is off by default and remembered. It turns on:
+
+- **dev folders**: load a game straight from a folder on disk,
+- **zip drag and drop** onto the window,
+- **the debug dock**, opened with `` ` `` (backtick) or **F2**,
+- **debug mode in games**: the SDK forwards console errors and frame stats and creates `HotTakeDebug`.
+
+With it off, imported games still show on the shelf, but dev-folder games, the dock and its shortcuts are gone.
+
+## Dev folders and live reload
+
+Under **Dev folder**, paste the path of a folder that contains `manifest.json` and press **Load** (or **Browse…** in the desktop app). The manifest is validated as described on [Manifest](/docs/manifest).
+
+- The folder is served from disk without caching and is never modified.
+- HotTake checks it once a second. When a file changes, the game restarts **with the same players** and a toast says "Reloaded `name` (rev N)". The shelf tags it "Dev · rev N".
+- If a change breaks `manifest.json`, the last good manifest stays and the error is shown under the game.
+- **Installed games** lists it with **Reload now** and a hold-to-confirm **Remove**, which only forgets the folder.
+- A folder with more than 5000 files, or nested deeper than 16 levels, can't be watched. Folders starting with `.` (such as `.git`) and `node_modules` are skipped when watching.
+
+Read the security note on [Sharing games](/docs/sharing-games) before you register a folder: its files are readable by other programs on the computer.
+
+## Hot reload for built-in games
+
+When you work on the platform itself or on a game in `games/`, run a debug build. Debug builds read `web/` and `games/` from disk, so a change only needs a page reload. Release builds embed the files in the executable.
+
+```bash
+npm run dev        # headless host, no window: open http://127.0.0.1:47801/host/ in a browser
+npm run app:dev    # the desktop app in dev mode
+```
+
+To run a second host beside the desktop app, move it to other ports:
+
+```bash
+HOTTAKE_HTTP_PORT=47901 HOTTAKE_GAMES_PORT=47902 npm run dev
+```
+
+## The debug dock
+
+With Developer mode on, press `` ` `` or **F2** to open or close the dock on the right. It can collapse to a strip. Typing in a text field keeps the backtick; F2 always works.
+
+| Tab | What it has |
+|---|---|
+| **Console** | The last 500 lines: `party.log`, `console.warn` and `console.error`, uncaught errors and unhandled rejections (with file:line), and platform events (join, leave, reload). Level filters, **Copy**, **Clear**. |
+| **Players** | Per player: connection path, ping, packets per second, last-input age, live stick and held buttons. |
+| **Bots** | **Count** − / +, a behaviour (`idle`, `wander` or `mash`), **Add bots** up to the free seats, **Remove all bots**. |
+| **Perf** | FPS, frame average and p95, sim step time; **Reload**; speed **1× / 0.5× / 0.25×**; **Freeze**; **Step**. |
+
+**Bots** are local seats named "Bot 1", "Bot 2"…, driven at 30 Hz through the same input path as keyboard players, so your game cannot tell them from phones. The name pattern `Bot N` is reserved for them.
+
+### Time controls in your own loop
+
+The kit's `startLoop` supports speed, freeze and step for free. A game with its own loop must follow the `HotTakeDebug` contract, or the dock says "Time controls not supported by this game" two seconds after the game is ready:
+
+```js
+const STEP = 1 / 60;
+let last = performance.now(), acc = 0;
+function frame(now) {
+  const dbg = globalThis.HotTakeDebug;             // undefined unless debug is on
+  const dt = Math.min(0.25, (now - last) / 1000);
+  last = now;
+  const timed = () => {                            // run one step and report its cost
+    const t0 = performance.now();
+    update(STEP);
+    if (dbg) dbg.stepCost = dbg.stepCost * 0.9 + (performance.now() - t0) * 0.1 || 0.01;
+  };
+  if (dbg?.frozen && !party.paused) {
+    while (dbg.steps > 0) { dbg.steps--; timed(); }
+  } else if (!party.paused) {
+    acc += dt * (dbg?.speed ?? 1);
+    while (acc >= STEP) { timed(); acc -= STEP; }
+  }
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+```
+
+Pausing wins over freeze: nothing steps while the pause card is up, and queued steps wait for resume.
+
+### Debug-only switches
+
+In Developer mode, opening the host page as `/host/?gameQuery=fast%3D1` appends `?fast=1` to the game's URL (only `key=value` pairs of word characters, dots and dashes pass). Night Siege uses it for 20-second days. Gate such switches on `globalThis.HotTakeDebug` too, so they never work in a normal session.
+
+## Keyboard players
+
+**Options › Players** adds up to two keyboard players on the laptop:
+
+| Player | Directions | Buttons 1–4 |
+|---|---|---|
+| WASD + J/K | `W` `A` `S` `D` | `J` `K` `L` `I` |
+| Arrows + ./, | arrow keys | `.` `,` `/` `;` |
+
+The phone controller page also takes a keyboard, which is handy in a desktop browser on the same network: WASD or arrows, and `Space`/`J`/`Z`, `K`/`X`, `L`/`C`, `I`/`V` for buttons 1 to 4. Press **F3** on the host for connection stats (path, ping, input age per player).
+
+## Gamepads
+
+USB or Bluetooth gamepads with the standard mapping work as local players:
+
+- Press **Start** (or **A** in the lobby) to join as "Pad N". Hold **Select/Back** for 0.8 seconds to leave.
+- Left stick or d-pad is `stick`, the right stick is `stick2`, and A, B, X, Y are buttons 1 to 4. Start pauses.
+- The dead zone is 0.15. There is no rumble or remapping yet.
+
+The right stick makes a gamepad a quick way to test a twin-stick layout.
+
+## The bot harness
+
+`tests/e2e/bots.mjs` connects bot phones to a running host over the real phone protocol and plays with semi-random input. It prints packets sent and round-trip latency (p50, p95, max) per bot, and exits non-zero if a bot fails to join or loses its connection.
+
+```bash
+node tests/e2e/bots.mjs [count=4] [seconds=30] [baseUrl=http://127.0.0.1:47801] [flags]
+node tests/e2e/bots.mjs 4 0 http://127.0.0.1:47801 --start --game=coin-clash --until-end
+```
+
+| Flag | What it does |
+|---|---|
+| `--start` | The leader bot starts the selected game, like tapping Play. |
+| `--game=<id>` | The leader bot presses "right" (at most 60 times) until the lobby's selection is that game. |
+| `--until-end` | After the round starts, wait for the lobby to come back (`seconds` may be 0). Fails on `--timeout`. |
+| `--timeout=<s>` | The limit for `--until-end`, `--training` and `--tutorial`. Default 150. |
+| `--turns` | Send input only while the bot's banner says "Your turn"; neutral frames otherwise. Use it for turn-based games. |
+| `--allow-short` | A `--until-end` round shorter than 35 s normally fails, because the ready watchdog sends a game that never loaded back after 30 s and that looks like a result. Pass this for games that really end that fast. |
+| `--cdp=<port>` | Read the host page over Chrome DevTools (default 9333). With `--until-end`, the run also fails on a "Watchdog:" line in the dock console. Needs Developer mode. |
+| `--training` | Cartastrophe's Training store: bots walk each step, steered by the game's debug view over `--cdp`. |
+| `--tutorial` | Night Siege's tutorial: the leader picks Tutorial and the bots act out each step over `--cdp`. |
+| `--join=<url>`, `--doh` | Connect through another address (such as the online tunnel); `--doh` resolves it with DNS-over-HTTPS. |
+
+`--training` and `--tutorial` leave the game running when they pass, so run them last.
+
+For your own game, make sure every round ends on its own. Pick a timeout above your longest round, and use `--turns` if bots should only act on their turn.
+
+### A headless host
+
+Games only run while a host screen is open. With `npm run dev`, keep a headless Edge on the host page:
+
+```bash
+msedge --headless=new --remote-debugging-port=9333 --force-prefers-reduced-motion \
+  --no-first-run --user-data-dir=<scratch dir> http://127.0.0.1:47801/host/
+```
+
+`--force-prefers-reduced-motion` is required for a headless host screen. Don't add `--disable-gpu`: software WebGL is slow enough to push heavy games past their timeouts. For `--cdp` against the desktop app, start it with `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9333`.
+
+## Unit-testing a pure simulation
+
+Keep your rules in a module with no DOM and no SDK, like `games/coin-clash/sim.js`, and you can test whole rounds in milliseconds with Node's built-in runner:
+
+```js
+import test from "node:test";
+import assert from "node:assert/strict";
+import { STEP, addPlayer, createWorld, step } from "../../games/coin-clash/sim.js";
+
+const run = (world, seconds, inputs = () => new Map()) => {
+  const events = [];
+  for (let t = 0; t < seconds; t += STEP) events.push(...step(world, inputs(world)));
+  return events;
+};
+
+test("countdown freezes players, then the round starts", () => {
+  const w = createWorld({ seed: 1 });
+  const p = addPlayer(w, { id: "a" });
+  const x0 = p.x;
+  run(w, 2.9, () => new Map([["a", { x: 1, y: 0, jump: false, jumpPressed: false, dashPressed: false }]]));
+  assert.equal(w.phase, "countdown");
+  assert.equal(p.x, x0);
+  run(w, 0.2);
+  assert.equal(w.phase, "play");
+});
+```
+
+Run it with:
+
+```bash
+node --test tests/js/my-game.test.mjs
+npm test        # the whole JS suite in tests/js
+```
+
+- Seed your randomness (`mulberry32` from `games/_kit/rng.js`) so a failing round replays exactly.
+- `npm test` loads `tests/js/register.mjs`, which maps the browser paths `/sdk/`, `/shared/`, `/controller/`, `/host/` and `/vendor/` onto the repository. That lets a test import `/sdk/screen-sdk.js` and the kit just as the game does.
+- Kit modules that touch the browser are written to load in Node: `Synth` creates its `AudioContext` lazily, and `startLoop` takes a fake `_clock`. `Party` takes a test environment as its second constructor argument.
+
+The repository has a test file per built-in game in `tests/js/`, for example `bumper-bloom.test.mjs` and `lob-squad.test.mjs`, which are good templates.

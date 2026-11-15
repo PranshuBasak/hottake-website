@@ -1,0 +1,173 @@
+export const meta = { title: "Manifest", description: "Every manifest.json field, the validation rules HotTake applies on import and on loading a dev folder, cover and credits rules, and the error messages.", section: "Making games", order: 3 };
+
+Every game folder has a `manifest.json` that tells HotTake what the game is called, how many people can play it, what the shelf shows and which controller the phones get first. The same validator, `crates/host-core/src/manifest.rs`, checks it when you import a zip, when you load a dev folder, and in a test over every built-in game.
+
+## A full example
+
+```json
+{
+  "id": "coin-clash",
+  "name": "Coin Clash",
+  "description": "Platform brawl: grab coins, stomp heads, dash to bump. Most coins in 90 seconds wins.",
+  "tagline": "Grab coins, stomp rivals, dash to bump. Most coins in 90 seconds wins.",
+  "tags": ["party", "platformer", "brawl"],
+  "version": "1.0.0",
+  "sdk": "1",
+  "entry": "index.html",
+  "players": { "min": 1, "max": 8 },
+  "controller": {
+    "layout": "gamepad",
+    "stick": "dpad",
+    "buttons": ["Jump", "Dash"]
+  },
+  "aspect": "16:9",
+  "cover": "cover.svg"
+}
+```
+
+A ported game adds a `credits` block:
+
+```json
+"credits": {
+  "author": "Eigil Nikolajsen",
+  "url": "https://github.com/eigilnikolajsen/achtung-die-kurve",
+  "license": "MIT",
+  "notes": "Tangle — based on achtung-die-kurve by Eigil Nikolajsen"
+}
+```
+
+## Required fields
+
+| Field | Type | Rule |
+|---|---|---|
+| `id` | string | 2 to 40 characters of `a-z`, `0-9` and `-`. Must not be a built-in game's id. It names the game's URL (`/games/<id>/`) and its folder once imported. |
+| `name` | string | 1 to 40 characters, not blank. Shown on the shelf and the lobby hero. |
+| `tagline` | string | 1 to 80 characters, not blank. The one-line pitch under the name. |
+| `tags` | string array | 1 to 6 entries, none empty. Shown as chips. |
+| `version` | string | Not blank, for example `"1.0.0"`. Shown in Installed games and in the Replace prompt. |
+| `entry` | string | The page to load, for example `"index.html"`. A relative path to a file in the game folder. |
+| `cover` | string | The shelf picture: a relative path to an `.svg` or `.png` file in the game folder. |
+| `players.min` | whole number | At least 1. The lobby will not start the game with fewer connected players. |
+| `players.max` | whole number | At most 8, and not less than `players.min`. |
+
+Lengths are counted in characters, not bytes, so an emoji or accented letter counts as one.
+
+## Optional fields
+
+| Field | Type | What it does |
+|---|---|---|
+| `description` | string | A longer description. The lobby falls back to it when there is no tagline. Not validated. |
+| `sdk` | string | The SDK version the game targets. Every game uses `"1"`. Not validated. |
+| `aspect` | string | The game's aspect ratio. Every built-in game declares `"16:9"`. Not validated and not read by the shell today; design for a 16:9 screen and letterbox. |
+| `controller` | object | The default phone layout (below). |
+| `credits` | object | Who made the original and under which licence (below). |
+
+## The controller block
+
+`controller` is the layout phones get the moment the game starts, before any of your code runs. The shell sends it to phones as a `"gamepad"` layout, and the SDK uses it as the default for `party.input()` labels until you call `setController`. It accepts the same fields as `setController` (see [SDK reference](/docs/sdk-reference)). The validator checks four of them:
+
+| Field | Rule |
+|---|---|
+| `buttons` | At most 4 entries. |
+| `layout` | When present, `"gamepad"` or `"twin"`. |
+| `hold` | When present, an array of strings, each one a label in `buttons`. |
+| `stick` | Not validated; use `"dpad"`, `"joystick"` or `"none"`. Omitted means a d-pad. |
+
+`arrange: "split"` (with `stick: "none"` and two buttons) also works here, since the whole block becomes the starting layout.
+
+```json
+"controller": { "layout": "twin", "buttons": ["Fire", "Use", "Item", "Craft"], "hold": ["Fire"] }
+```
+
+## Paths: entry and cover
+
+`entry` and `cover` must be plain relative paths inside the game folder, and the file must exist. The validator refuses:
+
+- an empty path, a leading `/`, a `\` or a `:` (drive letters, streams),
+- control characters and the characters Windows cannot store: `<`, `>`, `"`, `|`, `?`, `*`,
+- empty, `.` or `..` segments, and segments ending in a dot or a space,
+- Windows device names such as `con`, `nul.txt` or `com1`, in any case.
+
+Subfolders are fine: `"entry": "dist/index.html"` works. Files and folders whose names start with `.` are never served, so neither path may point into one.
+
+## Cover requirements
+
+- **Format:** SVG or PNG, decided by the file extension (`.svg` or `.png`, any case).
+- **Shape:** 16:9. The built-in covers are SVGs with `viewBox="0 0 1600 900"`; a PNG of 1600 by 900 or 1920 by 1080 works too.
+- **Self-contained:** the host serves covers from `/host/cover/<id>` with the policy `default-src 'none'; style-src 'unsafe-inline'`. An SVG cover cannot load scripts, external images or web fonts, so draw everything inline and use font stacks that every system has.
+- **Missing:** a game whose cover file does not exist fails validation; the catalog only lists covers that exist.
+
+## Credits and licences
+
+Add `credits` when your game is based on someone else's code or art. When `credits` is present:
+
+- `license` is required and must be one of `MIT`, `BSD-2-Clause`, `BSD-3-Clause`, `Apache-2.0`, `ISC`, `CC0-1.0` or `CC-BY-4.0`. Case, spaces and dashes are ignored, so `cc by 4.0` matches `CC-BY-4.0`.
+- `author`, `url` and `notes` are free text. The lobby shows `notes` (or "By `author`" when there are no notes) followed by the licence.
+
+The built-in games follow stricter rules, checked by `tests/js/manifests.test.mjs`:
+
+- A game with a `credits` block or a `LICENSE` file is treated as a port and needs both: an allowed licence in `credits`, a `credits.author`, and the licence text in `LICENSE` or `LICENSE.txt` next to the code.
+- The value `"permission"` is accepted only for built-in games, for code shipped with the author's written permission and no open licence. It then needs `credits.author`, a non-blank `credits.notes` and a `PERMISSION.md` file. Imported and dev-folder games cannot use it.
+- An original game has no `credits` and no `LICENSE`.
+
+The full obligations for ported games are on [Porting games](/docs/porting-games).
+
+## When it is checked
+
+- **Importing a zip.** The import is refused with the first problem found.
+- **Loading a dev folder.** The folder is refused with the first problem found.
+- **Editing a loaded dev folder.** If a change breaks `manifest.json`, the last good manifest stays in use, the error shows under the game, and the lobby shows "Can't start" with the message.
+- **Tests.** Every built-in manifest is validated by Rust and JS tests.
+
+The `id` is also checked against the library. A built-in game's id is refused, and an id already used by a dev folder or an imported game has to be removed from the library first (see [Sharing games](/docs/sharing-games)).
+
+## Error messages
+
+The first problem found is shown as it is, always prefixed with `manifest.json:`. For example:
+
+```text
+manifest.json: tagline is 96 characters (max 80)
+```
+
+The full list, in the order the validator checks:
+
+```text
+manifest.json: must be a JSON object
+manifest.json: id is missing
+manifest.json: id "My_Game" must be 2-40 characters of a-z, 0-9 and -
+manifest.json: name is missing
+manifest.json: name is 52 characters (max 40)
+manifest.json: tagline is missing
+manifest.json: tagline is 96 characters (max 80)
+manifest.json: tags has 7 entries (max 6)
+manifest.json: tags must be 1-6 non-empty strings
+manifest.json: players.min and players.max must be whole numbers
+manifest.json: players.min must be at least 1
+manifest.json: players.max is 10 (max 8)
+manifest.json: players.min (4) is more than players.max (2)
+manifest.json: controller.buttons has 5 entries (max 4)
+manifest.json: controller.layout must be "gamepad" or "twin"
+manifest.json: controller.hold must be an array of button names
+manifest.json: controller.hold: "Run" is not one of the buttons
+manifest.json: version is missing
+manifest.json: entry is missing
+manifest.json: entry "../index.html" must be a relative path inside the game folder
+manifest.json: entry "index.html" was not found in the game folder
+manifest.json: cover is missing
+manifest.json: cover "/cover.svg" must be a relative path inside the game folder
+manifest.json: cover "cover.jpg" must be an SVG or PNG
+manifest.json: cover "cover.svg" was not found in the game folder
+manifest.json: credits.license is missing
+manifest.json: licence GPL-3.0 is not allowed (use one of MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, CC0-1.0, CC-BY-4.0)
+```
+
+Before validation, the library itself can refuse the file:
+
+```text
+manifest.json was not found in the game folder
+manifest.json is larger than 1 MB
+manifest.json is not valid JSON (expected `,` or `}` at line 4 column 3)
+"coin-clash" is the id of a built-in game; give your game another id
+```
+
+A UTF-8 byte-order mark at the start of the file is accepted.

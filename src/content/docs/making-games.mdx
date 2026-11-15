@@ -1,0 +1,250 @@
+export const meta = { title: "Making games", description: "Build a HotTake party game: the starter template, a minimal working game, the fixed-step loop, players joining and leaving, and ending with results.", section: "Making games", order: 1 };
+
+A HotTake game is a small web page that runs on the laptop screen while every player holds their phone as a controller. This page walks you from an empty folder to a working game, then covers the patterns the built-in games use. Keep the [SDK reference](/docs/sdk-reference) open while you work.
+
+## What a game is
+
+A game is a folder with a `manifest.json` and an entry page (usually `index.html`). The host loads that page in a sandboxed iframe on its own origin (`127.0.0.1:47802`), and the page talks to the platform only through the Screen SDK, a single ES module at `/sdk/screen-sdk.js`.
+
+The SDK gives you:
+
+- who is playing (`party.players`) and when they join, drop out or come back,
+- each player's controller state, read once per simulation step,
+- the phone layout: a d-pad or joystick and up to four buttons,
+- short messages to phones (toasts), and
+- `party.end()` to hand scores back to the lobby.
+
+Everything else is up to you. Plain canvas, Phaser, Pixi, three.js or a WASM build all work, as long as every file ships inside the game folder: nothing may load from a CDN at run time.
+
+Built-in games live in `games/<id>/` in the repository. Your own games are loaded as a dev folder while you work, then shared as a zip (see [Sharing games](/docs/sharing-games)).
+
+## The starter template
+
+The quickest start is the starter template: a tiny working game where each press of **Grow** makes your dot bigger, and the biggest dot after 45 seconds wins.
+
+Get it in any of three ways:
+
+- In HotTake, open **Options › Developer**, switch **Developer mode** on, and press **New game template**. It downloads `hottake-game-template.zip`.
+- Fetch `GET /host/library/template.zip` from the host on the same computer.
+- Copy `templates/starter/` from the repository.
+
+| File | What it is |
+|---|---|
+| `manifest.json` | The game's id, name, player count, cover and default controller |
+| `index.html` | A page with one canvas that loads `main.js` |
+| `main.js` | The game, built on the SDK and the shared kit |
+| `cover.svg` | The shelf picture, 16:9 |
+| `README.md` | A short guide to the SDK, the kit and the manifest rules |
+
+Unzip it, change `id` and `name` in `manifest.json`, and load the folder (step 6 below).
+
+## A minimal game, step by step
+
+This walkthrough builds **Tap Dash**: everyone taps one button for 20 seconds and the most taps wins.
+
+### 1. The manifest
+
+```json
+{
+  "id": "tap-dash",
+  "name": "Tap Dash",
+  "tagline": "Tap faster than everyone else for 20 seconds.",
+  "tags": ["party", "mash"],
+  "version": "0.1.0",
+  "sdk": "1",
+  "entry": "index.html",
+  "cover": "cover.svg",
+  "players": { "min": 1, "max": 8 },
+  "controller": { "layout": "gamepad", "stick": "none", "buttons": ["Tap"] },
+  "aspect": "16:9"
+}
+```
+
+The `id` must be 2 to 40 characters of `a-z`, `0-9` and `-`, and must not be a built-in game's id. Every rule is on the [Manifest](/docs/manifest) page.
+
+### 2. A cover
+
+Any 16:9 SVG or PNG inside the folder. The built-in covers use a `0 0 1600 900` view box.
+
+```html
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#10131f"/>
+  <text x="800" y="500" font-size="180" font-family="sans-serif" font-weight="800"
+        fill="#ffd23f" text-anchor="middle">TAP DASH</text>
+</svg>
+```
+
+### 3. The page
+
+The games origin has a strict Content Security Policy: scripts must be files from the game's own origin, so inline `<script>` blocks do not run. Inline styles are fine.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tap Dash</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #10131f; overflow: hidden; }
+      body { display: grid; place-items: center; }
+      canvas { width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; }
+    </style>
+  </head>
+  <body>
+    <canvas id="view" width="1920" height="1080"></canvas>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
+```
+
+### 4. Connect, seat players, set the controller
+
+```js
+import { Party } from "/sdk/screen-sdk.js";
+import { startLoop } from "../_kit/loop.js";
+
+const ROUND_SECONDS = 20;
+const party = await Party.connect();            // waits for the platform's handshake
+
+const taps = new Map();                         // player id -> { name, color, count, active }
+function join(p) {
+  const t = taps.get(p.id);
+  if (t) Object.assign(t, { name: p.name, color: p.color, active: true });
+  else taps.set(p.id, { name: p.name, color: p.color, count: 0, active: true });
+}
+for (const p of party.players) if (p.connected) join(p);
+party.on("join", join);
+party.on("reconnect", join);
+party.on("leave", (p) => {
+  const t = taps.get(p.id);
+  if (t) t.active = false;                      // keep their score: they may come back
+});
+
+party.setController({ type: "gamepad", stick: "none", buttons: ["Tap"] });
+party.ready();                                  // hides the loader; must happen within 30 s
+```
+
+### 5. Loop, draw and end
+
+```js
+const ctx = document.getElementById("view").getContext("2d");
+let timeLeft = ROUND_SECONDS;
+let ended = false;
+
+startLoop({
+  stepSeconds: 1 / 60,
+  isPaused: () => party.paused,
+  step(dt) {
+    if (ended) return;
+    for (const [id, t] of taps) {
+      const input = party.input(id);            // once per step per player
+      if (t.active) t.count += input.pressed.Tap ?? 0;
+    }
+    timeLeft -= dt;
+    if (timeLeft <= 0) {
+      ended = true;
+      const best = [...taps.values()].sort((a, b) => b.count - a.count)[0];
+      party.end({
+        scores: Object.fromEntries([...taps].map(([id, t]) => [id, t.count])),
+        summary: best ? `${best.name} tapped ${best.count} times` : "",
+      });
+    }
+  },
+  render() {
+    ctx.fillStyle = "#10131f";
+    ctx.fillRect(0, 0, 1920, 1080);
+    const list = [...taps.values()];
+    list.forEach((t, i) => {
+      const x = (1920 / list.length) * (i + 0.5);
+      ctx.globalAlpha = t.active ? 1 : 0.35;
+      ctx.fillStyle = t.color;
+      ctx.fillRect(x - 60, 900 - t.count * 4, 120, t.count * 4);
+      ctx.fillText(`${t.name}: ${t.count}`, x - 60, 960);
+    });
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#fff";
+    ctx.font = "800 72px system-ui";
+    ctx.fillText(String(Math.max(0, Math.ceil(timeLeft))), 920, 110);
+  },
+});
+```
+
+`pressed.Tap` counts every press since the last read, so a quick tap between two steps is never lost.
+
+### 6. Load it
+
+1. Open **Options › Developer** and switch **Developer mode** on.
+2. Paste the folder's path under **Dev folder** and press **Load** (or **Browse…** in the desktop app).
+3. The game appears on the shelf tagged "Dev · rev N". Pick it and press Play.
+
+HotTake checks the folder once a second and restarts the game with the same players when you save a file. With no phones handy, add keyboard players or bots (see [Testing games](/docs/testing-games)).
+
+## The game loop pattern
+
+Every built-in game separates three things, and `games/coin-clash/` is the clearest example:
+
+| File | Role | Touches |
+|---|---|---|
+| `sim.js` | The rules: `createWorld`, `addPlayer`, `setActive`, `step(world, inputs, dt)`, `ranking` | Nothing but plain data |
+| `render.js` | A `Renderer` that draws a world on a canvas | The DOM and canvas |
+| `main.js` | SDK glue: players, pad reading, events to sounds and toasts, `party.end` | The SDK and the kit |
+
+The simulation is pure and deterministic. It takes a seed (Coin Clash uses `mulberry32` from `games/_kit/rng.js`), never reads the clock or the DOM, and returns a list of events (`jump`, `coin`, `stomp`, `end`…) from each `step`. Because of that, `tests/js/sim.test.mjs` can drive whole rounds in Node with scripted inputs.
+
+The glue turns pads into plain input objects once per step:
+
+```js
+function readInputs() {
+  const inputs = new Map();
+  for (const p of world.players.values()) {
+    if (!p.active) continue;
+    const pad = readPad(party, p.id);
+    inputs.set(p.id, { x: pad.x, y: pad.sy, jump: pad.held[0], jumpPressed: pad.pressed[0], dashPressed: pad.pressed[1] });
+  }
+  return inputs;
+}
+
+startLoop({
+  stepSeconds: STEP,                         // 1 / 60
+  isPaused: () => party.paused,
+  step: (dt) => onEvents(step(world, readInputs(), dt)),
+  render: (alpha) => renderer.draw(world, alpha),
+});
+```
+
+`startLoop` from `games/_kit/loop.js` runs `step` at a fixed rate and `render(alpha)` once per display frame, where `alpha` is how far you are between two steps (for smooth drawing). It runs at most 5 steps per frame and drops any longer backlog. It also follows the debug dock's speed, freeze and step controls. If you write your own loop, follow the same contract (see [Testing games](/docs/testing-games)).
+
+Read input only inside `step`, exactly once per player per step: `party.input()` consumes the press counts it returns.
+
+## Join, leave and reconnect
+
+- **At start**, `party.players` already holds everyone in the room. Seat the ones with `connected: true`. Players who join while your page is loading are queued and delivered as events once you connect, so nobody is missed.
+- **`join`** fires when a new player arrives mid-game. Late joiners should get a seat if your game can take them.
+- **`leave`** means the phone dropped. The host holds the seat for 60 seconds. Keep the player's state (score, position), stop reading their input and show them dimmed. A player removed from the room also arrives as `leave`.
+- **`reconnect`** means they are back with the same id. Their press counters restart, which the SDK handles for you.
+
+Make `join` and `reconnect` share one idempotent function, as above, so a returning player gets their own state back.
+
+Players are `{ id, seat, name, color, connected }`. Use `color` for their pieces: it matches the dot on their phone.
+
+## Ending with results
+
+Call `party.end({ scores })` once, with a number per player id. The lobby shows the ranking, highest first; pass `lowerIsBetter: true` for golf strokes or race times. An optional `summary` (up to 80 characters) is the headline line. Most built-in games show their own results board for a few seconds first (`drawResults` from `games/_kit/results.js`), then call `end`. During a tournament (`party.tournament` is `true`) the same scores feed the standings.
+
+## What the platform enforces
+
+- **Ready in 30 s.** Call `party.ready()` within 30 seconds of the page loading, or the game is sent back to the lobby ("did not become ready in time"). Use `party.loading(p)` to show progress meanwhile.
+- **Heartbeat.** The host pings every 2 seconds and the SDK answers by itself. A page that stops answering for 5 seconds is unloaded ("stopped responding"). A long blocking loop on the main thread will trip this.
+- **Message limits.** `party.send` drops anything over 16 kB (as JSON) and more than 30 messages a second per target.
+- **Sandbox and CSP.** The frame has `allow-scripts allow-same-origin` only. The CSP allows scripts, styles, images, media and `fetch` from the game's own origin and nothing else, so there are no external requests, no CDNs and no WebSockets out.
+- **No host access.** The games origin cannot reach the host app's routes; the SDK's message port is the only channel.
+- **Clean scores.** Only finite numbers for real player ids reach the results.
+
+> A throw inside a `requestAnimationFrame` callback stops your loop for good while the SDK keeps answering heartbeats, so the watchdog never notices and the round freezes. Wrap your frame with `guardFrame` from `games/_kit/frame-guard.js` (see [Porting games](/docs/porting-games) for the whole kit).
+
+## Next steps
+
+- [SDK reference](/docs/sdk-reference): every method, event and layout option.
+- [Manifest](/docs/manifest): every field and the exact error messages.
+- [Testing games](/docs/testing-games): bots, keyboard players, the debug dock and unit tests.
+- [Sharing games](/docs/sharing-games): zip it and send it.

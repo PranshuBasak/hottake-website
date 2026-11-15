@@ -1,0 +1,1928 @@
+[
+ {
+  "slug": "index",
+  "title": "HotTake documentation",
+  "description": "How HotTake works inside, how to make your own party games for it, and how to build, update and port the desktop app.",
+  "section": "Start here",
+  "order": 1,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "What's in here",
+    "id": "whats-in-here"
+   },
+   {
+    "depth": 2,
+    "title": "HotTake in one minute",
+    "id": "hottake-in-one-minute"
+   },
+   {
+    "depth": 2,
+    "title": "Where to start",
+    "id": "where-to-start"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "HotTake documentation",
+    "text": "HotTake turns a laptop into a party-game console: the laptop runs the host app and shows the game, and every player uses their phone as the controller through the browser. These docs are for people who want to go further than playing, whether that is understanding how it works, making a game, or helping build the app. Just want to play? The player guide is on How to play. Everything here is for de"
+   },
+   {
+    "id": "whats-in-here",
+    "title": "What's in here",
+    "text": "Section Read it when you want to… --- --- Architecture understand the pieces: the Rust host core, the host screen, the phone controller and how input travels Making games build your own game with the Screen SDK, test it with bots and share it as a zip Build & contribute build the Windows app from source, run online play on your own domain, port it to macOS or Linux, or send a change"
+   },
+   {
+    "id": "hottake-in-one-minute",
+    "title": "HotTake in one minute",
+    "text": "- One host, no cloud. The desktop app runs a small web server on the laptop. Phones on the same Wi-Fi load the controller page from it, so there is no game server and no account. - Fast input. Button presses travel over an unreliable WebRTC data channel (UDP), so a lost packet never holds up the next one. WebSocket is the automatic fallback. - Games are web pages. Each game is a folder with a mani"
+   },
+   {
+    "id": "where-to-start",
+    "title": "Where to start",
+    "text": "1. New to the codebase: read Architecture, then Host core. 2. Want to make a game: start with Making games and keep the SDK reference open. 3. Want to help with the app itself, including a macOS build: read Building from source, macOS and Linux and Contributing. Press / or Ctrl K anywhere in the docs to search."
+   }
+  ]
+ },
+ {
+  "slug": "architecture",
+  "title": "Architecture",
+  "description": "How HotTake fits together: the desktop app, the Rust host core, the host screen, phone controllers, sandboxed games and the SDK.",
+  "section": "Architecture",
+  "order": 1,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "The pieces",
+    "id": "the-pieces"
+   },
+   {
+    "depth": 2,
+    "title": "How it fits together",
+    "id": "how-it-fits-together"
+   },
+   {
+    "depth": 2,
+    "title": "A session, end to end",
+    "id": "a-session-end-to-end"
+   },
+   {
+    "depth": 2,
+    "title": "Two origins, three port ranges",
+    "id": "two-origins-three-port-ranges"
+   },
+   {
+    "depth": 2,
+    "title": "Local-first",
+    "id": "local-first"
+   },
+   {
+    "depth": 2,
+    "title": "Security model",
+    "id": "security-model"
+   },
+   {
+    "depth": 2,
+    "title": "Where to go next",
+    "id": "where-to-go-next"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Architecture",
+    "text": "HotTake turns one computer into a party-game console. The laptop runs everything: it serves the phone controller page, keeps the room, relays input and hosts the games. Phones are only browsers holding a web page that came from the laptop. This page is the map. The other Architecture pages go one level deeper into each part. To follow along in the code, see /docs/contributing getting-the-source."
+   },
+   {
+    "id": "the-pieces",
+    "title": "The pieces",
+    "text": "Piece Where What it does --- --- --- Desktop app apps/desktop A Tauri 2 app. Starts the host core in-process and opens one fullscreen window on the host screen. Host core crates/host-core Rust (axum, tokio, webrtc-rs). Rooms and seats, phone WebSockets and WebRTC, the shell bridge, serving files on two origins, the game library, online tunnel. Host screen (\"shell\") web/shell The page in the deskto"
+   },
+   {
+    "id": "how-it-fits-together",
+    "title": "How it fits together",
+    "text": "Two rules hold everywhere: - Phones never load or talk to games. They get controller layouts and messages over /ws; the game sees phones only through the SDK. - Game logic runs only inside the game iframe. The host core and the shell move input and messages; they never simulate anything."
+   },
+   {
+    "id": "a-session-end-to-end",
+    "title": "A session, end to end",
+    "text": "1. Start. The desktop app calls host core::start. It binds port 47801 on all interfaces and 47802 on loopback, creates a Room with a random 4-letter code (no I or O) and a 128-bit key, picks the laptop's LAN addresses, and returns the shell URL http://127.0.0.1:47801/host/. Tauri opens a fullscreen window on it. 2. QR. The shell opens the loopback socket /host/ws and receives a room message with t"
+   },
+   {
+    "id": "two-origins-three-port-ranges",
+    "title": "Two origins, three port ranges",
+    "text": "Port Bound to Serves Why --- --- --- --- 47801/tcp 0.0.0.0 Controller site (/, /controller/ , /shared/ , /vendor/ ), phone socket /ws, host screen /host/ Phones on the LAN must reach it. The /host/ routes refuse anything that is not loopback. 47802/tcp 127.0.0.1 Games (/games/<id / ) and the SDK (/sdk/ ) A separate origin from the shell, so a game in its iframe cannot touch the shell's DOM, storag"
+   },
+   {
+    "id": "local-first",
+    "title": "Local-first",
+    "text": "There is no game server and nothing in the cloud. The laptop serves the controller page, so phones on the same Wi-Fi need no internet connection at all. Built-in games, the SDK, fonts and vendored libraries are compiled into the executable in release builds (rust-embed), and the games origin's CSP (connect-src 'self') stops games from fetching anything elsewhere. Online play is an opt-in exception"
+   },
+   {
+    "id": "security-model",
+    "title": "Security model",
+    "text": "The trust model is \"you can see the screen\": the QR carries the room key, and the 4-letter code shown on the TV also admits a player. Everything else is about keeping games, web pages and LAN devices away from the host's privileged routes. Games are sandboxed. The iframe has sandbox=\"allow-scripts allow-same-origin\". Because the game lives on 127.0.0.1:47802 and the shell on 127.0.0.1:47801, \"same"
+   },
+   {
+    "id": "where-to-go-next",
+    "title": "Where to go next",
+    "text": "- /docs/host-core: the Rust crate, module by module. - /docs/networking: packets, WebRTC, fallback, latency and reconnects. - /docs/host-screen: the shell and the game frame. - /docs/controller: the phone side. - /docs/making-games and /docs/sdk-reference: building a game."
+   }
+  ]
+ },
+ {
+  "slug": "host-core",
+  "title": "Host core",
+  "description": "The Rust crate behind HotTake: rooms and seats, phone and shell sockets, WebRTC, the binary protocol, asset serving and the Tauri wrapper.",
+  "section": "Architecture",
+  "order": 2,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Starting the host",
+    "id": "starting-the-host"
+   },
+   {
+    "depth": 2,
+    "title": "Modules",
+    "id": "modules"
+   },
+   {
+    "depth": 3,
+    "title": "http.rs",
+    "id": "httprs"
+   },
+   {
+    "depth": 3,
+    "title": "hub.rs",
+    "id": "hubrs"
+   },
+   {
+    "depth": 3,
+    "title": "room.rs",
+    "id": "roomrs"
+   },
+   {
+    "depth": 3,
+    "title": "phone.rs",
+    "id": "phoners"
+   },
+   {
+    "depth": 3,
+    "title": "rtc.rs",
+    "id": "rtcrs"
+   },
+   {
+    "depth": 3,
+    "title": "shell.rs",
+    "id": "shellrs"
+   },
+   {
+    "depth": 3,
+    "title": "net.rs, library.rs, manifest.rs, online.rs",
+    "id": "netrs-libraryrs-manifestrs-onliners"
+   },
+   {
+    "depth": 2,
+    "title": "The binary protocol",
+    "id": "the-binary-protocol"
+   },
+   {
+    "depth": 2,
+    "title": "The headless dev server",
+    "id": "the-headless-dev-server"
+   },
+   {
+    "depth": 2,
+    "title": "The desktop app",
+    "id": "the-desktop-app"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Host core",
+    "text": "crates/host-core is the whole server side of HotTake in one Rust library: axum for HTTP and WebSockets, tokio for the runtime, webrtc-rs for the data channel. The desktop app, the headless dev server and the integration tests all start it the same way, through host core::start(Config). You need the source to follow this page; see /docs/contributing getting-the-source."
+   },
+   {
+    "id": "starting-the-host",
+    "title": "Starting the host",
+    "text": "start in src/lib.rs does the following, in order, and returns once both listeners are bound: 1. Installs the ring TLS crypto provider (two backends end up in the build, and rustls panics if it has to choose). 2. Binds the main listener on 0.0.0.0:47801 (or loopback when Config.lan is false) and the games listener on 127.0.0.1:47802. A busy port fails with \"could not open port … (is HotTake already"
+   },
+   {
+    "id": "modules",
+    "title": "Modules",
+    "text": "File Responsibility --- --- lib.rs Config, start, background tasks, logging http.rs Routers, guards, CSPs, QR, catalog, library routes, embedded assets hub.rs Shared state: room, connections, phase and layouts, fan-out room.rs Pure seat logic phone.rs One phone's WebSocket session rtc.rs The WebRTC answerer shell.rs The host screen's WebSocket session protocol.rs Binary packets and JSON message en"
+   },
+   {
+    "id": "httprs",
+    "title": "http.rs",
+    "text": "main router serves the phone side on /, /manifest.webmanifest, /ws, /controller/ , /shared/ and /vendor/ . The /host/ sub-router is wrapped in host guard and serves the shell, /host/ws, /host/qr.svg?i=N (the Nth join URL as a QR), /host/catalog.json (?dev=1 adds dev folders), /host/cover/<id , /host/room.json (the room view with the key, for local tools such as the e2e bots) and the library routes"
+   },
+   {
+    "id": "hubrs",
+    "title": "hub.rs",
+    "text": "Hub is the shared state behind an Arc. It holds std mutexes held only for short sections (lock order: phones before room), plus a tokio mutex for the library, since an import may hold it for seconds. - Phones. admit phone checks the per-IP failed-join limit (8 per 60 s), admits through the room, stamps the player's epoch with the new connection id and closes any older connection for the same playe"
+   },
+   {
+    "id": "roomrs",
+    "title": "room.rs",
+    "text": "Pure logic with no I/O, unit-tested on its own. - Seats. Up to 8 (MAX PLAYERS), seats 0–7, each with a palette colour. A player may pick another free palette colour; clashes are resolved automatically. - Admission. A JoinRequest carrying a known player id takes its held seat back with no key needed: it proved itself on its first join. Otherwise the request needs the room key or the 4-letter code ("
+   },
+   {
+    "id": "phoners",
+    "title": "phone.rs",
+    "text": "handle phone runs one phone's socket. Before hello only the join is accepted. After it: - Binary packets go through on packet, which first checks hub.is current so a replaced or kicked connection can never inject input into a seat. Pings are echoed; inputs are forwarded. - rtcOffer builds a new RtcLink (closing any old one) and replies rtcAnswer. - rtt updates the player's ping, at most once per 9"
+   },
+   {
+    "id": "rtcrs",
+    "title": "rtc.rs",
+    "text": "answer creates a peer connection restricted to UDP over IPv4, ports 47810–47899, and to host candidates on the current LAN addresses. It creates a pre-negotiated data channel input (id 1, unordered, max retransmits: 0), sets the phone's offer, and returns a complete answer SDP after gathering (non-trickle, 3 s cap). For tunnel phones it adds the STUN and TURN servers from online.rs."
+   },
+   {
+    "id": "shellrs",
+    "title": "shell.rs",
+    "text": "handle shell accepts the shell's JSON messages: setLayout, send, phase, select, setVibrate, addLocal, removeLocal, kick, rename, setColor, moveSeat (the last three only in the lobby), fullscreen, pickFolder and setOnline. When the shell disconnects, the host sets the phase back to lobby so phones leave a gamepad that drives nothing."
+   },
+   {
+    "id": "netrs-libraryrs-manifestrs-onliners",
+    "title": "net.rs, library.rs, manifest.rs, online.rs",
+    "text": "- net.rs ranks private IPv4 addresses (192.168 first, then the Windows hotspot range, then 10/8 and 172.16/12), skips virtual adapters (WSL, Hyper-V, Docker, VMware, Tailscale…) and keeps at most 4. - library.rs imports zips through a staging folder and registers dev folders; poll folders detects edits. See /docs/sharing-games. - manifest.rs validates manifests with human-readable errors. See /doc"
+   },
+   {
+    "id": "the-binary-protocol",
+    "title": "The binary protocol",
+    "text": "Input and pings are tiny little-endian packets defined in protocol.rs and mirrored by web/shared/codec.js: classify accepts a packet only when type and exact length match. InputPacket::shell frame(seat) inserts the seat byte. JSON messages are serde enums tagged by t with camelCase fields: PhoneIn, PhoneOut, ShellIn and ShellOut. Details are in /docs/networking."
+   },
+   {
+    "id": "the-headless-dev-server",
+    "title": "The headless dev server",
+    "text": "src/bin/hottake-server.rs starts the same host without a window: It prints the host screen URL (http://127.0.0.1:47801/host/), a test phone URL on loopback and the LAN join URLs, then runs until Ctrl+C. Open the host screen in a browser on the laptop. Games only run while a host screen is open. runs a second host beside the desktop app. Integration tests in crates/host-core/tests/ start hosts on p"
+   },
+   {
+    "id": "the-desktop-app",
+    "title": "The desktop app",
+    "text": "apps/desktop/src-tauri/src/main.rs is short. In Tauri's setup it builds a host core::Config with two hooks: - on fullscreen finds the main window and calls set fullscreen. - on pick folder opens the dialog plugin's native folder picker, parented to the window, and passes the chosen path back to the shell as folderPicked. It then runs host core::start with block on. On success it opens a window on "
+   }
+  ]
+ },
+ {
+  "slug": "networking",
+  "title": "Networking",
+  "description": "How phone input reaches a game: WebRTC data channel with WebSocket fallback, packet formats, ping stats, reconnects and LAN address detection.",
+  "section": "Architecture",
+  "order": 3,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "The input path",
+    "id": "the-input-path"
+   },
+   {
+    "depth": 2,
+    "title": "Two transports",
+    "id": "two-transports"
+   },
+   {
+    "depth": 2,
+    "title": "Packet formats",
+    "id": "packet-formats"
+   },
+   {
+    "depth": 3,
+    "title": "Send rate",
+    "id": "send-rate"
+   },
+   {
+    "depth": 2,
+    "title": "Ping and latency stats",
+    "id": "ping-and-latency-stats"
+   },
+   {
+    "depth": 2,
+    "title": "Reconnects",
+    "id": "reconnects"
+   },
+   {
+    "depth": 2,
+    "title": "LAN addresses, hotspots and AP isolation",
+    "id": "lan-addresses-hotspots-and-ap-isolation"
+   },
+   {
+    "depth": 2,
+    "title": "Online play",
+    "id": "online-play"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Networking",
+    "text": "Phone input takes the shortest path HotTake can find: an unreliable, unordered WebRTC data channel straight to the laptop, with the phone's WebSocket as a fallback that is always open. This page follows a button press from the phone to the game and explains what happens when the network misbehaves. The code lives in web/controller/net.js, web/controller/rtc-retry.js, web/shared/codec.js and the ho"
+   },
+   {
+    "id": "the-input-path",
+    "title": "The input path",
+    "text": "The host core never interprets input. It validates the packet, checks that the connection still owns the seat, and forwards it to the shell without taking the room lock (Hub::forward input). The shell maps the seat to a player id and posts it to the game. The SDK keeps only the latest state per player plus press counters, so party.input(id) is a synchronous read."
+   },
+   {
+    "id": "two-transports",
+    "title": "Two transports",
+    "text": "WebRTC data channel WebSocket /ws --- --- --- Carries Input and ping packets only Join, layouts, messages, menu actions, and input/ping when WebRTC is not open Delivery Unordered, maxRetransmits: 0 Ordered and reliable (TCP) Set up After welcome: phone sends rtcOffer, host replies rtcAnswer First thing the page opens Status label WebRTC or WebRTC relay WebSocket Why unreliable? Each input packet i"
+   },
+   {
+    "id": "packet-formats",
+    "title": "Packet formats",
+    "text": "Binary packets are little-endian. web/shared/codec.js must match crates/host-core/src/protocol.rs byte for byte; both have unit tests for it. Packet Layout Bytes Direction --- --- --- --- Ping [u8 1][u16 seq][f64 sentAtMs] 11 phone to host, echoed back unchanged Input [u8 2][u16 seq][u8 buttons][i8 x][i8 y][u8 press0..3] 10 phone to host Twin input [u8 3][u16 seq][u8 buttons][i8 x][i8 y][i8 x2][i8"
+   },
+   {
+    "id": "send-rate",
+    "title": "Send rate",
+    "text": "The controller does not send on a fixed clock. A 16 ms timer in app.js sends a snapshot every 16 ms (about 60 Hz) while a control is held and for 200 ms after any change, and every 250 ms otherwise as a keepalive, so a lost \"release\" packet is corrected quickly. Every touch change also sends at once."
+   },
+   {
+    "id": "ping-and-latency-stats",
+    "title": "Ping and latency stats",
+    "text": "Every 500 ms the phone sends a ping packet stamped with performance.now(). The host echoes it on whichever path it arrived. The phone keeps the last 20 round-trip samples and uses their median as its ping, shown in the status bar as, for example, WebRTC · 23 ms. Above 80 ms the label is marked slow. Every 2 s the phone reports that median as { \"t\": \"rtt\", \"ms\": 23 }. The host accepts at most one r"
+   },
+   {
+    "id": "reconnects",
+    "title": "Reconnects",
+    "text": "Phones drop all the time: screens lock, Wi-Fi roams, browsers background tabs. Several layers cover it. WebSocket. When the socket closes, the phone retries after 0.5, 1, 2, then every 4 s, and immediately when the page becomes visible again. It sends the same playerId, saved in sessionStorage under hottake:session, so it survives a reload of the tab. It gives up only on close code 4000 with reaso"
+   },
+   {
+    "id": "lan-addresses-hotspots-and-ap-isolation",
+    "title": "LAN addresses, hotspots and AP isolation",
+    "text": "The QR code needs an address phones can reach. net.rs reads the laptop's IPv4 interfaces and: - drops virtual adapters by name (vEthernet, VirtualBox, VMware, WSL, Hyper-V, Docker, Tailscale, ZeroTier, loopback), - keeps private ranges, ranked 192.168.x, then the Windows hotspot address, then 10.x, then 172.16–31.x, - keeps at most 4, each labelled with its adapter name. Windows Mobile Hotspot and"
+   },
+   {
+    "id": "online-play",
+    "title": "Online play",
+    "text": "With online play on, phones load the controller from a public hostname such as play.example.com through a Cloudflare Tunnel. The page detects HTTPS, uses wss:// for its socket and receives STUN (and TURN, when configured) servers in welcome, so WebRTC can still find a direct or relayed UDP path. The host screen and its socket are refused through the tunnel. Setup and trade-offs are on /docs/online"
+   }
+  ]
+ },
+ {
+  "slug": "host-screen",
+  "title": "Host screen",
+  "description": "The shell in web/shell: lobby and shelf, players, options, keyboard and gamepad players, the game frame and its watchdog, tournaments and debug tools.",
+  "section": "Architecture",
+  "order": 4,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Structure",
+    "id": "structure"
+   },
+   {
+    "depth": 2,
+    "title": "Lobby and shelf",
+    "id": "lobby-and-shelf"
+   },
+   {
+    "depth": 2,
+    "title": "Players strip and join card",
+    "id": "players-strip-and-join-card"
+   },
+   {
+    "depth": 2,
+    "title": "Options",
+    "id": "options"
+   },
+   {
+    "depth": 2,
+    "title": "Keyboard players and gamepads",
+    "id": "keyboard-players-and-gamepads"
+   },
+   {
+    "depth": 2,
+    "title": "The game frame",
+    "id": "the-game-frame"
+   },
+   {
+    "depth": 3,
+    "title": "Watchdog",
+    "id": "watchdog"
+   },
+   {
+    "depth": 2,
+    "title": "Pause card",
+    "id": "pause-card"
+   },
+   {
+    "depth": 2,
+    "title": "Tournament flow",
+    "id": "tournament-flow"
+   },
+   {
+    "depth": 2,
+    "title": "Toasts",
+    "id": "toasts"
+   },
+   {
+    "depth": 2,
+    "title": "Developer tools",
+    "id": "developer-tools"
+   },
+   {
+    "depth": 2,
+    "title": "When the host link drops",
+    "id": "when-the-host-link-drops"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Host screen",
+    "text": "The host screen, or \"shell\", is the page the desktop window shows at http://127.0.0.1:47801/host/. It is plain JavaScript modules with no framework and no build step, in web/shell/. It owns everything the TV shows except the game itself, and it is the only thing that talks to a game. Because it is an ordinary page, the same code runs in the Tauri window and in any browser on the laptop, which is h"
+   },
+   {
+    "id": "structure",
+    "title": "Structure",
+    "text": "app.js is the hub. It owns the link to the host core, the game lifecycle, the library requests, keyboard routing and option side effects. The UI parts are modules with a mount(root, store, actions) function that subscribe to a small observable store. Module Role --- --- host-link.js HostLink: the /host/ws socket; decodes input frames and dispatches host messages. store.js Shared state and persiste"
+   },
+   {
+    "id": "lobby-and-shelf",
+    "title": "Lobby and shelf",
+    "text": "The lobby is a \"Spotlight\" layout. The selected game's cover fills the screen behind a fade, and the hero shows its name, tagline, player count, tags, credits and the Play button. Play is disabled with a hint (\"Needs 2 players to start\") until enough players are connected, and a game whose manifest fails validation shows \"Can't start: …\". After a game the last round's scores, best first, sit under"
+   },
+   {
+    "id": "players-strip-and-join-card",
+    "title": "Players strip and join card",
+    "text": "The strip shows one chip per seat: colour dot, name, and a second line with the path and ping (WebRTC · 23 ms, WebSocket, Keyboard, Gamepad, Bot, or \"reconnecting…\"). Then an \"open seats\" chip and buttons to add keyboard players. Holding the × on a chip for 800 ms removes the player. Keyboard, pad and bot players are removed with removeLocal. Phones are kicked with kick, which also rotates the roo"
+   },
+   {
+    "id": "options",
+    "title": "Options",
+    "text": "O opens the Options card in the lobby or on the pause card; opening it during a game pauses first. Tabs: Tab Contents --- --- Sound Volume, game sound on or off, phone vibration Display Fullscreen (F11 too), UI size (Auto, TV, Laptop), reduce motion Players Rename, colour and seat per player (lobby only), keyboard players Network Online play switch and invite link, which address the QR shows, a te"
+   },
+   {
+    "id": "keyboard-players-and-gamepads",
+    "title": "Keyboard players and gamepads",
+    "text": "Two keyboard players can be added from Options › Players: WASD with J, K, L, I as buttons 1–4, and Arrows with ., ,, /, ;. They are local seats created with addLocal and fed through KeyboardPad, which produces the same frame shape as a phone. Keys go to them only while a game runs and no card is open; Escape is always the shell's. USB or Bluetooth gamepads with the standard mapping are read throug"
+   },
+   {
+    "id": "the-game-frame",
+    "title": "The game frame",
+    "text": "launch(manifest) in app.js: 1. Sets the view to playing, sends phase and setLayout (the manifest's controller block, with type: \"gamepad\") to the host, and shows the loader. 2. Creates a GameFrame: an iframe with sandbox=\"allow-scripts allow-same-origin\" and allow=\"autoplay; gamepad; fullscreen\", pointing at <gamesOrigin /games/<id /<entry . 3. On iframe load, posts hottake:connect with a fresh Me"
+   },
+   {
+    "id": "watchdog",
+    "title": "Watchdog",
+    "text": "Rule Value Constant --- --- --- The game must call ready() within 30 s of the frame being created READY TIMEOUT MS The shell pings the ready game every 2 s HEARTBEAT MS No pong for 5 s means hung HUNG AFTER MS The SDK answers pings automatically. A game that misses either deadline is torn down, a toast says why (\"… did not become ready in time. Back to the lobby.\" or \"… stopped responding\"), and e"
+   },
+   {
+    "id": "pause-card",
+    "title": "Pause card",
+    "text": "Esc on the laptop, a pad's Start, or holding ⏸ on any phone pauses. The shell releases all held input, sends the game pause, and tells the host phase paused with who paused. Controller layouts are kept for the resume. The card shows Resume , Restart , Quit to lobby and Options . On the laptop every button works. From phones, anyone can resume; restart and quit are for the leader only, enforced in "
+   },
+   {
+    "id": "tournament-flow",
+    "title": "Tournament flow",
+    "text": "With 2 or more players connected, the lobby offers Tournament . tournament-flow.js is a DOM-free state machine with phases setup, intro, playing, standings, waiting, stopped, final and between: - Setup: 3 to 12 games (default 6), drawn at random from games that fit the players; Reroll and Start . - Intro: a 3 s round card, then the game launches with party.tournament set. - Standings: about 6 s af"
+   },
+   {
+    "id": "toasts",
+    "title": "Toasts",
+    "text": "toasts.js shows one pill at the bottom centre for 3 s, with at most 3 queued and duplicates dropped. Toasts cover joins, drops and leaves during a game, watchdog stops, start problems and library reloads."
+   },
+   {
+    "id": "developer-tools",
+    "title": "Developer tools",
+    "text": "Options › Developer has the Developer mode switch (off by default). With it on: - Import game (.zip) , also by dropping a zip anywhere on the window, plus New game template . - Dev folder : a path, Load , and Browse… in the desktop app. Edits restart the game in place with the same players and a \"Reloaded … (rev N)\" toast. - Installed games with Reload now, Replace… and a hold-to-confirm Remove. -"
+   },
+   {
+    "id": "when-the-host-link-drops",
+    "title": "When the host link drops",
+    "text": "If /host/ws closes, a banner says the host service connection was lost and the shell retries every second. If another host screen opened (the host keeps only one), this one shows Use this screen instead of fighting for the socket, and ends any running game. When the shell disconnects, the host puts phones back in the lobby."
+   }
+  ]
+ },
+ {
+  "slug": "controller",
+  "title": "Phone controller",
+  "description": "The phone side in web/controller: joining, the lobby remote, pad layouts, turn banners, setController, fullscreen and reconnects.",
+  "section": "Architecture",
+  "order": 5,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Joining",
+    "id": "joining"
+   },
+   {
+    "depth": 2,
+    "title": "What the phone shows",
+    "id": "what-the-phone-shows"
+   },
+   {
+    "depth": 2,
+    "title": "The pad",
+    "id": "the-pad"
+   },
+   {
+    "depth": 3,
+    "title": "Controls",
+    "id": "controls"
+   },
+   {
+    "depth": 3,
+    "title": "How a game changes the pad",
+    "id": "how-a-game-changes-the-pad"
+   },
+   {
+    "depth": 3,
+    "title": "Turn-based games",
+    "id": "turn-based-games"
+   },
+   {
+    "depth": 2,
+    "title": "Sending input",
+    "id": "sending-input"
+   },
+   {
+    "depth": 2,
+    "title": "Fullscreen",
+    "id": "fullscreen"
+   },
+   {
+    "depth": 2,
+    "title": "Reconnect behaviour",
+    "id": "reconnect-behaviour"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Phone controller",
+    "text": "The phone controller is a small web page the laptop serves at http://<lan-ip :47801/. Players open it by scanning the QR code; nothing is installed. It joins the room, shows a lobby screen or a menu remote, and turns into a touch gamepad whose layout the running game chooses. The code is in web/controller/ (see /docs/contributing getting-the-source): File Role --- --- index.html, style.css Markup "
+   },
+   {
+    "id": "joining",
+    "title": "Joining",
+    "text": "The QR link carries the room key in the URL fragment: http://192.168.1.20:47801/ k=<key . The fragment never reaches the server in an HTTP request; the page reads it and sends it in its hello. With a key present the form asks only for a name. Without one, for example when the player typed the address, it also asks for the 4-letter room code shown on the TV. The name (up to 16 characters) is rememb"
+   },
+   {
+    "id": "what-the-phone-shows",
+    "title": "What the phone shows",
+    "text": "Every screen change comes from a lobby message the host sends whenever the phase, layout or roster changes. screenFor(m) in screens.js picks the screen: Phase Leader Screen --- --- --- playing with a gamepad layout either the pad paused yes pause screen with Resume, Restart and Quit (Skip game and End tournament in a tournament) paused no pause screen with Resume (\"Anyone can resume.\") lobby yes \""
+   },
+   {
+    "id": "the-pad",
+    "title": "The pad",
+    "text": "mountPad(root, layout, onChange) builds the controls from a layout object: Field Values Effect --- --- --- stick \"dpad\" (default), \"joystick\", \"none\" Left-hand control buttons up to 4 labels Buttons 0–3 on the right; extra labels are ignored hold labels from buttons Those buttons get a ring, telling the player to hold them arrange \"split\" With stick: \"none\" and exactly two buttons, one big button "
+   },
+   {
+    "id": "controls",
+    "title": "Controls",
+    "text": "- D-pad is one touch surface, not four buttons: the direction follows the finger as it slides. Horizontal directions trigger at 25% of the radius from the centre, vertical at 45%, so diagonals are deliberate. - Joystick is a well with a knob. The touch is captured, so the thumb can leave the well and keep steering. Values below a 0.2 dead zone read as 0, and the vector is clamped to length 1. - Bu"
+   },
+   {
+    "id": "how-a-game-changes-the-pad",
+    "title": "How a game changes the pad",
+    "text": "The manifest's controller block is the default layout when a game launches. A game changes it at any time: The SDK posts setController to the shell, which sends setLayout to the host. The host stores it for everyone or per player and pushes a fresh lobby message to each phone. The phone compares controlsKey(layout), built from the stick, buttons, arrangement, twin flag and hold labels. If those ar"
+   },
+   {
+    "id": "turn-based-games",
+    "title": "Turn-based games",
+    "text": "party.setTurn(activeId, { active, waiting }) is a helper over setController. The active player gets active with the banner \"Your turn\"; everyone else gets waiting with \"<name 's turn\" and dim: true. Because only the banner and dimming differ, a turn change does not rebuild anyone's pad. Call it again whenever a player joins or leaves."
+   },
+   {
+    "id": "sending-input",
+    "title": "Sending input",
+    "text": "The pad reports every change, and app.js sends a snapshot immediately. A 16 ms timer also resends while anything is held and for 200 ms after a change, and every 250 ms when idle. The resend corrects a lost release packet on the unreliable channel within a quarter of a second. When the game pauses or ends, the pad is destroyed, so its keepalive cannot keep a button held."
+   },
+   {
+    "id": "fullscreen",
+    "title": "Fullscreen",
+    "text": "enterPlayMode() runs from the Join, Start and Resume taps: - On touch browsers with the Fullscreen API (Android), it requests fullscreen with the navigation UI hidden, then locks landscape. - It requests a screen wake lock and takes it again whenever the page becomes visible. Wake lock needs a secure context, so it works over online play's HTTPS, not on plain LAN HTTP. - iPhone Safari supports nei"
+   },
+   {
+    "id": "reconnect-behaviour",
+    "title": "Reconnect behaviour",
+    "text": "- Socket lost: an overlay says \"Reconnecting…\" and the phone retries after 0.5, 1, 2, then every 4 s, and immediately when the page becomes visible. It rejoins with its saved player id and gets its seat back if it returns within the host's 60 s hold. - WebRTC lost: input switches to the WebSocket at once and WebRTC is retried in the background. - Closed for good: close reasons kicked, replaced, ba"
+   }
+  ]
+ },
+ {
+  "slug": "making-games",
+  "title": "Making games",
+  "description": "Build a HotTake party game: the starter template, a minimal working game, the fixed-step loop, players joining and leaving, and ending with results.",
+  "section": "Making games",
+  "order": 1,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "What a game is",
+    "id": "what-a-game-is"
+   },
+   {
+    "depth": 2,
+    "title": "The starter template",
+    "id": "the-starter-template"
+   },
+   {
+    "depth": 2,
+    "title": "A minimal game, step by step",
+    "id": "a-minimal-game-step-by-step"
+   },
+   {
+    "depth": 3,
+    "title": "1. The manifest",
+    "id": "1-the-manifest"
+   },
+   {
+    "depth": 3,
+    "title": "2. A cover",
+    "id": "2-a-cover"
+   },
+   {
+    "depth": 3,
+    "title": "3. The page",
+    "id": "3-the-page"
+   },
+   {
+    "depth": 3,
+    "title": "4. Connect, seat players, set the controller",
+    "id": "4-connect-seat-players-set-the-controller"
+   },
+   {
+    "depth": 3,
+    "title": "5. Loop, draw and end",
+    "id": "5-loop-draw-and-end"
+   },
+   {
+    "depth": 3,
+    "title": "6. Load it",
+    "id": "6-load-it"
+   },
+   {
+    "depth": 2,
+    "title": "The game loop pattern",
+    "id": "the-game-loop-pattern"
+   },
+   {
+    "depth": 2,
+    "title": "Join, leave and reconnect",
+    "id": "join-leave-and-reconnect"
+   },
+   {
+    "depth": 2,
+    "title": "Ending with results",
+    "id": "ending-with-results"
+   },
+   {
+    "depth": 2,
+    "title": "What the platform enforces",
+    "id": "what-the-platform-enforces"
+   },
+   {
+    "depth": 2,
+    "title": "Next steps",
+    "id": "next-steps"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Making games",
+    "text": "A HotTake game is a small web page that runs on the laptop screen while every player holds their phone as a controller. This page walks you from an empty folder to a working game, then covers the patterns the built-in games use. Keep the SDK reference open while you work."
+   },
+   {
+    "id": "what-a-game-is",
+    "title": "What a game is",
+    "text": "A game is a folder with a manifest.json and an entry page (usually index.html). The host loads that page in a sandboxed iframe on its own origin (127.0.0.1:47802), and the page talks to the platform only through the Screen SDK, a single ES module at /sdk/screen-sdk.js. The SDK gives you: - who is playing (party.players) and when they join, drop out or come back, - each player's controller state, r"
+   },
+   {
+    "id": "the-starter-template",
+    "title": "The starter template",
+    "text": "The quickest start is the starter template: a tiny working game where each press of Grow makes your dot bigger, and the biggest dot after 45 seconds wins. Get it in any of three ways: - In HotTake, open Options › Developer , switch Developer mode on, and press New game template . It downloads hottake-game-template.zip. - Fetch GET /host/library/template.zip from the host on the same computer. - Co"
+   },
+   {
+    "id": "a-minimal-game-step-by-step",
+    "title": "A minimal game, step by step",
+    "text": "This walkthrough builds Tap Dash : everyone taps one button for 20 seconds and the most taps wins."
+   },
+   {
+    "id": "1-the-manifest",
+    "title": "1. The manifest",
+    "text": "The id must be 2 to 40 characters of a-z, 0-9 and -, and must not be a built-in game's id. Every rule is on the Manifest page."
+   },
+   {
+    "id": "2-a-cover",
+    "title": "2. A cover",
+    "text": "Any 16:9 SVG or PNG inside the folder. The built-in covers use a 0 0 1600 900 view box."
+   },
+   {
+    "id": "3-the-page",
+    "title": "3. The page",
+    "text": "The games origin has a strict Content Security Policy: scripts must be files from the game's own origin, so inline <script blocks do not run. Inline styles are fine."
+   },
+   {
+    "id": "5-loop-draw-and-end",
+    "title": "5. Loop, draw and end",
+    "text": "pressed.Tap counts every press since the last read, so a quick tap between two steps is never lost."
+   },
+   {
+    "id": "6-load-it",
+    "title": "6. Load it",
+    "text": "1. Open Options › Developer and switch Developer mode on. 2. Paste the folder's path under Dev folder and press Load (or Browse… in the desktop app). 3. The game appears on the shelf tagged \"Dev · rev N\". Pick it and press Play. HotTake checks the folder once a second and restarts the game with the same players when you save a file. With no phones handy, add keyboard players or bots (see Testing g"
+   },
+   {
+    "id": "the-game-loop-pattern",
+    "title": "The game loop pattern",
+    "text": "Every built-in game separates three things, and games/coin-clash/ is the clearest example: File Role Touches --- --- --- sim.js The rules: createWorld, addPlayer, setActive, step(world, inputs, dt), ranking Nothing but plain data render.js A Renderer that draws a world on a canvas The DOM and canvas main.js SDK glue: players, pad reading, events to sounds and toasts, party.end The SDK and the kit "
+   },
+   {
+    "id": "join-leave-and-reconnect",
+    "title": "Join, leave and reconnect",
+    "text": "- At start , party.players already holds everyone in the room. Seat the ones with connected: true. Players who join while your page is loading are queued and delivered as events once you connect, so nobody is missed. - join fires when a new player arrives mid-game. Late joiners should get a seat if your game can take them. - leave means the phone dropped. The host holds the seat for 60 seconds. Ke"
+   },
+   {
+    "id": "ending-with-results",
+    "title": "Ending with results",
+    "text": "Call party.end({ scores }) once, with a number per player id. The lobby shows the ranking, highest first; pass lowerIsBetter: true for golf strokes or race times. An optional summary (up to 80 characters) is the headline line. Most built-in games show their own results board for a few seconds first (drawResults from games/ kit/results.js), then call end. During a tournament (party.tournament is tr"
+   },
+   {
+    "id": "what-the-platform-enforces",
+    "title": "What the platform enforces",
+    "text": "- Ready in 30 s. Call party.ready() within 30 seconds of the page loading, or the game is sent back to the lobby (\"did not become ready in time\"). Use party.loading(p) to show progress meanwhile. - Heartbeat. The host pings every 2 seconds and the SDK answers by itself. A page that stops answering for 5 seconds is unloaded (\"stopped responding\"). A long blocking loop on the main thread will trip t"
+   },
+   {
+    "id": "next-steps",
+    "title": "Next steps",
+    "text": "- SDK reference: every method, event and layout option. - Manifest: every field and the exact error messages. - Testing games: bots, keyboard players, the debug dock and unit tests. - Sharing games: zip it and send it."
+   }
+  ]
+ },
+ {
+  "slug": "sdk-reference",
+  "title": "SDK reference",
+  "description": "Every export of the HotTake Screen SDK: Party.connect, players, events, input(), controller layouts, setTurn, send, end and the debug hooks.",
+  "section": "Making games",
+  "order": 2,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Module exports",
+    "id": "module-exports"
+   },
+   {
+    "depth": 2,
+    "title": "Connecting",
+    "id": "connecting"
+   },
+   {
+    "depth": 3,
+    "title": "Party.connect(options?)",
+    "id": "partyconnectoptions"
+   },
+   {
+    "depth": 3,
+    "title": "party.loading(progress)",
+    "id": "partyloadingprogress"
+   },
+   {
+    "depth": 3,
+    "title": "party.ready()",
+    "id": "partyready"
+   },
+   {
+    "depth": 2,
+    "title": "Properties",
+    "id": "properties"
+   },
+   {
+    "depth": 2,
+    "title": "Events",
+    "id": "events"
+   },
+   {
+    "depth": 3,
+    "title": "party.on(event, handler)",
+    "id": "partyonevent-handler"
+   },
+   {
+    "depth": 2,
+    "title": "Reading input",
+    "id": "reading-input"
+   },
+   {
+    "depth": 3,
+    "title": "party.input(playerId)",
+    "id": "partyinputplayerid"
+   },
+   {
+    "depth": 3,
+    "title": "party.layoutFor(playerId)",
+    "id": "partylayoutforplayerid"
+   },
+   {
+    "depth": 2,
+    "title": "Controller layouts",
+    "id": "controller-layouts"
+   },
+   {
+    "depth": 3,
+    "title": "party.setController(layout, options?)",
+    "id": "partysetcontrollerlayout-options"
+   },
+   {
+    "depth": 3,
+    "title": "party.setTurn(activeId, { active, waiting })",
+    "id": "partysetturnactiveid--active-waiting-"
+   },
+   {
+    "depth": 2,
+    "title": "Messages",
+    "id": "messages"
+   },
+   {
+    "depth": 3,
+    "title": "party.send(to, data)",
+    "id": "partysendto-data"
+   },
+   {
+    "depth": 2,
+    "title": "Ending the game",
+    "id": "ending-the-game"
+   },
+   {
+    "depth": 3,
+    "title": "party.end(result)",
+    "id": "partyendresult"
+   },
+   {
+    "depth": 2,
+    "title": "Logging and quality",
+    "id": "logging-and-quality"
+   },
+   {
+    "depth": 3,
+    "title": "party.log(...args)",
+    "id": "partylogargs"
+   },
+   {
+    "depth": 3,
+    "title": "party.reportQuality(level, name)",
+    "id": "partyreportqualitylevel-name"
+   },
+   {
+    "depth": 2,
+    "title": "Debug mode",
+    "id": "debug-mode"
+   },
+   {
+    "depth": 2,
+    "title": "The InputTracker class",
+    "id": "the-inputtracker-class"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "SDK reference",
+    "text": "The Screen SDK is one ES module, web/sdk/screen-sdk.js, served to games at /sdk/screen-sdk.js. It is the only API a game uses to talk to the platform, and it does not depend on any engine. This page documents everything the module exports, with types and short examples."
+   },
+   {
+    "id": "module-exports",
+    "title": "Module exports",
+    "text": "Export Type What it is --- --- --- Party class The connection to the platform. Get one with Party.connect(). SDK VERSION number The SDK protocol version, currently 1. InputTracker class The per-player input state behind party.input(). Exported for tests. guardFileDrops(target) function Stops a file dragged over the game from navigating the window. Called on window automatically when the module loa"
+   },
+   {
+    "id": "partyconnectoptions",
+    "title": "Party.connect(options?)",
+    "text": "Waits for the host's handshake over a private MessagePort and resolves with a connected Party. If no handshake arrives within timeoutMs (10 seconds by default) it rejects with HotTake: no platform handshake (open this game from the HotTake host). That is what you see when you open a game's page directly in a browser. The handshake carries the players, the default controller layout (from your manif"
+   },
+   {
+    "id": "partyloadingprogress",
+    "title": "party.loading(progress)",
+    "text": "Reports load progress (0 to 1, clamped) to the platform loader. Optional."
+   },
+   {
+    "id": "partyready",
+    "title": "party.ready()",
+    "text": "Hides the platform loader and starts the heartbeat watchdog. Call it within 30 seconds of the page loading, or the game is sent back to the lobby. Calling it again does nothing."
+   },
+   {
+    "id": "properties",
+    "title": "Properties",
+    "text": "Property Type Meaning --- --- --- players Player[] Everyone in the room, sorted by seat, kept up to date by the SDK on join, leave and reconnect. paused boolean true while the host's pause card is up. Don't step your simulation while it is. leader string or null The player id of HotTake's leader (the phone that runs the menus), or null when there is none. Updated with the leader event. tournament "
+   },
+   {
+    "id": "partyonevent-handler",
+    "title": "party.on(event, handler)",
+    "text": "Adds a handler and returns a function that removes it. A handler that throws does not break the SDK: the error is sent to the host log as <event handler: <stack . Event Handler arguments When --- --- --- join (player) A new player joined mid-game. leave (player) A player's phone dropped (or they were removed). player.connected is false. reconnect (player) A dropped player came back with the same i"
+   },
+   {
+    "id": "partyinputplayerid",
+    "title": "party.input(playerId)",
+    "text": "Returns the latest controller state for one player. Call it once per fixed simulation step per player : it consumes the press counts, so a second call in the same step sees zero presses. - Labels. Button keys are the labels of the player's current layout (layoutFor(id).buttons). Change the labels and the keys change with them. - Taps are never lost. Each phone button carries a wrapping 8-bit press"
+   },
+   {
+    "id": "partylayoutforplayerid",
+    "title": "party.layoutFor(playerId)",
+    "text": "The layout a player currently has: their own, if you set one for them, otherwise the default."
+   },
+   {
+    "id": "partysetcontrollerlayout-options",
+    "title": "party.setController(layout, options?)",
+    "text": "Sets what the phones show. Without players it replaces the default for everyone and clears every per-player layout. With players it sets the layout for just those ids. The starting layout is your manifest's controller block, so phones show the right pad before your code runs. Field Values Effect --- --- --- type \"gamepad\" Required to show a pad. Any other value (or none) shows the phone's waiting "
+   },
+   {
+    "id": "partysetturnactiveid--active-waiting-",
+    "title": "party.setTurn(activeId, { active, waiting })",
+    "text": "A turn-based helper. The active player gets active with the banner \"Your turn\". Everyone else gets waiting, dimmed, with the banner \"Name's turn\". Call it again whenever a player joins or leaves, so newcomers get the right pad. When the banner must carry private information (a dice hand, say), push per-player layouts yourself with padPush from games/ kit/turns.js. It only sends a layout when it ch"
+   },
+   {
+    "id": "partysendto-data",
+    "title": "party.send(to, data)",
+    "text": "Sends JSON-serialisable data to a phone, or to every phone with \"all\". The host drops a message larger than 16 kB (its JSON length) and anything past 30 messages a second per target, silently. The built-in phone understands two keys: Key Effect on the phone --- --- toast: string Shows the text for 2.5 seconds. buzz: true A short vibration, only if the player turned Vibration on."
+   },
+   {
+    "id": "partyendresult",
+    "title": "party.end(result)",
+    "text": "Ends the game and returns everyone to the lobby with results. - scores: one number per player id. Only finite numbers for players in the room are kept. - lowerIsBetter: true ranks the smallest score first (strokes, times). Default false. - summary: an optional one-line headline, trimmed to 80 characters. Call it once. In a tournament (party.tournament), the scores and lowerIsBetter feed the standi"
+   },
+   {
+    "id": "partylogargs",
+    "title": "party.log(...args)",
+    "text": "Sends a line to the host log. It always reaches the host, and in Developer mode it shows in the debug dock's Console. Arguments are joined with spaces."
+   },
+   {
+    "id": "partyreportqualitylevel-name",
+    "title": "party.reportQuality(level, name)",
+    "text": "Tells the host your current quality level (shown in the debug dock). Pair it with QualityGuard from games/ kit/quality.js."
+   },
+   {
+    "id": "debug-mode",
+    "title": "Debug mode",
+    "text": "When the host starts a game with Developer mode on, the SDK also: - forwards console.warn, console.error, uncaught errors and unhandled rejections to the dock, with file and line. It sends at most 50 lines a second (extras become one \"… N lines dropped\" line) and at most 2000 characters a line; - posts frame stats every 500 ms; - creates globalThis.HotTakeDebug. With debug off, nothing is wrapped "
+   },
+   {
+    "id": "the-inputtracker-class",
+    "title": "The InputTracker class",
+    "text": "InputTracker is the state machine behind party.input(). You only need it for tests: update(raw) takes a frame (b held bitmask, x/y, optional x2/y2, c four press counters, s sequence, at arrival time). read(labels, now) returns an Input. reset() forgets history, which the SDK does on leave and reconnect so a fresh counter is not read as about 256 presses."
+   }
+  ]
+ },
+ {
+  "slug": "manifest",
+  "title": "Manifest",
+  "description": "Every manifest.json field, the validation rules HotTake applies on import and on loading a dev folder, cover and credits rules, and the error messages.",
+  "section": "Making games",
+  "order": 3,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "A full example",
+    "id": "a-full-example"
+   },
+   {
+    "depth": 2,
+    "title": "Required fields",
+    "id": "required-fields"
+   },
+   {
+    "depth": 2,
+    "title": "Optional fields",
+    "id": "optional-fields"
+   },
+   {
+    "depth": 2,
+    "title": "The controller block",
+    "id": "the-controller-block"
+   },
+   {
+    "depth": 2,
+    "title": "Paths: entry and cover",
+    "id": "paths-entry-and-cover"
+   },
+   {
+    "depth": 2,
+    "title": "Cover requirements",
+    "id": "cover-requirements"
+   },
+   {
+    "depth": 2,
+    "title": "Credits and licences",
+    "id": "credits-and-licences"
+   },
+   {
+    "depth": 2,
+    "title": "When it is checked",
+    "id": "when-it-is-checked"
+   },
+   {
+    "depth": 2,
+    "title": "Error messages",
+    "id": "error-messages"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Manifest",
+    "text": "Every game folder has a manifest.json that tells HotTake what the game is called, how many people can play it, what the shelf shows and which controller the phones get first. The same validator, crates/host-core/src/manifest.rs, checks it when you import a zip, when you load a dev folder, and in a test over every built-in game."
+   },
+   {
+    "id": "a-full-example",
+    "title": "A full example",
+    "text": "A ported game adds a credits block:"
+   },
+   {
+    "id": "required-fields",
+    "title": "Required fields",
+    "text": "Field Type Rule --- --- --- id string 2 to 40 characters of a-z, 0-9 and -. Must not be a built-in game's id. It names the game's URL (/games/<id /) and its folder once imported. name string 1 to 40 characters, not blank. Shown on the shelf and the lobby hero. tagline string 1 to 80 characters, not blank. The one-line pitch under the name. tags string array 1 to 6 entries, none empty. Shown as chi"
+   },
+   {
+    "id": "optional-fields",
+    "title": "Optional fields",
+    "text": "Field Type What it does --- --- --- description string A longer description. The lobby falls back to it when there is no tagline. Not validated. sdk string The SDK version the game targets. Every game uses \"1\". Not validated. aspect string The game's aspect ratio. Every built-in game declares \"16:9\". Not validated and not read by the shell today; design for a 16:9 screen and letterbox. controller "
+   },
+   {
+    "id": "the-controller-block",
+    "title": "The controller block",
+    "text": "controller is the layout phones get the moment the game starts, before any of your code runs. The shell sends it to phones as a \"gamepad\" layout, and the SDK uses it as the default for party.input() labels until you call setController. It accepts the same fields as setController (see SDK reference). The validator checks four of them: Field Rule --- --- buttons At most 4 entries. layout When presen"
+   },
+   {
+    "id": "paths-entry-and-cover",
+    "title": "Paths: entry and cover",
+    "text": "entry and cover must be plain relative paths inside the game folder, and the file must exist. The validator refuses: - an empty path, a leading /, a \\ or a : (drive letters, streams), - control characters and the characters Windows cannot store: <, , \", , ?, , - empty, . or .. segments, and segments ending in a dot or a space, - Windows device names such as con, nul.txt or com1, in any case. Subfo"
+   },
+   {
+    "id": "cover-requirements",
+    "title": "Cover requirements",
+    "text": "- Format: SVG or PNG, decided by the file extension (.svg or .png, any case). - Shape: 16:9. The built-in covers are SVGs with viewBox=\"0 0 1600 900\"; a PNG of 1600 by 900 or 1920 by 1080 works too. - Self-contained: the host serves covers from /host/cover/<id with the policy default-src 'none'; style-src 'unsafe-inline'. An SVG cover cannot load scripts, external images or web fonts, so draw ever"
+   },
+   {
+    "id": "credits-and-licences",
+    "title": "Credits and licences",
+    "text": "Add credits when your game is based on someone else's code or art. When credits is present: - license is required and must be one of MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, CC0-1.0 or CC-BY-4.0. Case, spaces and dashes are ignored, so cc by 4.0 matches CC-BY-4.0. - author, url and notes are free text. The lobby shows notes (or \"By author\" when there are no notes) followed by the licence."
+   },
+   {
+    "id": "when-it-is-checked",
+    "title": "When it is checked",
+    "text": "- Importing a zip. The import is refused with the first problem found. - Loading a dev folder. The folder is refused with the first problem found. - Editing a loaded dev folder. If a change breaks manifest.json, the last good manifest stays in use, the error shows under the game, and the lobby shows \"Can't start\" with the message. - Tests. Every built-in manifest is validated by Rust and JS tests."
+   },
+   {
+    "id": "error-messages",
+    "title": "Error messages",
+    "text": "The first problem found is shown as it is, always prefixed with manifest.json:. For example: The full list, in the order the validator checks: Before validation, the library itself can refuse the file: A UTF-8 byte-order mark at the start of the file is accepted."
+   }
+  ]
+ },
+ {
+  "slug": "testing-games",
+  "title": "Testing games",
+  "description": "Test a HotTake game without a room full of phones: Developer mode, dev folders, the debug dock, keyboard players, gamepads, the bot harness and unit tests.",
+  "section": "Making games",
+  "order": 4,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Developer mode",
+    "id": "developer-mode"
+   },
+   {
+    "depth": 2,
+    "title": "Dev folders and live reload",
+    "id": "dev-folders-and-live-reload"
+   },
+   {
+    "depth": 2,
+    "title": "Hot reload for built-in games",
+    "id": "hot-reload-for-built-in-games"
+   },
+   {
+    "depth": 2,
+    "title": "The debug dock",
+    "id": "the-debug-dock"
+   },
+   {
+    "depth": 3,
+    "title": "Time controls in your own loop",
+    "id": "time-controls-in-your-own-loop"
+   },
+   {
+    "depth": 3,
+    "title": "Debug-only switches",
+    "id": "debug-only-switches"
+   },
+   {
+    "depth": 2,
+    "title": "Keyboard players",
+    "id": "keyboard-players"
+   },
+   {
+    "depth": 2,
+    "title": "Gamepads",
+    "id": "gamepads"
+   },
+   {
+    "depth": 2,
+    "title": "The bot harness",
+    "id": "the-bot-harness"
+   },
+   {
+    "depth": 3,
+    "title": "A headless host",
+    "id": "a-headless-host"
+   },
+   {
+    "depth": 2,
+    "title": "Unit-testing a pure simulation",
+    "id": "unit-testing-a-pure-simulation"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Testing games",
+    "text": "You don't need eight friends and eight phones to test a party game. HotTake has keyboard players, USB gamepads, in-app bots, a command-line bot harness and a debug dock, and the patterns the built-in games use make the rules testable in plain Node."
+   },
+   {
+    "id": "developer-mode",
+    "title": "Developer mode",
+    "text": "Open Options › Developer and switch on Developer mode . It is off by default and remembered. It turns on: - dev folders : load a game straight from a folder on disk, - zip drag and drop onto the window, - the debug dock , opened with (backtick) or F2 , - debug mode in games : the SDK forwards console errors and frame stats and creates HotTakeDebug`. With it off, imported games still show on the sh"
+   },
+   {
+    "id": "dev-folders-and-live-reload",
+    "title": "Dev folders and live reload",
+    "text": "Under Dev folder , paste the path of a folder that contains manifest.json and press Load (or Browse… in the desktop app). The manifest is validated as described on Manifest. - The folder is served from disk without caching and is never modified. - HotTake checks it once a second. When a file changes, the game restarts with the same players and a toast says \"Reloaded name (rev N)\". The shelf tags i"
+   },
+   {
+    "id": "hot-reload-for-built-in-games",
+    "title": "Hot reload for built-in games",
+    "text": "When you work on the platform itself or on a game in games/, run a debug build. Debug builds read web/ and games/ from disk, so a change only needs a page reload. Release builds embed the files in the executable. To run a second host beside the desktop app, move it to other ports:"
+   },
+   {
+    "id": "the-debug-dock",
+    "title": "The debug dock",
+    "text": "With Developer mode on, press or F2 to open or close the dock on the right. It can collapse to a strip. Typing in a text field keeps the backtick; F2 always works. Tab What it has --- --- Console The last 500 lines: party.log, console.warn and console.error, uncaught errors and unhandled rejections (with file:line), and platform events (join, leave, reload). Level filters, Copy , Clear . Players P"
+   },
+   {
+    "id": "time-controls-in-your-own-loop",
+    "title": "Time controls in your own loop",
+    "text": "The kit's startLoop supports speed, freeze and step for free. A game with its own loop must follow the HotTakeDebug contract, or the dock says \"Time controls not supported by this game\" two seconds after the game is ready: Pausing wins over freeze: nothing steps while the pause card is up, and queued steps wait for resume."
+   },
+   {
+    "id": "debug-only-switches",
+    "title": "Debug-only switches",
+    "text": "In Developer mode, opening the host page as /host/?gameQuery=fast%3D1 appends ?fast=1 to the game's URL (only key=value pairs of word characters, dots and dashes pass). Night Siege uses it for 20-second days. Gate such switches on globalThis.HotTakeDebug too, so they never work in a normal session."
+   },
+   {
+    "id": "keyboard-players",
+    "title": "Keyboard players",
+    "text": "Options › Players adds up to two keyboard players on the laptop: Player Directions Buttons 1–4 --- --- --- WASD + J/K W A S D J K L I Arrows + ./, arrow keys . , / ; The phone controller page also takes a keyboard, which is handy in a desktop browser on the same network: WASD or arrows, and Space/J/Z, K/X, L/C, I/V for buttons 1 to 4. Press F3 on the host for connection stats (path, ping, input ag"
+   },
+   {
+    "id": "gamepads",
+    "title": "Gamepads",
+    "text": "USB or Bluetooth gamepads with the standard mapping work as local players: - Press Start (or A in the lobby) to join as \"Pad N\". Hold Select/Back for 0.8 seconds to leave. - Left stick or d-pad is stick, the right stick is stick2, and A, B, X, Y are buttons 1 to 4. Start pauses. - The dead zone is 0.15. There is no rumble or remapping yet. The right stick makes a gamepad a quick way to test a twin"
+   },
+   {
+    "id": "the-bot-harness",
+    "title": "The bot harness",
+    "text": "tests/e2e/bots.mjs connects bot phones to a running host over the real phone protocol and plays with semi-random input. It prints packets sent and round-trip latency (p50, p95, max) per bot, and exits non-zero if a bot fails to join or loses its connection. Flag What it does --- --- --start The leader bot starts the selected game, like tapping Play. --game=<id The leader bot presses \"right\" (at mo"
+   },
+   {
+    "id": "a-headless-host",
+    "title": "A headless host",
+    "text": "Games only run while a host screen is open. With npm run dev, keep a headless Edge on the host page: --force-prefers-reduced-motion is required for a headless host screen. Don't add --disable-gpu: software WebGL is slow enough to push heavy games past their timeouts. For --cdp against the desktop app, start it with WEBVIEW2 ADDITIONAL BROWSER ARGUMENTS=--remote-debugging-port=9333."
+   },
+   {
+    "id": "unit-testing-a-pure-simulation",
+    "title": "Unit-testing a pure simulation",
+    "text": "Keep your rules in a module with no DOM and no SDK, like games/coin-clash/sim.js, and you can test whole rounds in milliseconds with Node's built-in runner: Run it with: - Seed your randomness (mulberry32 from games/ kit/rng.js) so a failing round replays exactly. - npm test loads tests/js/register.mjs, which maps the browser paths /sdk/, /shared/, /controller/, /host/ and /vendor/ onto the reposi"
+   }
+  ]
+ },
+ {
+  "slug": "sharing-games",
+  "title": "Sharing games",
+  "description": "Package a HotTake game as a zip, import, replace and remove it, what the host serves from a game folder, and the security limits of imported games.",
+  "section": "Making games",
+  "order": 5,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Packaging a game as a zip",
+    "id": "packaging-a-game-as-a-zip"
+   },
+   {
+    "depth": 2,
+    "title": "Importing",
+    "id": "importing"
+   },
+   {
+    "depth": 2,
+    "title": "Limits",
+    "id": "limits"
+   },
+   {
+    "depth": 2,
+    "title": "Replacing and removing",
+    "id": "replacing-and-removing"
+   },
+   {
+    "depth": 2,
+    "title": "What is served",
+    "id": "what-is-served"
+   },
+   {
+    "depth": 2,
+    "title": "Security caveats",
+    "id": "security-caveats"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Sharing games",
+    "text": "A HotTake game travels as a plain zip of its folder. The other person drops it on their HotTake window and it lands on the shelf next to the built-in games. This page covers packaging, the import rules and limits, and what you should know about running someone else's game."
+   },
+   {
+    "id": "packaging-a-game-as-a-zip",
+    "title": "Packaging a game as a zip",
+    "text": "Zip the game folder so that manifest.json is either at the top of the zip or inside exactly one top-level folder. Both of these work: On Windows, right-click the folder and choose Send to › Compressed (zipped) folder . Elsewhere: Before you zip: - Ship built output only. If you use a bundler, zip the build folder, not your source tree. Leave out node modules, tests and source maps you don't need. "
+   },
+   {
+    "id": "importing",
+    "title": "Importing",
+    "text": "Switch on Options › Developer › Developer mode first (the import controls are hidden without it), then either: - press Import game (.zip) in the same tab, or - drop the .zip anywhere on the HotTake window. The first import shows a warning and asks you to confirm (\"I trust it\"), because imported games are someone else's code. The zip is checked and unpacked in a staging folder, and moved into place"
+   },
+   {
+    "id": "limits",
+    "title": "Limits",
+    "text": "Limit Value --- --- Zip size 64 MB Unpacked size 256 MB, checked while unpacking as well as from the zip's header Entries 2000 Name length 255 bytes per entry manifest.json 1 MB The import refuses: - absolute paths, .. segments, drive letters, backslashes and characters Windows cannot store, - Windows device names (con, nul…), - symlinks and devices, - password-protected (encrypted) entries, - com"
+   },
+   {
+    "id": "replacing-and-removing",
+    "title": "Replacing and removing",
+    "text": "- Same id, already imported. HotTake asks whether to Replace it, showing the installed and incoming versions: \"this game is already installed (version 1.0.0); importing version 1.1.0 will replace it\". Under the hood the first request gets HTTP 409 and the retry is POST /host/library/import?replace=1. A replace is staged too; if it is interrupted, the old copy is put back on the next start. - A bui"
+   },
+   {
+    "id": "what-is-served",
+    "title": "What is served",
+    "text": "Every game, built-in or not, is served from the games origin at http://127.0.0.1:47802/games/<id /. The rules: - Everything in the folder is reachable , except files and folders whose names start with . (.env, .git/config). That check also applies after resolving links, junctions and short names. - Nothing outside the folder. A link or junction that leads out of the game folder is not followed. - "
+   },
+   {
+    "id": "security-caveats",
+    "title": "Security caveats",
+    "text": "Developer mode is a switch in the host screen, not a lock. Know the limits before you import a game or register a folder. Imported games are someone else's code. They run in the same sandboxed frame as built-in games and on the same origin. That means an imported game can read other games' local storage and fetch any file of any other game on that origin, including registered dev folders. It canno"
+   }
+  ]
+ },
+ {
+  "slug": "porting-games",
+  "title": "Porting games",
+  "description": "How existing web games were ported: vendored upstream plus an adapter, the ports build, pad mapping, licences and the _kit helpers.",
+  "section": "Making games",
+  "order": 6,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Two kinds of port",
+    "id": "two-kinds-of-port"
+   },
+   {
+    "depth": 2,
+    "title": "Building ports",
+    "id": "building-ports"
+   },
+   {
+    "depth": 2,
+    "title": "Removing what can't run",
+    "id": "removing-what-cant-run"
+   },
+   {
+    "depth": 2,
+    "title": "The server runs inside the page",
+    "id": "the-server-runs-inside-the-page"
+   },
+   {
+    "depth": 2,
+    "title": "Pad mapping",
+    "id": "pad-mapping"
+   },
+   {
+    "depth": 2,
+    "title": "One shared screen",
+    "id": "one-shared-screen"
+   },
+   {
+    "depth": 2,
+    "title": "The party lifecycle",
+    "id": "the-party-lifecycle"
+   },
+   {
+    "depth": 2,
+    "title": "Licences and credits",
+    "id": "licences-and-credits"
+   },
+   {
+    "depth": 2,
+    "title": "The shared kit: games/ kit",
+    "id": "the-shared-kit-games-kit"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Porting games",
+    "text": "Several HotTake games started life as someone else's open-source web game. This page explains the two ways they were ported, the pieces every port needs (pad mapping, one shared screen, the party lifecycle), the licensing duties that come with borrowed code, and the shared helpers in games/ kit that every game, ported or original, can use."
+   },
+   {
+    "id": "two-kinds-of-port",
+    "title": "Two kinds of port",
+    "text": "Hand ports rewrite a small game's logic straight into games/<id /. Tangle (from achtung-die-kurve), Bombermoji, Nebula Knockout (from hft-powpow), Star Convoy, Ricochet Tanks and Sushi Paws are hand ports. Tangle shows the usual shape: curve.js is the original's game logic turned into a pure ES module (no DOM, canvas or timers), with HotTake glue (hottake.js, match.js) around it. Each keeps its LI"
+   },
+   {
+    "id": "building-ports",
+    "title": "Building ports",
+    "text": "For each port the script: 1. runs npm ci (or npm install without a lockfile) inside ports/<id /, 2. runs vite build into games/<id .build, 3. copies static/ in, 4. checks the required files (index.html, manifest.json, cover.svg, CREDITS.md), 5. scans the bundle: no http(s):// resource references, no eval( or new Function( unless waived, 6. swaps the result into games/<id /. On any failure games/<i"
+   },
+   {
+    "id": "removing-what-cant-run",
+    "title": "Removing what can't run",
+    "text": "A party game on one laptop has no accounts, no lobby servers and no internet. Ports strip: - Online networking : signalling servers, WebRTC meshes, public brokers (Cartastrophe dropped peerjs and its signal server). - Websites and persistence : account systems, payments, databases (Night Siege does not vendor upstream's website package at all). - Tooling : map editors, sprite labs, art generators,"
+   },
+   {
+    "id": "the-server-runs-inside-the-page",
+    "title": "The server runs inside the page",
+    "text": "Night Siege's upstream is a client and a Node game server talking over WebSockets. HotTake games can't open sockets to anywhere, so the port runs the real upstream server inside the page and connects it to the client over a loopback: - hottake/loopback-adapter.ts implements upstream's server and socket adapter interfaces with in-memory sockets. Frames keep the original format (event type id, then "
+   },
+   {
+    "id": "pad-mapping",
+    "title": "Pad mapping",
+    "text": "Upstream games expect a keyboard and mouse, or a gamepad per player. The adapter turns each player's party.input() into the commands the upstream code already understands: - Cartastrophe (hottake/mapping.ts, pure and unit-tested): the stick becomes a screen-space move that upstream's own screenMoveToWorld rotates into the isometric world, so up on the stick walks up the screen. Grab down and up be"
+   },
+   {
+    "id": "one-shared-screen",
+    "title": "One shared screen",
+    "text": "Most upstream games follow one \"my player\". On a TV everyone shares one view, so ports turn the per-player UI off and draw their own: - A shared camera. Night Siege's fitCamera frames every player who is up or downed with a margin, never closer than the natural zoom and never further out than 0.6 times it. When the group is too spread out, it frames the biggest cluster and draws an edge arrow for "
+   },
+   {
+    "id": "the-party-lifecycle",
+    "title": "The party lifecycle",
+    "text": "Every port wires the same SDK pieces described in Making games: loading while assets load, ready, seats in seat order (late joiners get a seat, leavers keep theirs), stepping nothing while party.paused, a seed per round, and one party.end with scores. Ports also respect party.tournament (Cartastrophe hides its Training store in tournaments) and party.leader (the leader can drive a start card, with"
+   },
+   {
+    "id": "licences-and-credits",
+    "title": "Licences and credits",
+    "text": "Porting someone's game means carrying their licence with it: - Pick only allowed licences. credits.license must be one of MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, CC0-1.0 or CC-BY-4.0. Code with no licence needs the author's written permission; built-in games record that as \"permission\" with PERMISSION.md and an explanatory credits.notes. - Keep the licence text next to the code as LICENS"
+   },
+   {
+    "id": "the-shared-kit-games-kit",
+    "title": "The shared kit: games/ kit",
+    "text": "The host serves games/ kit/ to every game, including imported and dev-folder games, so import { startLoop } from \"../ kit/loop.js\" works anywhere. Every module is optional and has no dependencies, and the pure ones load in Node for tests. Module What it gives you --- --- loop.js startLoop({ step, render, stepSeconds, isPaused }): a fixed-step loop with interpolation alpha, at most 5 steps per fram"
+   }
+  ]
+ },
+ {
+  "slug": "building",
+  "title": "Building from source",
+  "description": "Build HotTake on Windows: prerequisites, npm scripts, the Cargo workspace, debug vs release, versioning, icons and the release checklist.",
+  "section": "Build & contribute",
+  "order": 1,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Prerequisites",
+    "id": "prerequisites"
+   },
+   {
+    "depth": 2,
+    "title": "npm scripts",
+    "id": "npm-scripts"
+   },
+   {
+    "depth": 2,
+    "title": "Where the build output goes",
+    "id": "where-the-build-output-goes"
+   },
+   {
+    "depth": 2,
+    "title": "Cargo workspace layout",
+    "id": "cargo-workspace-layout"
+   },
+   {
+    "depth": 2,
+    "title": "Vendored crates",
+    "id": "vendored-crates"
+   },
+   {
+    "depth": 2,
+    "title": "Debug vs release",
+    "id": "debug-vs-release"
+   },
+   {
+    "depth": 2,
+    "title": "Versioning",
+    "id": "versioning"
+   },
+   {
+    "depth": 2,
+    "title": "Icons",
+    "id": "icons"
+   },
+   {
+    "depth": 2,
+    "title": "Release checklist",
+    "id": "release-checklist"
+   },
+   {
+    "depth": 2,
+    "title": "Publishing a new installer to the website",
+    "id": "publishing-a-new-installer-to-the-website"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Building from source",
+    "text": "HotTake is a Cargo workspace with a Tauri 2 desktop app on top and a handful of Node scripts around it. This page covers everything from a fresh Windows machine to a published installer. If you don't have the source yet, see Getting the source."
+   },
+   {
+    "id": "prerequisites",
+    "title": "Prerequisites",
+    "text": "Tool Version Notes --- --- --- Rust stable, MSVC toolchain Install with rustup; the default x86 64-pc-windows-msvc host is what the build expects. You also need the Visual Studio C++ build tools that rustup asks for. Node.js 22.18 or newer package.json declares \"node\": \" =22.18\". Used for the Tauri CLI, tests, bots and build scripts. WebView2 any current runtime Built into Windows 11. The host scr"
+   },
+   {
+    "id": "npm-scripts",
+    "title": "npm scripts",
+    "text": "Script What it runs Use it for --- --- --- npm run dev cargo run -p host-core --bin hottake-server The headless host: no window. Open http://127.0.0.1:47801/host/ in a browser to get the host screen. Fastest loop for web and game work. npm run app:dev tauri dev The real desktop app in a debug build, with a console window for logs. npm run app:build tauri build Release exe plus the NSIS installer. "
+   },
+   {
+    "id": "where-the-build-output-goes",
+    "title": "Where the build output goes",
+    "text": "npm run app:build writes: The installer name comes from productName and version in tauri.conf.json. The NSIS installer uses installMode: \"currentUser\", so it installs without admin rights."
+   },
+   {
+    "id": "cargo-workspace-layout",
+    "title": "Cargo workspace layout",
+    "text": "The root Cargo.toml defines a two-member workspace: Member Package What it builds --- --- --- crates/host-core host-core The library with everything the host does (rooms, phone WebSocket and WebRTC, shell bridge, asset serving, game library, online tunnel), plus the hottake-server binary used by npm run dev. apps/desktop/src-tauri hottake-desktop The Tauri app, binary name hottake. It calls host c"
+   },
+   {
+    "id": "vendored-crates",
+    "title": "Vendored crates",
+    "text": "vendor/webrtc-sctp is webrtc-sctp 0.17.3 with one fix, wired in through [patch.crates-io] in the root Cargo.toml and excluded from the workspace. The upstream parser measured a FORWARD-TSN chunk against the rest of the packet instead of the chunk's own length. Chrome bundles FORWARD-TSN with other chunks all the time on unreliable channels, so whole packets were dropped. Phone ping crept from abou"
+   },
+   {
+    "id": "debug-vs-release",
+    "title": "Debug vs release",
+    "text": "The host core serves web/, games/ and templates/starter/ through rust-embed. That crate behaves differently by profile: - Debug builds (npm run dev, npm run app:dev) read those folders from disk at request time. Edit a file in web/ or games/ and reload the page; no rebuild. - Release builds (npm run app:build) embed the folders into the executable. Any change to web files or games needs a new buil"
+   },
+   {
+    "id": "versioning",
+    "title": "Versioning",
+    "text": "The version lives in two places, and they must match: File Field Used for --- --- --- Cargo.toml (root) [workspace.package] version Both crates (version.workspace = true). apps/desktop/src-tauri/tauri.conf.json version The app's version and the installer file name. The root package.json is \"private\": true and has no version field, so there is nothing to bump there. Cargo.lock picks up the new vers"
+   },
+   {
+    "id": "icons",
+    "title": "Icons",
+    "text": "The app icon is generated, not drawn by hand. scripts/make-icon.mjs writes a 1024×1024 PNG to apps/desktop/app-icon.png with no dependencies. The Tauri CLI then makes every size in apps/desktop/src-tauri/icons/: tauri.conf.json lists 32x32.png, 128x128.png, 128x128@2x.png, icon.icns and icon.ico for bundling. The other files in icons/ (the Square Logo.png set and StoreLogo.png) are produced by tau"
+   },
+   {
+    "id": "release-checklist",
+    "title": "Release checklist",
+    "text": "Work through this in order. Every step must pass before the next. 1. Bump the version in both files above. 2. Rebuild the ports if anything under ports/ changed: npm run build:ports. Commit the output in games/<id /. 3. Unit tests: npm test and cargo test --workspace. 4. Bot runs: start npm run dev, keep a host screen open, and run the per-game bot commands from the README (each must exit 0). A qu"
+   },
+   {
+    "id": "publishing-a-new-installer-to-the-website",
+    "title": "Publishing a new installer to the website",
+    "text": "The website lives in its own repo (open source, see Contributing). It serves the installer from Supabase Storage. In the website repo, with SUPABASE URL and SUPABASE SECRET KEY set in its .env.local: For example: The script: 1. Uploads the file to the releases bucket as v<version /<file name , overwriting any file already there. 2. Records the size and SHA-256 of the file. 3. Clears is latest on t"
+   }
+  ]
+ },
+ {
+  "slug": "online-play",
+  "title": "Online play with your own domain",
+  "description": "Let remote phones join HotTake through a Cloudflare Tunnel on your own domain, with an optional TURN relay for players on mobile data.",
+  "section": "Build & contribute",
+  "order": 2,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "What online play does (and doesn't)",
+    "id": "what-online-play-does-and-doesnt"
+   },
+   {
+    "depth": 2,
+    "title": "Requirements",
+    "id": "requirements"
+   },
+   {
+    "depth": 2,
+    "title": "One-time setup",
+    "id": "one-time-setup"
+   },
+   {
+    "depth": 3,
+    "title": "1. Install cloudflared",
+    "id": "1-install-cloudflared"
+   },
+   {
+    "depth": 3,
+    "title": "2. Log in, create the tunnel and route the hostname",
+    "id": "2-log-in-create-the-tunnel-and-route-the-hostname"
+   },
+   {
+    "depth": 3,
+    "title": "3. Write online.json",
+    "id": "3-write-onlinejson"
+   },
+   {
+    "depth": 3,
+    "title": "4. Switch it on",
+    "id": "4-switch-it-on"
+   },
+   {
+    "depth": 2,
+    "title": "Setting up the TURN relay",
+    "id": "setting-up-the-turn-relay"
+   },
+   {
+    "depth": 3,
+    "title": "Cost",
+    "id": "cost"
+   },
+   {
+    "depth": 2,
+    "title": "Which path is a phone using?",
+    "id": "which-path-is-a-phone-using"
+   },
+   {
+    "depth": 2,
+    "title": "What is refused through the tunnel",
+    "id": "what-is-refused-through-the-tunnel"
+   },
+   {
+    "depth": 2,
+    "title": "Testing it",
+    "id": "testing-it"
+   },
+   {
+    "depth": 2,
+    "title": "Troubleshooting",
+    "id": "troubleshooting"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Online play with your own domain",
+    "text": "Online play lets people who are not on your Wi-Fi join a HotTake room from their phone. You bring a domain on Cloudflare, HotTake starts a Cloudflare Tunnel to it, and remote phones open https://play.example.com/ and type the room code. Everything still runs on the laptop: Cloudflare only carries the traffic."
+   },
+   {
+    "id": "what-online-play-does-and-doesnt",
+    "title": "What online play does (and doesn't)",
+    "text": "- It carries input, not video. Remote players see the game the same way as before: on a video call or a stream of the laptop's screen. HotTake does not stream the host screen. - The tunnel carries the controller page and the phone's WebSocket. cloudflared runs on the laptop and forwards https://play.example.com/ to http://127.0.0.1:47801. - Input then moves to WebRTC if it can. The phone tries a d"
+   },
+   {
+    "id": "requirements",
+    "title": "Requirements",
+    "text": "- A domain whose DNS is managed by Cloudflare. The examples use play.example.com; replace it with a hostname on your domain. - cloudflared installed on the laptop that runs HotTake. - HotTake closed while you edit its settings file."
+   },
+   {
+    "id": "1-install-cloudflared",
+    "title": "1. Install cloudflared",
+    "text": "HotTake looks for cloudflared in this order: 1. The path in the HOTTAKE CLOUDFLARED environment variable, if set (it must point at the file itself). 2. Every folder on PATH. 3. cloudflared\\cloudflared.exe under Program Files (x86) and Program Files. HotTake reads PATH when it starts. If you install cloudflared while HotTake is open, restart HotTake (and sign out and in again if the installer chang"
+   },
+   {
+    "id": "2-log-in-create-the-tunnel-and-route-the-hostname",
+    "title": "2. Log in, create the tunnel and route the hostname",
+    "text": "- tunnel login opens a browser. Pick your domain and click Authorize . This saves a certificate for your account in cloudflared's user folder. - tunnel create hottake creates a named tunnel and its credentials file. The name is up to you; it goes in online.json below. - tunnel route dns adds a CNAME for play.example.com that points at the tunnel. You don't need a cloudflared config.yml. HotTake st"
+   },
+   {
+    "id": "3-write-onlinejson",
+    "title": "3. Write online.json",
+    "text": "Create %APPDATA%\\HotTake\\online.json (or online.json in the folder named by HOTTAKE CONFIG DIR, if you set that): With a TURN relay (see below), add the two optional fields: Field Required Meaning --- --- --- hostname yes The public hostname phones open. HotTake builds the invite link as https:// plus this. tunnel yes The tunnel name (or ID) from cloudflared tunnel create. enabled no, default fals"
+   },
+   {
+    "id": "4-switch-it-on",
+    "title": "4. Switch it on",
+    "text": "Start HotTake, press O for Options, open Network and switch on Online play . The status line moves from \"Connecting to play.example.com…\" to: Players anywhere can join at play.example.com with the room code, or with the invite link. HotTake marks the tunnel online when cloudflared reports a registered connection. Copy invite link then appears; send that link to remote players, or have them open th"
+   },
+   {
+    "id": "setting-up-the-turn-relay",
+    "title": "Setting up the TURN relay",
+    "text": "1. In the Cloudflare dashboard, go to Realtime → TURN Server and create a key. 2. Copy the key ID and the API token into turnKeyId and turnApiToken in online.json. 3. Restart HotTake. The online status line now ends with \"Relay on for mobile data.\" Without a key it says \"No relay set up: mobile data may lag.\" How HotTake uses the key: - The key stays in online.json on the laptop. Phones only ever "
+   },
+   {
+    "id": "cost",
+    "title": "Cost",
+    "text": "Cloudflare's TURN service is free up to 1,000 GB a month. HotTake uses roughly 30 MB per relayed player per hour, so the free allowance covers on the order of 30,000 relayed player-hours a month. Only phones that can't make a direct link use the relay. Check Cloudflare's current pricing before relying on it for anything large."
+   },
+   {
+    "id": "which-path-is-a-phone-using",
+    "title": "Which path is a phone using?",
+    "text": "The phone's status bar shows the path and the ping: Phone shows Meaning --- --- WebRTC Direct data channel to the laptop (same Wi-Fi, or STUN worked). Best case. WebRTC relay Data channel through Cloudflare's TURN relay. Still UDP, a little more latency. WebSocket Fallback: input goes over the tunnelled WebSocket. Works, but stutters on lossy networks. On the laptop, press F3 for path, ping and in"
+   },
+   {
+    "id": "what-is-refused-through-the-tunnel",
+    "title": "What is refused through the tunnel",
+    "text": "The tunnel exposes only the phone side of port 47801: - Reachable: the controller page (/, /controller/ ), shared files and vendored libraries the controller uses, the web app manifest, and the phone WebSocket /ws. - Refused: everything under /host/. That covers the host screen and its socket /host/ws, room.json (which holds the join key), the QR code, the catalog and covers, and every library rou"
+   },
+   {
+    "id": "testing-it",
+    "title": "Testing it",
+    "text": "With online play switched on and npm run dev (or the app) running, bot phones can join through the tunnel: The room key still comes from the local address; --join sends the bots through the public hostname. --doh resolves that hostname with Cloudflare DNS-over-HTTPS, which skips a stale local DNS cache right after tunnel route dns. For a real test, put one phone on mobile data with Wi-Fi off and c"
+   },
+   {
+    "id": "troubleshooting",
+    "title": "Troubleshooting",
+    "text": "Symptom Likely cause and fix --- --- No Online play switch in Options › Network online.json is missing, in the wrong folder, or not valid JSON. Check the log for online.json is not valid. \"Online play unavailable: cloudflared is not installed\" HotTake found the settings but not the executable. Put it on PATH, install it in the standard folder, or set HOTTAKE CLOUDFLARED. Restart HotTake. Stuck on "
+   }
+  ]
+ },
+ {
+  "slug": "macos-linux",
+  "title": "Porting to macOS and Linux",
+  "description": "What is Windows-specific in HotTake today, what to change for macOS and Linux, a first-build plan, a checklist, and how to report results.",
+  "section": "Build & contribute",
+  "order": 3,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Audit: what is Windows-specific today",
+    "id": "audit-what-is-windows-specific-today"
+   },
+   {
+    "depth": 3,
+    "title": "Config folder uses %APPDATA% (verified in code)",
+    "id": "config-folder-uses-appdata-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "cloudflared lookup and lifetime (verified in code)",
+    "id": "cloudflared-lookup-and-lifetime-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Hotspot detection and adapter names (verified in code)",
+    "id": "hotspot-detection-and-adapter-names-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Windows-only tests (verified in code)",
+    "id": "windows-only-tests-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Path rules that stay as they are (verified in code)",
+    "id": "path-rules-that-stay-as-they-are-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Firewall (verified in code)",
+    "id": "firewall-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Webview assumptions (verified in code, plus guidance)",
+    "id": "webview-assumptions-verified-in-code-plus-guidance"
+   },
+   {
+    "depth": 3,
+    "title": "Bundling (verified in code)",
+    "id": "bundling-verified-in-code"
+   },
+   {
+    "depth": 3,
+    "title": "Tooling and docs (verified in code)",
+    "id": "tooling-and-docs-verified-in-code"
+   },
+   {
+    "depth": 2,
+    "title": "macOS specifics (general guidance)",
+    "id": "macos-specifics-general-guidance"
+   },
+   {
+    "depth": 2,
+    "title": "Linux specifics (general guidance)",
+    "id": "linux-specifics-general-guidance"
+   },
+   {
+    "depth": 2,
+    "title": "First macOS build: step by step",
+    "id": "first-macos-build-step-by-step"
+   },
+   {
+    "depth": 2,
+    "title": "Porting checklist",
+    "id": "porting-checklist"
+   },
+   {
+    "depth": 2,
+    "title": "How to help",
+    "id": "how-to-help"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Porting to macOS and Linux",
+    "text": "HotTake ships for Windows only today, but it was written to stay portable: Rust, Tauri 2 and plain web code, no Windows UI frameworks. This page lists what is Windows-specific right now and what a macOS or Linux build needs. Each item is marked: - Verified in code : found in the HotTake source as described. - General guidance : standard Tauri or OS practice, not yet tried with HotTake. Treat these"
+   },
+   {
+    "id": "config-folder-uses-appdata-verified-in-code",
+    "title": "Config folder uses %APPDATA% (verified in code)",
+    "text": "host core::config dir() in crates/host-core/src/lib.rs returns HOTTAKE CONFIG DIR if set, else %APPDATA%\\HotTake. macOS and Linux have no APPDATA variable, so it returns nothing. As a result: - The game library is off. Imports fail with \"the game library is unavailable (no config folder)\". - Online play finds no online.json and stays hidden. Change: add a per-OS fallback. A sketch, not yet in the "
+   },
+   {
+    "id": "cloudflared-lookup-and-lifetime-verified-in-code",
+    "title": "cloudflared lookup and lifetime (verified in code)",
+    "text": "In crates/host-core/src/online.rs: - find cloudflared() checks HOTTAKE CLOUDFLARED, then PATH, then Program Files folders. It already uses cloudflared (no .exe) off Windows. - On Windows, cloudflared is started with CREATE NO WINDOW and put in a job object (windows-sys, a cfg(windows) dependency in crates/host-core/Cargo.toml). The job kills the tunnel when HotTake exits, even on a forced close. E"
+   },
+   {
+    "id": "hotspot-detection-and-adapter-names-verified-in-code",
+    "title": "Hotspot detection and adapter names (verified in code)",
+    "text": "crates/host-core/src/net.rs picks the LAN addresses for the QR code: - is windows hotspot() treats 192.168.137.x as Windows Mobile Hotspot or Wi-Fi Direct. It ranks it after the shared Wi-Fi and labels it \"Laptop hotspot / direct link\". - Virtual adapters are skipped by name hints: vethernet, virtualbox, vmware, wsl, hyper-v, docker, tailscale, zerotier, loopback. - Other addresses are labelled wi"
+   },
+   {
+    "id": "windows-only-tests-verified-in-code",
+    "title": "Windows-only tests (verified in code)",
+    "text": "Three tests are [cfg(windows)] and simply don't run elsewhere: - library.rs: hidden folders are refused through links and short names, which uses cmd /C mklink /J and 8.3 short names. - library.rs: removing a locked imported game is a disk error, which uses Windows share modes. - tests/library.rs: a junction out of a dev folder is not followed, which uses mklink /J. The code they protect (canonica"
+   },
+   {
+    "id": "path-rules-that-stay-as-they-are-verified-in-code",
+    "title": "Path rules that stay as they are (verified in code)",
+    "text": "Zip import and manifest paths refuse backslashes, drive letters, Windows device names (con, nul…), characters Windows cannot store, and names that differ only in case. These rules are stricter than macOS or Linux need, and that is deliberate: a game zipped on a Mac must still unpack on Windows. Keep them. Rust code joins paths with PathBuf::join; no hard-coded separators were found outside tests."
+   },
+   {
+    "id": "firewall-verified-in-code",
+    "title": "Firewall (verified in code)",
+    "text": "There is no netsh or firewall code. On Windows the OS prompts the first time HotTake listens on 0.0.0.0. HotTake needs 47801/tcp from the LAN and 47810–47899/udp for WebRTC. Port 47802 is loopback-only."
+   },
+   {
+    "id": "webview-assumptions-verified-in-code-plus-guidance",
+    "title": "Webview assumptions (verified in code, plus guidance)",
+    "text": "The window loads http://127.0.0.1:47801/host/ as an external URL (apps/desktop/src-tauri/src/main.rs). No IPC is used, and no WebView2-only API was found in web/. WebRTC is handled in the Rust core, not the webview, so WebKitGTK's lack of RTCPeerConnection doesn't matter. Still check: - macOS WKWebView (general guidance): that plain-HTTP loads from 127.0.0.1 are allowed (if not, add NSAllowsLocalN"
+   },
+   {
+    "id": "bundling-verified-in-code",
+    "title": "Bundling (verified in code)",
+    "text": "tauri.conf.json sets bundle.targets to [\"nsis\"] with a Windows-only nsis block. icon.icns is already in the icon list. The windows subsystem attribute in main.rs is ignored on other targets. (app.windows: [] in the config is the Tauri window list, not the OS.)"
+   },
+   {
+    "id": "tooling-and-docs-verified-in-code",
+    "title": "Tooling and docs (verified in code)",
+    "text": "- scripts/screenshot-window.ps1 is PowerShell calling user32.dll: Windows only. - The README's automated runs use headless msedge, and --cdp against the desktop app uses WEBVIEW2 ADDITIONAL BROWSER ARGUMENTS. WKWebView and WebKitGTK don't speak the Chrome DevTools Protocol. On macOS and Linux, run --cdp bot runs against npm run dev with headless Chrome or Chromium on the host page. - The Developer"
+   },
+   {
+    "id": "macos-specifics-general-guidance",
+    "title": "macOS specifics (general guidance)",
+    "text": "- Platform config: add apps/desktop/src-tauri/tauri.macos.conf.json; Tauri merges it over tauri.conf.json on macOS: - Info.plist: Tauri merges src-tauri/Info.plist. On macOS 15 and later, the laptop sends WebRTC checks to phones on the LAN, which triggers the Local Network prompt. Add a reason string: - Firewall: with the application firewall on, macOS asks to accept incoming connections. Unsigned"
+   },
+   {
+    "id": "linux-specifics-general-guidance",
+    "title": "Linux specifics (general guidance)",
+    "text": "- Build dependencies (Debian/Ubuntu): - Platform config: apps/desktop/src-tauri/tauri.linux.conf.json with \"bundle\": { \"targets\": [\"deb\", \"appimage\"] }. - Firewall: nothing prompts. With ufw on, open the ports: - Graphics: if the window is blank or slow on some GPU drivers, try WEBKIT DISABLE DMABUF RENDERER=1, and measure frame times."
+   },
+   {
+    "id": "first-macos-build-step-by-step",
+    "title": "First macOS build: step by step",
+    "text": "1. Install the Xcode command line tools (xcode-select --install), Rust via rustup, and Node 22.18 or newer. 2. In the repo: npm install, then npm test. 3. cargo test --workspace. Expect the three Windows-only tests to be skipped; everything else should pass. Note any failures. 4. Run the headless host with a config folder: HOTTAKE CONFIG DIR=$HOME/hottake-dev npm run dev. Open http://127.0.0.1:478"
+   },
+   {
+    "id": "porting-checklist",
+    "title": "Porting checklist",
+    "text": "- [ ] config dir() has macOS and Linux fallbacks - [ ] cloudflared found in Homebrew and system paths; orphan handling on macOS and Linux - [ ] Hotspot subnets and adapter labels for macOS and Linux in net.rs - [ ] Unix twins for the three Windows-only tests - [ ] tauri.macos.conf.json and tauri.linux.conf.json with bundle targets - [ ] Info.plist with NSLocalNetworkUsageDescription - [ ] Host scr"
+   },
+   {
+    "id": "how-to-help",
+    "title": "How to help",
+    "text": "If you try HotTake on macOS or Linux, please share what happened, even if it's only \"the tests pass\". Open an issue, or a PR if you have a fix. Include: - OS and version, CPU (Apple silicon, Intel, x86 64, ARM) and, for Linux, the distro and WebKitGTK version. - Which steps above you got through, and the first one that failed, with the error text. - Which games ran well and which were slow, plus t"
+   }
+  ]
+ },
+ {
+  "slug": "contributing",
+  "title": "Contributing",
+  "description": "How the HotTake repo is laid out, how to get the source, coding conventions, tests, the disk budget, specs and plans, and licence rules for third-party code.",
+  "section": "Build & contribute",
+  "order": 4,
+  "headings": [
+   {
+    "depth": 2,
+    "title": "Getting the source",
+    "id": "getting-the-source"
+   },
+   {
+    "depth": 2,
+    "title": "Repo layout",
+    "id": "repo-layout"
+   },
+   {
+    "depth": 2,
+    "title": "Coding conventions",
+    "id": "coding-conventions"
+   },
+   {
+    "depth": 3,
+    "title": "Rust",
+    "id": "rust"
+   },
+   {
+    "depth": 3,
+    "title": "JavaScript",
+    "id": "javascript"
+   },
+   {
+    "depth": 3,
+    "title": "Writing",
+    "id": "writing"
+   },
+   {
+    "depth": 2,
+    "title": "Tests",
+    "id": "tests"
+   },
+   {
+    "depth": 2,
+    "title": "The disk budget",
+    "id": "the-disk-budget"
+   },
+   {
+    "depth": 2,
+    "title": "Specs and plans",
+    "id": "specs-and-plans"
+   },
+   {
+    "depth": 2,
+    "title": "How to propose a change",
+    "id": "how-to-propose-a-change"
+   },
+   {
+    "depth": 2,
+    "title": "Licences and credits for third-party code",
+    "id": "licences-and-credits-for-third-party-code"
+   }
+  ],
+  "chunks": [
+   {
+    "id": "",
+    "title": "Contributing",
+    "text": "HotTake is small enough to read end to end: one Rust crate, one Tauri app, plain web modules and a folder per game. This page explains how the repo is organised and how to get a change in."
+   },
+   {
+    "id": "getting-the-source",
+    "title": "Getting the source",
+    "text": "The HotTake app source is not public yet. Access is available on request: use the contact on /creator and say what you'd like to work on. The website, including these docs, is open source at https://github.com/PranshuBasak/hottake-website. Fixes to the docs and the site can go straight there as issues or pull requests."
+   },
+   {
+    "id": "repo-layout",
+    "title": "Repo layout",
+    "text": "Path What lives there --- --- crates/ host-core, the Rust library that does everything on the laptop: rooms and seats, phone WebSocket and WebRTC, the shell bridge, asset serving, the game library and the online tunnel. Also the headless hottake-server binary and the integration tests in crates/host-core/tests/. apps/ apps/desktop: the Tauri 2 app (src-tauri/), its icons, capability file and the s"
+   },
+   {
+    "id": "coding-conventions",
+    "title": "Coding conventions",
+    "text": "None of this is enforced by a linter config; it is what the existing code does. Match it."
+   },
+   {
+    "id": "rust",
+    "title": "Rust",
+    "text": "- Every module starts with a //! comment that says what it is for. Comments explain why , often with the bug or attack they prevent. - anyhow for errors at the edges and tracing for logs (tracing::info!, warn! with structured fields). User-facing error strings are plain English and specific, because the host screen shows them verbatim. - Unit tests live in a [cfg(test)] mod tests at the bottom of "
+   },
+   {
+    "id": "javascript",
+    "title": "JavaScript",
+    "text": "- Plain ES modules, no bundler, for web/ and the native games. Files are served as-is, so they must run directly in the browser. - Games keep their simulation pure: sim.js has no DOM and no SDK, is deterministic and fixed-step, and is unit-tested on its own. Rendering and SDK glue live in render.js and main.js. games/coin-clash/ is the reference. - Games use shared code from games/ kit/ instead of"
+   },
+   {
+    "id": "writing",
+    "title": "Writing",
+    "text": "User-facing text, docs and specs use short sentences and plain words. The README is the reference manual: a change in behaviour updates it in the same PR. Line endings are LF (.gitattributes sets eol=lf)."
+   },
+   {
+    "id": "tests",
+    "title": "Tests",
+    "text": "Run all of these before opening a PR: Then the end-to-end bots, against a running host with a host screen open: If you touched a game, run its bot command with --until-end; it must exit 0. The full per-game list, timeouts and the --cdp, --turns, --training and --tutorial flags are on Testing games. If you touched vendor/webrtc-sctp, also run its own tests there (cargo test --lib -- --skip fuzz art"
+   },
+   {
+    "id": "the-disk-budget",
+    "title": "The disk budget",
+    "text": "Rust and Vite builds grow fast. The rule: build and debug leftovers stay under 10 GB in total. It counts target/debug, target/test-build, target/tmp, vendor/ /target, ports/ /node modules and ports/ /dist. target/release (the shipped exe and installer) is never counted or deleted. Check the budget before you finish a piece of work, and clean up screenshots, logs, browser profiles and scratch folde"
+   },
+   {
+    "id": "specs-and-plans",
+    "title": "Specs and plans",
+    "text": "Bigger changes are designed before they are built. The documents live in docs/superpowers/: - Specs (docs/superpowers/specs/YYYY-MM-DD-<topic -design.md): why the change is needed, success criteria, non-goals, the approaches considered and the one chosen, constraints and testing. A spec starts as a draft and is marked approved when the maintainer agrees. - Plans (docs/superpowers/plans/YYYY-MM-DD-"
+   },
+   {
+    "id": "how-to-propose-a-change",
+    "title": "How to propose a change",
+    "text": "1. Open an issue. Say what's wrong or missing, and how you'd know it's fixed. Small fixes (a typo, a one-line bug with a test) can go straight to a PR. 2. Write a spec for anything bigger: a new feature, a protocol or SDK change, a new game, a port. Use the structure of the existing specs and put it in docs/superpowers/specs/. Agree on it in the issue before writing much code. 3. Write a plan if t"
+   },
+   {
+    "id": "licences-and-credits-for-third-party-code",
+    "title": "Licences and credits for third-party code",
+    "text": "HotTake is MIT-licensed (license = \"MIT\" in the workspace). Anything third-party that ships with it must have a licence that allows that, and must be credited. - NOTICE.md lists every bundled third-party component: name, version or pinned commit, licence, and the path where its licence file sits. Add a row when you add a component, and update it when you upgrade one. - Keep the licence file next t"
+   }
+  ]
+ }
+]

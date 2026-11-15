@@ -116,7 +116,7 @@ export default function HowToPlayPage() {
                 Hover the phone&apos;s stick or buttons: each press travels to the laptop and the player answers. Drawn with <a href="https://hairline.lucasmarkes.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-foreground">Hairline</a> (MIT).
               </figcaption>
             </figure>
-            <div className="mt-6 rounded-3xl border border-border bg-bg-1 p-5 sm:p-6">
+            <div className="mt-6">
               <ControlsTabs />
             </div>
           </section>
@@ -144,9 +144,17 @@ export default function HowToPlayPage() {
           <section id="online" aria-labelledby="online-h">
             <h2 id="online-h" className="flex items-center gap-3 text-3xl font-bold"><Globe className="size-7 text-[#3ec1ff]" aria-hidden /> Online play</h2>
             <p className="mt-4 text-muted-foreground">
-              Friends somewhere else can join through <span className="font-mono text-foreground">hottake.pranshubasak.site</span> while they watch your screen on a video call.
-              Turn on Online play in Options › Network and send them the invite link or the room code. Phones connect directly when they can and fall back to a relay when a mobile carrier blocks it.
+              Friends somewhere else can join while they watch your screen on a video call. HotTake does this through a tunnel you
+              own: set up a free Cloudflare Tunnel on your laptop, point a hostname you control at it (for example
+              <span className="font-mono text-foreground"> play.yourdomain.com</span>) and add it to HotTake&apos;s online settings.
             </p>
+            <p className="mt-3 text-muted-foreground">
+              Then turn on Online play in Options › Network and send friends the invite link or the room code. Phones connect directly
+              when they can and fall back to a relay (optional Cloudflare TURN) when a mobile carrier blocks it.
+            </p>
+            <Link href="/docs/online-play" className="mt-4 inline-flex items-center gap-1 font-semibold text-amber underline underline-offset-4">
+              Set up online play with your own domain →
+            </Link>
           </section>
 
           <section id="troubleshooting" aria-labelledby="trouble-h">
@@ -173,7 +181,7 @@ export default function HowToPlayPage() {
             <h2 id="make-h" className="text-3xl font-bold">Make your own game</h2>
             <p className="mt-4 text-muted-foreground">
               A HotTake game is a folder with a <code className="font-mono text-foreground">manifest.json</code> and an <code className="font-mono text-foreground">index.html</code>, run in a sandboxed frame.
-              Any engine works. Turn on Developer mode under Options › Developer, download the starter template, load your folder, and share the result as a zip that others drop onto their HotTake window.
+              Any engine works. Turn on Developer mode under Options › Developer, download the starter template, load your folder, and share the result as a zip that others drop onto their HotTake window. The full guide is in the <Link href="/docs/making-games" className="text-amber underline underline-offset-4">developer docs</Link>.
             </p>
           </section>
 

@@ -1,0 +1,28 @@
+export const meta = { title: "HotTake documentation", description: "How HotTake works inside, how to make your own party games for it, and how to build, update and port the desktop app.", section: "Start here", order: 1 };
+
+HotTake turns a laptop into a party-game console: the laptop runs the host app and shows the game, and every player uses their phone as the controller through the browser. These docs are for people who want to go further than playing, whether that is understanding how it works, making a game, or helping build the app.
+
+> Just want to play? The player guide is on [How to play](/how-to-play). Everything here is for developers.
+
+## What's in here
+
+| Section | Read it when you want to… |
+| --- | --- |
+| [Architecture](/docs/architecture) | understand the pieces: the Rust host core, the host screen, the phone controller and how input travels |
+| [Making games](/docs/making-games) | build your own game with the Screen SDK, test it with bots and share it as a zip |
+| [Build & contribute](/docs/building) | build the Windows app from source, run online play on your own domain, port it to macOS or Linux, or send a change |
+
+## HotTake in one minute
+
+- **One host, no cloud.** The desktop app runs a small web server on the laptop. Phones on the same Wi-Fi load the controller page from it, so there is no game server and no account.
+- **Fast input.** Button presses travel over an unreliable WebRTC data channel (UDP), so a lost packet never holds up the next one. WebSocket is the automatic fallback.
+- **Games are web pages.** Each game is a folder with a `manifest.json` and an `index.html`, running in a sandboxed frame on its own origin. Use plain canvas, Phaser, Pixi, three.js or WASM: the platform does not care.
+- **A tiny SDK.** Games import one script to learn who joined, read each player's input, message phones and report results.
+
+## Where to start
+
+1. New to the codebase: read [Architecture](/docs/architecture), then [Host core](/docs/host-core).
+2. Want to make a game: start with [Making games](/docs/making-games) and keep the [SDK reference](/docs/sdk-reference) open.
+3. Want to help with the app itself, including a macOS build: read [Building from source](/docs/building), [macOS and Linux](/docs/macos-linux) and [Contributing](/docs/contributing).
+
+Press `/` or `Ctrl K` anywhere in the docs to search.

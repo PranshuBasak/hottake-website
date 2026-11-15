@@ -1,0 +1,303 @@
+export const meta = { title: "SDK reference", description: "Every export of the HotTake Screen SDK: Party.connect, players, events, input(), controller layouts, setTurn, send, end and the debug hooks.", section: "Making games", order: 2 };
+
+The Screen SDK is one ES module, `web/sdk/screen-sdk.js`, served to games at `/sdk/screen-sdk.js`. It is the only API a game uses to talk to the platform, and it does not depend on any engine. This page documents everything the module exports, with types and short examples.
+
+```js
+import { Party } from "/sdk/screen-sdk.js";
+
+const party = await Party.connect();
+party.loading(0.5);
+party.ready();
+```
+
+## Module exports
+
+| Export | Type | What it is |
+|---|---|---|
+| `Party` | class | The connection to the platform. Get one with `Party.connect()`. |
+| `SDK_VERSION` | `number` | The SDK protocol version, currently `1`. |
+| `InputTracker` | class | The per-player input state behind `party.input()`. Exported for tests. |
+| `guardFileDrops(target)` | function | Stops a file dragged over the game from navigating the window. Called on `window` automatically when the module loads. |
+
+You normally only need `Party`.
+
+## Connecting
+
+### `Party.connect(options?)`
+
+```js
+static connect({ timeoutMs = 10000 } = {}): Promise<Party>
+```
+
+Waits for the host's handshake over a private `MessagePort` and resolves with a connected `Party`. If no handshake arrives within `timeoutMs` (10 seconds by default) it rejects with `HotTake: no platform handshake (open this game from the HotTake host)`. That is what you see when you open a game's page directly in a browser.
+
+The handshake carries the players, the default controller layout (from your manifest's `controller` block), the leader, the tournament flag and whether debug mode is on. Player events that happen while your page loads are queued and delivered right after it.
+
+### `party.loading(progress)`
+
+```js
+loading(progress: number): void
+```
+
+Reports load progress (0 to 1, clamped) to the platform loader. Optional.
+
+### `party.ready()`
+
+```js
+ready(): void
+```
+
+Hides the platform loader and starts the heartbeat watchdog. Call it within 30 seconds of the page loading, or the game is sent back to the lobby. Calling it again does nothing.
+
+## Properties
+
+| Property | Type | Meaning |
+|---|---|---|
+| `players` | `Player[]` | Everyone in the room, sorted by seat, kept up to date by the SDK on join, leave and reconnect. |
+| `paused` | `boolean` | `true` while the host's pause card is up. Don't step your simulation while it is. |
+| `leader` | `string` or `null` | The player id of HotTake's leader (the phone that runs the menus), or `null` when there is none. Updated with the `leader` event. |
+| `tournament` | `boolean` | `true` when this game is a tournament round. Fixed for the game's life. |
+| `sdkVersion` | `number` | The protocol version the host answered with. |
+| `settings` | `object` | Reserved for host settings. Currently always `{}`. |
+
+A `Player` is:
+
+```js
+{
+  id: string,        // stable for the session, survives reconnects
+  seat: number,      // seat order in the room
+  name: string,
+  color: string,     // CSS colour, the same as the dot on their phone
+  connected: boolean // false while the phone has dropped (seat held for 60 s)
+}
+```
+
+Keyboard players, USB gamepads ("Pad N") and dock bots ("Bot N") are ordinary players: a game cannot tell them from phones.
+
+## Events
+
+### `party.on(event, handler)`
+
+```js
+on(event: string, handler: Function): () => void
+```
+
+Adds a handler and returns a function that removes it. A handler that throws does not break the SDK: the error is sent to the host log as `<event> handler: <stack>`.
+
+| Event | Handler arguments | When |
+|---|---|---|
+| `join` | `(player)` | A new player joined mid-game. |
+| `leave` | `(player)` | A player's phone dropped (or they were removed). `player.connected` is `false`. |
+| `reconnect` | `(player)` | A dropped player came back with the same id. Their press counters are reset. |
+| `message` | `(playerId, data)` | A message from a phone. The built-in pad does not send any today. |
+| `pause` | `()` | The host paused. `party.paused` is now `true`. |
+| `resume` | `()` | The host resumed. `party.paused` is now `false`. |
+| `volume` | `(v)` | The host's sound volume changed, `0` to `1` (`0` when Sound is off). |
+| `leader` | `(id)` | HotTake's leader changed; `id` is a player id or `null`. |
+| `debug` | `({ speed, frozen, steps, stepCost })` | Debug mode only: the dock changed a time control. |
+
+```js
+const off = party.on("join", (p) => seat(p));
+party.on("reconnect", (p) => seat(p));
+party.on("leave", (p) => dim(p.id));
+party.on("volume", (v) => sfx.setVolume(v));
+// later: off();
+```
+
+## Reading input
+
+### `party.input(playerId)`
+
+```js
+input(playerId: string): Input
+```
+
+Returns the latest controller state for one player. Call it **once per fixed simulation step per player**: it consumes the press counts, so a second call in the same step sees zero presses.
+
+```js
+{
+  stick:   { x: number, y: number },  // -1..1, y points down
+  stick2:  { x: number, y: number },  // second stick (twin layout, gamepads); 0 otherwise
+  buttons: { [label]: boolean },      // held right now, keyed by button label
+  pressed: { [label]: number },       // presses since your last read; only labels with 1 or more
+  seq:     number,                    // the phone's packet sequence number
+  ageMs:   number                     // ms since this state arrived; Infinity if none yet
+}
+```
+
+- **Labels.** Button keys are the labels of the player's current layout (`layoutFor(id).buttons`). Change the labels and the keys change with them.
+- **Taps are never lost.** Each phone button carries a wrapping 8-bit press counter. `pressed[label]` is the difference since your last read, so a tap that went down and up between two steps still counts.
+- **Sticks.** The phone applies a 0.2 dead zone and clamps to the unit circle. A d-pad and the keyboard give `-1`, `0` or `1` per axis. USB gamepads use a 0.15 dead zone.
+- **Nothing yet.** An unknown id, or a player with no input yet, returns a frozen empty state: zero sticks, no buttons, `ageMs: Infinity`. After `leave` and `reconnect` the state is reset the same way.
+- **Stale input.** Use `ageMs` to treat a quiet player as neutral. Night Siege treats input older than 500 ms that way.
+
+```js
+for (const p of seated) {
+  const i = party.input(p.id);
+  p.vx = i.stick.x * SPEED;
+  if (i.pressed.Jump) jump(p);          // pressed counts are numbers; 0 is absent
+  p.charging = i.buttons.Fire === true;
+}
+```
+
+The kit wraps this as `readPad(party, id)` in `games/_kit/input.js`, which returns buttons by index instead of label: `{ x, y, sx, sy, held[4], pressed[4] }`, with `x`/`y` quantised to `-1`, `0` or `1` (dead zone 0.3) and `sx`/`sy` raw.
+
+### `party.layoutFor(playerId)`
+
+```js
+layoutFor(playerId: string): Layout
+```
+
+The layout a player currently has: their own, if you set one for them, otherwise the default.
+
+## Controller layouts
+
+### `party.setController(layout, options?)`
+
+```js
+setController(layout: Layout, { players }?: { players?: string[] }): void
+```
+
+Sets what the phones show. Without `players` it replaces the default for everyone and clears every per-player layout. With `players` it sets the layout for just those ids.
+
+```js
+party.setController({ type: "gamepad", stick: "dpad", buttons: ["Jump", "Dash"] });
+party.setController({ type: "gamepad", stick: "none", buttons: [] }, { players: [spectatorId] });
+```
+
+The starting layout is your manifest's `controller` block, so phones show the right pad before your code runs.
+
+| Field | Values | Effect |
+|---|---|---|
+| `type` | `"gamepad"` | Required to show a pad. Any other value (or none) shows the phone's waiting screen, so players watch the TV. |
+| `stick` | `"dpad"` (default), `"joystick"`, `"none"` | The left control: an 8-way d-pad, an analogue joystick, or no stick. |
+| `buttons` | up to 4 strings | Button labels, in order. Long labels shrink to fit. Extra entries are ignored. |
+| `layout` | `"gamepad"` (default), `"twin"` | `"twin"` puts a joystick under each thumb: the left drives `stick`, the right drives `stick2`, with the buttons beside it. |
+| `hold` | array of labels | Buttons drawn with a hold ring, for hold-style actions such as charging or reviving. Only labels that are in `buttons` count. Visual only: read the held state from `buttons`. |
+| `arrange` | `"split"` | With `stick: "none"` and exactly two buttons (not twin), puts button 0 against the left edge and button 1 against the right: one thumb per side, for steering. Ignored otherwise. |
+| `banner` | string | A banner across the top of the pad, trimmed to 40 characters. |
+| `dim` | boolean | Dims the pad, for players who are waiting. |
+
+Changing only `banner` or `dim` keeps the pad, and any held buttons, in place. Changing `stick`, `buttons`, `layout`, `hold` or `arrange` rebuilds it.
+
+Real examples from the built-in games:
+
+```js
+// Orbit Snakes: two big steering buttons
+{ type: "gamepad", stick: "none", buttons: ["◀", "▶"], arrange: "split" }
+// Beetle Ball: Kick charges while held
+{ type: "gamepad", stick: "joystick", buttons: ["Kick", "Dash"], hold: ["Kick"] }
+// Night Siege (manifest controller block): twin stick
+{ "layout": "twin", "buttons": ["Fire", "Use", "Item", "Craft"], "hold": ["Fire"] }
+```
+
+### `party.setTurn(activeId, { active, waiting })`
+
+```js
+setTurn(activeId: string, { active: Layout, waiting: Layout }): void
+```
+
+A turn-based helper. The active player gets `active` with the banner "Your turn". Everyone else gets `waiting`, dimmed, with the banner "`Name`'s turn". Call it again whenever a player joins or leaves, so newcomers get the right pad.
+
+```js
+const padA = { type: "gamepad", stick: "joystick", buttons: ["Fire"] };
+const padB = { type: "gamepad", stick: "none", buttons: [] };
+party.setTurn(current.id, { active: padA, waiting: padB });
+```
+
+When the banner must carry private information (a dice hand, say), push per-player layouts yourself with `padPush` from `games/_kit/turns.js`. It only sends a layout when it changed.
+
+## Messages
+
+### `party.send(to, data)`
+
+```js
+send(to: string, data: any): void   // to: a player id or "all"
+```
+
+Sends JSON-serialisable data to a phone, or to every phone with `"all"`. The host drops a message larger than 16 kB (its JSON length) and anything past 30 messages a second per target, silently. The built-in phone understands two keys:
+
+| Key | Effect on the phone |
+|---|---|
+| `toast: string` | Shows the text for 2.5 seconds. |
+| `buzz: true` | A short vibration, only if the player turned Vibration on. |
+
+```js
+party.send(victimId, { toast: "Stomped! You dropped coins" });
+party.send("all", { toast: "Final lap!" });
+```
+
+## Ending the game
+
+### `party.end(result)`
+
+```js
+end({ scores = {}, lowerIsBetter = false, summary }?: {
+  scores?: { [playerId]: number },
+  lowerIsBetter?: boolean,
+  summary?: string
+}): void
+```
+
+Ends the game and returns everyone to the lobby with results.
+
+- `scores`: one number per player id. Only finite numbers for players in the room are kept.
+- `lowerIsBetter`: `true` ranks the smallest score first (strokes, times). Default `false`.
+- `summary`: an optional one-line headline, trimmed to 80 characters.
+
+```js
+party.end({ scores: { [a]: 12, [b]: 9 } });
+party.end({ scores: strokes, lowerIsBetter: true, summary: "Sam sank it in 31" });
+```
+
+Call it once. In a tournament (`party.tournament`), the scores and `lowerIsBetter` feed the standings.
+
+## Logging and quality
+
+### `party.log(...args)`
+
+Sends a line to the host log. It always reaches the host, and in Developer mode it shows in the debug dock's Console. Arguments are joined with spaces.
+
+### `party.reportQuality(level, name)`
+
+```js
+reportQuality(level: number, name: string): void
+```
+
+Tells the host your current quality level (shown in the debug dock). Pair it with `QualityGuard` from `games/_kit/quality.js`.
+
+## Debug mode
+
+When the host starts a game with Developer mode on, the SDK also:
+
+- forwards `console.warn`, `console.error`, uncaught errors and unhandled rejections to the dock, with file and line. It sends at most 50 lines a second (extras become one "… N lines dropped" line) and at most 2000 characters a line;
+- posts frame stats every 500 ms;
+- creates `globalThis.HotTakeDebug`.
+
+With debug off, nothing is wrapped or posted and `HotTakeDebug` is `undefined`.
+
+| `HotTakeDebug` field | Meaning | Written by |
+|---|---|---|
+| `speed` | Time scale, 1 is normal (0 to 8) | The SDK, from the dock |
+| `frozen` | The game is frozen | The SDK, from the dock |
+| `steps` | Fixed steps owed while frozen (up to 600) | The SDK adds them; your loop takes them off |
+| `stepCost` | Smoothed time of one step, in ms | Your loop |
+
+The kit's `startLoop` honours all four. On unfreeze the SDK drops presses made while frozen instead of landing them all on the next step. The dock only offers time controls once it sees a `stepCost` above 0; the loop contract is on [Testing games](/docs/testing-games).
+
+## The InputTracker class
+
+`InputTracker` is the state machine behind `party.input()`. You only need it for tests:
+
+```js
+import { InputTracker } from "/sdk/screen-sdk.js";
+
+const t = new InputTracker();
+t.update({ b: 0b01, x: 0, y: 0, c: [3, 0, 0, 0], s: 1, at: 0 });   // first frame: baseline
+t.update({ b: 0b00, x: 1, y: 0, c: [5, 0, 0, 0], s: 2, at: 10 });
+t.read(["Jump"], 20);
+// { stick: { x: 1, y: 0 }, stick2: { x: 0, y: 0 }, buttons: { Jump: false },
+//   pressed: { Jump: 2 }, seq: 2, ageMs: 10 }
+```
+
+`update(raw)` takes a frame (`b` held bitmask, `x`/`y`, optional `x2`/`y2`, `c` four press counters, `s` sequence, `at` arrival time). `read(labels, now)` returns an `Input`. `reset()` forgets history, which the SDK does on leave and reconnect so a fresh counter is not read as about 256 presses.

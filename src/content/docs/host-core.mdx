@@ -1,0 +1,137 @@
+export const meta = { title: "Host core", description: "The Rust crate behind HotTake: rooms and seats, phone and shell sockets, WebRTC, the binary protocol, asset serving and the Tauri wrapper.", section: "Architecture", order: 2 };
+
+`crates/host-core` is the whole server side of HotTake in one Rust library: axum for HTTP and WebSockets, tokio for the runtime, webrtc-rs for the data channel. The desktop app, the headless dev server and the integration tests all start it the same way, through `host_core::start(Config)`.
+
+You need the source to follow this page; see [/docs/contributing#getting-the-source](/docs/contributing#getting-the-source).
+
+## Starting the host
+
+`start` in `src/lib.rs` does the following, in order, and returns once both listeners are bound:
+
+1. Installs the `ring` TLS crypto provider (two backends end up in the build, and rustls panics if it has to choose).
+2. Binds the main listener on `0.0.0.0:47801` (or loopback when `Config.lan` is false) and the games listener on `127.0.0.1:47802`. A busy port fails with "could not open port … (is HotTake already running?)".
+3. Creates the `Room` with `random_code()` and `random_key()`, and the `Hub` with the host info, online settings, the desktop hooks and the game library (loaded on a blocking thread).
+4. Picks LAN addresses and spawns a watcher that re-checks them every 3 s, publishing a new room view when they change.
+5. Spawns the two axum servers. The main one disables Nagle so small input frames are never batched.
+6. If there is a library, spawns the dev-folder poller (every 1 s); each change becomes a `libraryChanged` message to the shell.
+7. Spawns the reconnect sweeper (every 1 s), which drops players whose hold has expired.
+
+`Config` carries `http_port`, `games_port` (0 picks a free port, used by tests), `lan`, the optional `on_fullscreen` and `on_pick_folder` hooks, and `config_dir`. The config folder is `HOTTAKE_CONFIG_DIR` if set, otherwise `%APPDATA%\HotTake`; it holds `online.json`, `library.json` and imported games.
+
+## Modules
+
+| File | Responsibility |
+|---|---|
+| `lib.rs` | `Config`, `start`, background tasks, logging |
+| `http.rs` | Routers, guards, CSPs, QR, catalog, library routes, embedded assets |
+| `hub.rs` | Shared state: room, connections, phase and layouts, fan-out |
+| `room.rs` | Pure seat logic |
+| `phone.rs` | One phone's WebSocket session |
+| `rtc.rs` | The WebRTC answerer |
+| `shell.rs` | The host screen's WebSocket session |
+| `protocol.rs` | Binary packets and JSON message enums |
+| `net.rs` | LAN addresses for the QR code |
+| `library.rs`, `manifest.rs` | Imported zips, dev folders, manifest validation |
+| `online.rs` | Cloudflare Tunnel and STUN/TURN |
+| `bin/hottake-server.rs` | The headless dev server |
+
+### http.rs
+
+`main_router` serves the phone side on `/`, `/manifest.webmanifest`, `/ws`, `/controller/*`, `/shared/*` and `/vendor/*`. The `/host/*` sub-router is wrapped in `host_guard` and serves the shell, `/host/ws`, `/host/qr.svg?i=N` (the Nth join URL as a QR), `/host/catalog.json` (`?dev=1` adds dev folders), `/host/cover/<id>`, `/host/room.json` (the room view with the key, for local tools such as the e2e bots) and the library routes: `GET /host/library/template.zip`, `POST /host/library/import`, `/folder` and `/remove`.
+
+`games_router` serves `/games/<id>/*` and `/sdk/*` behind `games_host_guard`. Built-in games and the shared `_kit` come from the executable and always win over a library game with the same id; library games are read from disk on a blocking thread through `library::resolve`. Every response gets the games CSP and `nosniff`.
+
+Files are embedded with `rust-embed` from `web/`, `games/` and `templates/starter/`. In debug builds rust-embed reads them from disk, so editing `web/` or `games/` only needs a page reload; release builds carry them inside the executable.
+
+`client_origin` decides whether a phone came through the online tunnel: a `cf-connecting-ip` header is trusted only from a loopback peer (that is, from `cloudflared`).
+
+### hub.rs
+
+`Hub` is the shared state behind an `Arc`. It holds std mutexes held only for short sections (lock order: `phones` before `room`), plus a tokio mutex for the library, since an import may hold it for seconds.
+
+- **Phones.** `admit_phone` checks the per-IP failed-join limit (8 per 60 s), admits through the room, stamps the player's `epoch` with the new connection id and closes any older connection for the same player with reason `replaced`. Each phone has a 512-frame outgoing queue; a phone that stops reading fills it and is disconnected.
+- **Shell.** One shell connection at a time. A second host screen replaces the first, which gets close reason `replaced`. The shell queue is 16384 frames; overflow drops frames.
+- **Hot path.** `forward_input(seat, pkt)` sends the shell frame without taking the room lock.
+- **Stage.** Phase (`lobby`, `playing`, `paused`), current and selected game, who paused, tournament flag and card, vibration, and controller layouts (one for everyone plus per-player overrides). Going to `paused` and back to `playing` keeps layouts; entering the lobby or starting a new game resets them to `{ "type": "lobby" }`.
+- **Publishing.** `publish_shell` sends a `room` view; `publish_phones` sends each phone its own `lobby` message (with its layout and whether it is the leader); `publish_all` does both.
+- **Kick.** `kick` closes the phone, frees the seat and calls `rotate_credentials`.
+
+### room.rs
+
+Pure logic with no I/O, unit-tested on its own.
+
+- **Seats.** Up to 8 (`MAX_PLAYERS`), seats 0–7, each with a palette colour. A player may pick another free palette colour; clashes are resolved automatically.
+- **Admission.** A `JoinRequest` carrying a known `player_id` takes its held seat back with no key needed: it proved itself on its first join. Otherwise the request needs the room key or the 4-letter code (case-insensitive). When every seat is taken, the seat of the player who disconnected longest ago goes to the newcomer. Otherwise the answer is `full`.
+- **Reconnect hold.** `disconnect` marks a player not connected and stamps the time; `sweep` removes players held for `RECONNECT_HOLD` (60 s).
+- **Leader.** `vip()` is the connected non-local player in the lowest seat. Keyboard players, gamepads and bots are local and never lead.
+- **Removal changes the room code.** After a kick, `rotate_credentials` issues a new key and a code guaranteed to differ from the old one, so the removed phone cannot rejoin with what it had. Everyone else keeps reconnecting by player id.
+- **Names.** Trimmed, control characters removed, capped at 16 characters, defaulting to "Player N".
+
+### phone.rs
+
+`handle_phone` runs one phone's socket. Before `hello` only the join is accepted. After it:
+
+- Binary packets go through `on_packet`, which first checks `hub.is_current` so a replaced or kicked connection can never inject input into a seat. Pings are echoed; inputs are forwarded.
+- `rtcOffer` builds a new `RtcLink` (closing any old one) and replies `rtcAnswer`.
+- `rtt` updates the player's ping, at most once per 900 ms.
+- `msg` goes to the shell, at most 30 per second.
+- `start`, `pause`, `menu` and `nav` become `startRequest` or `phoneAction` for the shell after Rust-side checks: Start and nav keys are leader-only (nav only in the lobby, 15 per second), pause only while playing (one per second), and `menu_allowed` decides each menu action by phase, leader and tournament card.
+
+No message for 15 s closes the session (phones ping every 500 ms). Over 200 invalid packets or messages closes it with reason `invalid`.
+
+### rtc.rs
+
+`answer` creates a peer connection restricted to UDP over IPv4, ports 47810–47899, and to host candidates on the current LAN addresses. It creates a pre-negotiated data channel `input` (id 1, unordered, `max_retransmits: 0`), sets the phone's offer, and returns a complete answer SDP after gathering (non-trickle, 3 s cap). For tunnel phones it adds the STUN and TURN servers from `online.rs`.
+
+### shell.rs
+
+`handle_shell` accepts the shell's JSON messages: `setLayout`, `send`, `phase`, `select`, `setVibrate`, `addLocal`, `removeLocal`, `kick`, `rename`, `setColor`, `moveSeat` (the last three only in the lobby), `fullscreen`, `pickFolder` and `setOnline`. When the shell disconnects, the host sets the phase back to `lobby` so phones leave a gamepad that drives nothing.
+
+### net.rs, library.rs, manifest.rs, online.rs
+
+- `net.rs` ranks private IPv4 addresses (192.168 first, then the Windows hotspot range, then 10/8 and 172.16/12), skips virtual adapters (WSL, Hyper-V, Docker, VMware, Tailscale…) and keeps at most 4.
+- `library.rs` imports zips through a staging folder and registers dev folders; `poll_folders` detects edits. See [/docs/sharing-games](/docs/sharing-games).
+- `manifest.rs` validates manifests with human-readable errors. See [/docs/manifest](/docs/manifest).
+- `online.rs` runs `cloudflared` (tied to a Windows job object so it dies with the app) and generates short-lived TURN credentials. See [/docs/online-play](/docs/online-play).
+
+## The binary protocol
+
+Input and pings are tiny little-endian packets defined in `protocol.rs` and mirrored by `web/shared/codec.js`:
+
+```text
+Ping        [u8 1][u16 seq][f64 sentAtMs]                                  11 bytes, echoed
+Input       [u8 2][u16 seq][u8 buttons][i8 x][i8 y][u8 press0..3]          10 bytes
+Twin input  [u8 3][u16 seq][u8 buttons][i8 x][i8 y][i8 x2][i8 y2][u8 press0..3]  12 bytes
+To shell    [type][u8 seat][everything after the phone's type byte]       11 or 13 bytes
+```
+
+`classify` accepts a packet only when type and exact length match. `InputPacket::shell_frame(seat)` inserts the seat byte. JSON messages are serde enums tagged by `t` with camelCase fields: `PhoneIn`, `PhoneOut`, `ShellIn` and `ShellOut`. Details are in [/docs/networking](/docs/networking).
+
+## The headless dev server
+
+`src/bin/hottake-server.rs` starts the same host without a window:
+
+```bash
+npm run dev          # cargo run -p host-core --bin hottake-server
+```
+
+It prints the host screen URL (`http://127.0.0.1:47801/host/`), a test phone URL on loopback and the LAN join URLs, then runs until Ctrl+C. Open the host screen in a browser on the laptop. Games only run while a host screen is open.
+
+```bash
+HOTTAKE_HTTP_PORT=47901 HOTTAKE_GAMES_PORT=47902 npm run dev
+```
+
+runs a second host beside the desktop app. Integration tests in `crates/host-core/tests/` start hosts on port 0 and drive them with real WebSockets (`cargo test --workspace`).
+
+## The desktop app
+
+`apps/desktop/src-tauri/src/main.rs` is short. In Tauri's `setup` it builds a `host_core::Config` with two hooks:
+
+- `on_fullscreen` finds the `main` window and calls `set_fullscreen`.
+- `on_pick_folder` opens the dialog plugin's native folder picker, parented to the window, and passes the chosen path back to the shell as `folderPicked`.
+
+It then runs `host_core::start` with `block_on`. On success it opens a window on the external URL `http://127.0.0.1:47801/host/`, maximized and fullscreen, with Tauri's drag-and-drop handler disabled so the page receives dropped game zips. On failure, usually a busy port, it opens the bundled `dist/index.html` with the error, which says another copy is probably running.
+
+`tauri.conf.json` declares no windows (the code creates the one window), sets `csp` to null because the host core sends its own, and bundles a per-user NSIS installer. `capabilities/default.json` grants no permissions, so page scripts have no Tauri IPC.
+
+Build commands are on [/docs/building](/docs/building).

@@ -1,0 +1,110 @@
+export const meta = { title: "Sharing games", description: "Package a HotTake game as a zip, import, replace and remove it, what the host serves from a game folder, and the security limits of imported games.", section: "Making games", order: 5 };
+
+A HotTake game travels as a plain zip of its folder. The other person drops it on their HotTake window and it lands on the shelf next to the built-in games. This page covers packaging, the import rules and limits, and what you should know about running someone else's game.
+
+## Packaging a game as a zip
+
+Zip the game folder so that `manifest.json` is either at the top of the zip or inside exactly one top-level folder. Both of these work:
+
+```text
+tap-dash.zip                 tap-dash.zip
+├── manifest.json            └── tap-dash/
+├── index.html                   ├── manifest.json
+├── main.js                      ├── index.html
+└── cover.svg                    ├── main.js
+                                 └── cover.svg
+```
+
+On Windows, right-click the folder and choose **Send to › Compressed (zipped) folder**. Elsewhere:
+
+```bash
+cd tap-dash && zip -r ../tap-dash.zip . -x ".*" -x "node_modules/*"
+```
+
+Before you zip:
+
+- **Ship built output only.** If you use a bundler, zip the build folder, not your source tree. Leave out `node_modules`, tests and source maps you don't need.
+- **Bump `version`.** The person importing sees the installed and incoming versions when they replace your game.
+- **Include licences.** If your game uses someone else's code, fonts or art, add the `credits` block and keep their licence files in the zip (see [Porting games](/docs/porting-games)).
+- **Nothing remote.** The game must run with no network access beyond its own folder.
+
+## Importing
+
+Switch on **Options › Developer › Developer mode** first (the import controls are hidden without it), then either:
+
+- press **Import game (.zip)** in the same tab, or
+- drop the `.zip` anywhere on the HotTake window.
+
+The first import shows a warning and asks you to confirm ("I trust it"), because imported games are someone else's code. The zip is checked and unpacked in a staging folder, and moved into place only when complete, so a failed import leaves nothing behind.
+
+Imported games are unpacked into the app-data folder, `%APPDATA%\HotTake\games\<id>` (or under `HOTTAKE_CONFIG_DIR` when set). They survive app updates, show on the shelf tagged "Imported", and are served like built-in games. Imported games stay visible with Developer mode off.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Zip size | 64 MB |
+| Unpacked size | 256 MB, checked while unpacking as well as from the zip's header |
+| Entries | 2000 |
+| Name length | 255 bytes per entry |
+| `manifest.json` | 1 MB |
+
+The import refuses:
+
+- absolute paths, `..` segments, drive letters, backslashes and characters Windows cannot store,
+- Windows device names (`con`, `nul`…),
+- symlinks and devices,
+- password-protected (encrypted) entries,
+- compression methods other than deflate or stored,
+- names that differ only in case.
+
+A `__MACOSX/` folder is skipped. Some older zip tools write backslashes into entry names. If an import says a path "is not a safe path inside the game folder", re-zip with Explorer or `zip`.
+
+Errors come back as one readable line, for example:
+
+```text
+the zip has 2312 entries (max 2000)
+the game unpacks to more than 256 MB
+"../evil.js" is not a safe path inside the game folder
+manifest.json was not found at the top of the zip or inside its one top-level folder
+manifest.json: tagline is 96 characters (max 80)
+```
+
+## Replacing and removing
+
+- **Same id, already imported.** HotTake asks whether to **Replace** it, showing the installed and incoming versions: "this game is already installed (version 1.0.0); importing version 1.1.0 will replace it". Under the hood the first request gets HTTP `409` and the retry is `POST /host/library/import?replace=1`. A replace is staged too; if it is interrupted, the old copy is put back on the next start.
+- **A built-in's id.** Refused: `"coin-clash" is the id of a built-in game; give your game another id`.
+- **An id used by a dev folder.** Refused until you remove the folder from the library, and the reverse holds for loading a folder whose id is already imported.
+
+**Options › Developer › Installed games** lists every imported and dev-folder game with its name, version and source:
+
+| Source | Buttons |
+|---|---|
+| Imported | **Replace…** (pick a new zip) and **Remove**, which deletes the game's files |
+| Dev folder | **Reload now** and **Remove**, which only forgets the folder |
+
+**Remove** is hold-to-confirm.
+
+## What is served
+
+Every game, built-in or not, is served from the games origin at `http://127.0.0.1:47802/games/<id>/`. The rules:
+
+- **Everything in the folder is reachable**, except files and folders whose names start with `.` (`.env`, `.git/config`). That check also applies after resolving links, junctions and short names.
+- **Nothing outside the folder.** A link or junction that leads out of the game folder is not followed.
+- **No caching.** Imported and dev-folder files are sent with `no-store`, so edits show on the next load.
+- **Loopback only.** The games port answers only requests whose `Host` is `127.0.0.1` or `localhost` on that port. Phones never load games; they only get layouts.
+- **A strict CSP** on every response: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'`. Inline scripts, remote scripts, `eval` and requests to other hosts are all blocked.
+- **The shared kit and SDK** are always there: `/games/_kit/` (so `../_kit/loop.js` works from any game) and `/sdk/screen-sdk.js`.
+- **Built-ins win.** A built-in game's folder is always served from the app, never from the library.
+
+## Security caveats
+
+Developer mode is a switch in the host screen, not a lock. Know the limits before you import a game or register a folder.
+
+**Imported games are someone else's code.** They run in the same sandboxed frame as built-in games and on the same origin. That means an imported game can read other games' local storage and fetch any file of any other game on that origin, including registered dev folders. It cannot reach the host app's routes, your other files or the network. Import only games you trust.
+
+**Dev folders are readable by local programs.** Every registered dev folder's files (except `.`-names) are served on `127.0.0.1:47802` to anything running on the computer, and to imported games through the shared origin. Dev folders are often project roots: keep secrets in `.`-files such as `.env`, or out of the folder entirely. Register only folders you don't mind other local programs reading.
+
+**The library routes are local, not private.** Web pages and phones cannot reach the host's `/host/library` routes (import, dev folder, remove). But while the app runs, any process on this computer can, including one run by another Windows user, whether Developer mode is on or off.
+
+**Turning Developer mode off** hides dev-folder games, the Developer tab's controls, the dock and drag and drop. Imported games stay on the shelf. It does not unregister folders or remove imported games: turn it back on and use **Remove** for that.

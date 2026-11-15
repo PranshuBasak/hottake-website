@@ -53,7 +53,7 @@ const features: Feature[] = [
   {
     icon: Globe,
     title: "Friends far away? Send a link.",
-    body: "Switch on online play and remote friends join through hottake.pranshubasak.site while they watch your screen on a call.",
+    body: "Point your own Cloudflare Tunnel hostname at the laptop, switch on online play, and remote friends join while they watch your screen on a call.",
     accent: "#b18cff",
   },
 ];
@@ -64,15 +64,17 @@ export function Features() {
   useGSAP(
     () => {
       if (!shouldAnimate()) return;
+      // Cards rise and un-tilt into place. clearProps hands the transform back to CSS once done.
       gsap.from("[data-feature]", {
         y: 60,
         autoAlpha: 0,
-        rotateX: -12,
+        rotationX: -12,
         transformOrigin: "50% 100%",
         stagger: 0.08,
         duration: 1.1,
         ease: "expo.out",
-        scrollTrigger: { trigger: root.current, start: "top 75%", once: true },
+        clearProps: "transform,opacity,visibility",
+        scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
       });
     },
     { scope: root },
@@ -139,7 +141,7 @@ function Card({ icon: Icon, title, body, className, accent }: Feature) {
     <article
       data-feature
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-border bg-bg-1 p-7 transition-[border-color,transform] duration-500 hover:-translate-y-1 hover:border-white/20",
+        "group relative overflow-hidden rounded-3xl border border-border bg-bg-1 p-7 transition-[border-color] duration-500 hover:border-white/20",
         className,
       )}
     >

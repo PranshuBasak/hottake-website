@@ -1,0 +1,162 @@
+export const meta = { title: "Building from source", description: "Build HotTake on Windows: prerequisites, npm scripts, the Cargo workspace, debug vs release, versioning, icons and the release checklist.", section: "Build & contribute", order: 1 };
+
+HotTake is a Cargo workspace with a Tauri 2 desktop app on top and a handful of Node scripts around it. This page covers everything from a fresh Windows machine to a published installer. If you don't have the source yet, see [Getting the source](/docs/contributing#getting-the-source).
+
+## Prerequisites
+
+| Tool | Version | Notes |
+|---|---|---|
+| Rust | stable, MSVC toolchain | Install with rustup; the default `x86_64-pc-windows-msvc` host is what the build expects. You also need the Visual Studio C++ build tools that rustup asks for. |
+| Node.js | 22.18 or newer | `package.json` declares `"node": ">=22.18"`. Used for the Tauri CLI, tests, bots and build scripts. |
+| WebView2 | any current runtime | Built into Windows 11. The host screen runs in it. |
+
+Then, from the repo root:
+
+```powershell
+npm install
+```
+
+That installs only the Tauri CLI (`@tauri-apps/cli`). Ported games have their own `package.json` files and install their own dependencies when you build them.
+
+## npm scripts
+
+| Script | What it runs | Use it for |
+|---|---|---|
+| `npm run dev` | `cargo run -p host-core --bin hottake-server` | The headless host: no window. Open `http://127.0.0.1:47801/host/` in a browser to get the host screen. Fastest loop for web and game work. |
+| `npm run app:dev` | `tauri dev` | The real desktop app in a debug build, with a console window for logs. |
+| `npm run app:build` | `tauri build` | Release exe plus the NSIS installer. |
+| `npm run build:ports` | `node scripts/build-ports.mjs` | Rebuilds the ported co-op games into `games/<id>/`. Pass ids to build only some: `npm run build:ports -- night-siege`. |
+| `npm run disk` | `node scripts/disk-budget.mjs` | Prints how much space build leftovers use, against the 10 GB budget. |
+| `npm test` | `node --test` over `tests/js/**/*.test.mjs` | JS unit tests. |
+| `npm run test:rust` | `cargo test --workspace` | Rust unit and integration tests. |
+| `npm run bots` | `node tests/e2e/bots.mjs` | Bot phones against a running host. See [Testing games](/docs/testing-games). |
+
+The headless host takes two environment variables so you can run a second host next to the desktop app:
+
+```bash
+HOTTAKE_HTTP_PORT=47901 HOTTAKE_GAMES_PORT=47902 npm run dev
+```
+
+On PowerShell, set them first with `$env:HOTTAKE_HTTP_PORT = "47901"` and `$env:HOTTAKE_GAMES_PORT = "47902"`.
+
+## Where the build output goes
+
+`npm run app:build` writes:
+
+```text
+target/release/hottake.exe
+target/release/bundle/nsis/HotTake_0.1.0_x64-setup.exe
+```
+
+The installer name comes from `productName` and `version` in `tauri.conf.json`. The NSIS installer uses `installMode: "currentUser"`, so it installs without admin rights.
+
+## Cargo workspace layout
+
+The root `Cargo.toml` defines a two-member workspace:
+
+| Member | Package | What it builds |
+|---|---|---|
+| `crates/host-core` | `host-core` | The library with everything the host does (rooms, phone WebSocket and WebRTC, shell bridge, asset serving, game library, online tunnel), plus the `hottake-server` binary used by `npm run dev`. |
+| `apps/desktop/src-tauri` | `hottake-desktop` | The Tauri app, binary name `hottake`. It calls `host_core::start` and opens one fullscreen window on the host screen. |
+
+Both crates inherit `edition`, `version` and `license` from `[workspace.package]`. Profiles are tuned for disk and link time:
+
+- `[profile.dev]` keeps line tables for our own crates (enough for panics and backtraces) and drops debug info for dependencies. This took `target/debug` from about 20 GB down to a few GB.
+- `[profile.release]` uses `lto = "thin"` and `codegen-units = 4`.
+
+The desktop crate's `tauri.conf.json` has an empty `app.windows` list on purpose: the window is created in `main.rs` after the host core has bound its ports, and points at `http://127.0.0.1:47801/host/`. If the host fails to start (usually because another copy already holds port 47801), the window opens the small error page in `apps/desktop/dist/index.html` instead.
+
+The capability file (`capabilities/default.json`) grants no permissions. Page scripts have no Tauri IPC; the Developer tab's folder picker is opened from Rust.
+
+## Vendored crates
+
+`vendor/webrtc-sctp` is `webrtc-sctp` 0.17.3 with one fix, wired in through `[patch.crates-io]` in the root `Cargo.toml` and excluded from the workspace.
+
+The upstream parser measured a FORWARD-TSN chunk against the rest of the packet instead of the chunk's own length. Chrome bundles FORWARD-TSN with other chunks all the time on unreliable channels, so whole packets were dropped. Phone ping crept from about 20 ms to 250 ms or more until the data channel failed. `vendor/webrtc-sctp/HOTTAKE-PATCH.md` explains the change. The crate's own tests run separately:
+
+```bash
+cd vendor/webrtc-sctp
+cargo test --lib -- --skip fuzz_artifact
+```
+
+The `webrtc` dependency in `host-core` is pinned to `=0.17.3` so the patch always applies. Drop the patch when an upstream release has an equivalent fix.
+
+## Debug vs release
+
+The host core serves `web/`, `games/` and `templates/starter/` through `rust-embed`. That crate behaves differently by profile:
+
+- **Debug builds** (`npm run dev`, `npm run app:dev`) read those folders from disk at request time. Edit a file in `web/` or `games/` and reload the page; no rebuild.
+- **Release builds** (`npm run app:build`) embed the folders into the executable. Any change to web files or games needs a new build.
+
+Because the release embeds `games/`, the ported games must be built before a release: `games/<id>/` for ports is committed build output, so the release stays offline.
+
+Two smaller differences:
+
+- Release builds use `windows_subsystem = "windows"`, so no console window. Debug builds keep the console, which is where logs go.
+- Logging uses `RUST_LOG` if set. The default filter is `info` with the noisy WebRTC crates at `warn`.
+
+## Versioning
+
+The version lives in two places, and they must match:
+
+| File | Field | Used for |
+|---|---|---|
+| `Cargo.toml` (root) | `[workspace.package] version` | Both crates (`version.workspace = true`). |
+| `apps/desktop/src-tauri/tauri.conf.json` | `version` | The app's version and the installer file name. |
+
+The root `package.json` is `"private": true` and has no `version` field, so there is nothing to bump there. `Cargo.lock` picks up the new version on the next build; commit it with the bump.
+
+## Icons
+
+The app icon is generated, not drawn by hand. `scripts/make-icon.mjs` writes a 1024×1024 PNG to `apps/desktop/app-icon.png` with no dependencies. The Tauri CLI then makes every size in `apps/desktop/src-tauri/icons/`:
+
+```bash
+node scripts/make-icon.mjs
+npx tauri icon apps/desktop/app-icon.png
+```
+
+`tauri.conf.json` lists `32x32.png`, `128x128.png`, `128x128@2x.png`, `icon.icns` and `icon.ico` for bundling. The other files in `icons/` (the `Square*Logo.png` set and `StoreLogo.png`) are produced by `tauri icon` as well.
+
+## Release checklist
+
+Work through this in order. Every step must pass before the next.
+
+1. **Bump the version** in both files above.
+2. **Rebuild the ports** if anything under `ports/` changed: `npm run build:ports`. Commit the output in `games/<id>/`.
+3. **Unit tests:** `npm test` and `cargo test --workspace`.
+4. **Bot runs:** start `npm run dev`, keep a host screen open, and run the per-game bot commands from the README (each must exit 0). A quick sanity pass first:
+
+   ```bash
+   node tests/e2e/bots.mjs 7 30 http://127.0.0.1:47801 --start
+   ```
+
+   The full list and flags are in [Testing games](/docs/testing-games).
+5. **Disk check:** `npm run disk`. Clean up if it reports 8 GB or more (`npm run disk -- --clean`).
+6. **Build:** `npm run app:build`.
+7. **Smoke test the installer**, not just the exe. Install it, start HotTake, and click **Allow** on the Windows network prompt. Then join from at least one real phone on the same Wi-Fi by QR code and play a round. Check the phone status shows `WebRTC`, and press **F3** on the laptop to see path and ping per player. If online play is set up, join one phone over mobile data too (see [Online play](/docs/online-play)).
+8. **Keep a copy.** `target/` is disposable; copy the installer somewhere safe. The repo ignores a top-level `release/` folder for this.
+
+## Publishing a new installer to the website
+
+The website lives in its own repo (open source, see [Contributing](/docs/contributing)). It serves the installer from Supabase Storage. In the website repo, with `SUPABASE_URL` and `SUPABASE_SECRET_KEY` set in its `.env.local`:
+
+```bash
+npm run upload:release -- <path-to-setup.exe> <version> <notes>
+```
+
+For example:
+
+```bash
+npm run upload:release -- ../release/HotTake_0.2.0_x64-setup.exe 0.2.0 "Ten new games and a faster lobby"
+```
+
+The script:
+
+1. Uploads the file to the `releases` bucket as `v<version>/<file name>`, overwriting any file already there.
+2. Records the size and SHA-256 of the file.
+3. Clears `is_latest` on the previous release, then upserts a row for this version with `is_latest = true`.
+4. Prints the public URL and the SHA-256.
+
+The site's `/download` page and `/api/download` read the latest release through a cache that revalidates every 10 minutes. The new installer shows up within 10 minutes; nothing needs redeploying.
+
+> Never commit `.env.local` or paste the secret key anywhere. It can write to storage and the database.

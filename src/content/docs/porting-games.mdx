@@ -1,0 +1,120 @@
+export const meta = { title: "Porting games", description: "How existing web games were ported: vendored upstream plus an adapter, the ports build, pad mapping, licences and the _kit helpers.", section: "Making games", order: 6 };
+
+Several HotTake games started life as someone else's open-source web game. This page explains the two ways they were ported, the pieces every port needs (pad mapping, one shared screen, the party lifecycle), the licensing duties that come with borrowed code, and the shared helpers in `games/_kit` that every game, ported or original, can use.
+
+## Two kinds of port
+
+**Hand ports** rewrite a small game's logic straight into `games/<id>/`. Tangle (from achtung-die-kurve), Bombermoji, Nebula Knockout (from hft-powpow), Star Convoy, Ricochet Tanks and Sushi Paws are hand ports. Tangle shows the usual shape: `curve.js` is the original's game logic turned into a pure ES module (no DOM, canvas or timers), with HotTake glue (`hottake.js`, `match.js`) around it. Each keeps its `LICENSE` and a `CREDITS.md` that names the upstream commit.
+
+**Build ports** keep a larger upstream project mostly as it is and build it into a game. Cartastrophe and Night Siege are TypeScript/Vite projects ported this way. Each lives in `ports/<id>/`:
+
+| Path | What it holds |
+|---|---|
+| `upstream/` | The upstream source at a pinned commit, without `.git`. Edits are kept small, and each one is marked with a `HotTake port` comment. |
+| `hottake/` | The adapter: the entry point, `Party.connect`, pad mapping, the shared-screen view and the party lifecycle. |
+| `static/` | `manifest.json`, `cover.svg`, `CREDITS.md`, and `LICENSE` or `PERMISSION.md`. Copied into the build output. |
+| `PORT.md` | The upstream URL, pinned commit, licence or permission, every removed path, every changed upstream file, and the port's limits. |
+| `package.json`, `vite.config.ts` | The port's own dependencies and build. Its `node_modules` stay inside `ports/<id>/`. |
+| `bundle-allow.json` | Optional waivers for the bundle scan, by file and exact text. Stale entries fail the build. |
+
+`PORT.md` is the most important file. Anyone updating the port to a newer upstream reads it first, so record every removal and modification in it with the reason.
+
+## Building ports
+
+```bash
+npm run build:ports                     # every port
+npm run build:ports -- night-siege      # one port
+node scripts/build-ports.mjs cartastrophe night-siege
+```
+
+For each port the script:
+
+1. runs `npm ci` (or `npm install` without a lockfile) inside `ports/<id>/`,
+2. runs `vite build` into `games/<id>.build`,
+3. copies `static/` in,
+4. checks the required files (`index.html`, `manifest.json`, `cover.svg`, `CREDITS.md`),
+5. scans the bundle: no `http(s)://` resource references, no `eval(` or `new Function(` unless waived,
+6. swaps the result into `games/<id>/`.
+
+On any failure `games/<id>/` is left untouched, the `.build` folder is removed and the exit code is 1. The output in `games/<id>/` is committed, so release builds stay offline and the Rust host can embed it. Port `node_modules` count towards the 10 GB disk budget; `npm run disk -- --clean` removes them first.
+
+## Removing what can't run
+
+A party game on one laptop has no accounts, no lobby servers and no internet. Ports strip:
+
+- **Online networking**: signalling servers, WebRTC meshes, public brokers (Cartastrophe dropped `peerjs` and its signal server).
+- **Websites and persistence**: account systems, payments, databases (Night Siege does not vendor upstream's website package at all).
+- **Tooling**: map editors, sprite labs, art generators, agent and editor config files.
+- **Remote assets**: fonts from Google Fonts and images from CDNs are replaced with bundled files, because the CSP blocks every other origin.
+
+Upstream code that is left in the tree but no longer imported is fine; it simply isn't in the bundle. Note it in `PORT.md`.
+
+## The server runs inside the page
+
+Night Siege's upstream is a client and a Node game server talking over WebSockets. HotTake games can't open sockets to anywhere, so the port runs the **real upstream server inside the page** and connects it to the client over a loopback:
+
+- `hottake/loopback-adapter.ts` implements upstream's server and socket adapter interfaces with in-memory sockets. Frames keep the original format (event type id, then the upstream-serialised payload), so neither side knows the difference.
+- `hottake/local-server.ts` builds upstream's `GameServer` with that adapter and manual ticks, and steps it at upstream's 20 Hz from an accumulator (at most 5 catch-up steps per call).
+- `hottake/shims.ts` stands in for every Node built-in and Node-only package the server imports (`events`, `crypto`, `fs` and so on), plus `process`, `Buffer` and `global`.
+- Each seated player gets their own socket into the server. One upstream client is attached to one seat's socket and draws the shared screen.
+
+The same idea works for any client/server game: keep the authoritative server, replace the transport.
+
+## Pad mapping
+
+Upstream games expect a keyboard and mouse, or a gamepad per player. The adapter turns each player's `party.input()` into the commands the upstream code already understands:
+
+- **Cartastrophe** (`hottake/mapping.ts`, pure and unit-tested): the stick becomes a screen-space `move` that upstream's own `screenMoveToWorld` rotates into the isometric world, so up on the stick walks up the screen. **Grab** down and up become `interact` and `interactRelease`, upstream's hold-to-channel key. Prompts that name the keyboard key "E" are rewritten to say Grab.
+- **Night Siege** (`hottake/pad-input.ts`): a twin-stick layout. The left stick moves (8 ways, dead zone 0.3); `stick2` aims, with auto-aim at the nearest zombie when it is idle; **Fire** is held; a **Use** press sends one interact and holding it revives; **Item** cycles slots and a 600 ms hold drops; **Craft** opens a wheel picked with a stick. Upstream events are sent only when they change, and input older than 500 ms counts as neutral.
+
+Keep the mapping in a module with no DOM so it can be tested in Node, like `mapping.ts`.
+
+## One shared screen
+
+Most upstream games follow one "my player". On a TV everyone shares one view, so ports turn the per-player UI off and draw their own:
+
+- **A shared camera.** Night Siege's `fitCamera` frames every player who is up or downed with a margin, never closer than the natural zoom and never further out than 0.6 times it. When the group is too spread out, it frames the biggest cluster and draws an edge arrow for each player off screen. `smoothCamera` eases centre and zoom, with hysteresis so the picture doesn't pump.
+- **Per-player labels.** Name tags, prompts and "what Use would do now" pills are drawn per player in their seat colour, instead of upstream's single prompt.
+- **Seat colours.** Upstream sprite tints are mapped to the nearest distinct colour for each seat; the HUD uses the exact seat colour.
+
+## The party lifecycle
+
+Every port wires the same SDK pieces described in [Making games](/docs/making-games): `loading` while assets load, `ready`, seats in seat order (late joiners get a seat, leavers keep theirs), stepping nothing while `party.paused`, a seed per round, and one `party.end` with scores. Ports also respect `party.tournament` (Cartastrophe hides its Training store in tournaments) and `party.leader` (the leader can drive a start card, with `games/_kit/pick.js` passing the pick on after 10 s of no input). Debug views such as `__cartastrophe.debugState()` exist only when `HotTakeDebug` is set; the bot harness uses them.
+
+## Licences and credits
+
+Porting someone's game means carrying their licence with it:
+
+- **Pick only allowed licences.** `credits.license` must be one of `MIT`, `BSD-2-Clause`, `BSD-3-Clause`, `Apache-2.0`, `ISC`, `CC0-1.0` or `CC-BY-4.0`. Code with no licence needs the author's written permission; built-in games record that as `"permission"` with `PERMISSION.md` and an explanatory `credits.notes`.
+- **Keep the licence text next to the code** as `LICENSE` (or `LICENSE.txt`). Third-party fonts and art keep their own licence files too, for example `fonts/OFL.txt` in Tangle and `twemoji/LICENSE-GRAPHICS` in Bombermoji.
+- **Write `CREDITS.md`**: the upstream project and author, the pinned commit, every asset's source and licence, and a summary of what the port changes.
+- **Fill in the manifest's `credits`** block (`author`, `url`, `license`, `notes`). The lobby shows the notes and licence under the game.
+- **Add a row to `NOTICE.md`** at the repository root for anything bundled into HotTake: component, version or commit, licence and path. This is where CC-BY assets get their attribution.
+- **Rename when it helps.** Tangle is a renamed port that uses none of the original Flash game's name or branding.
+
+`tests/js/manifests.test.mjs` fails the build when a credited game lacks its licence file, or a licence file has no credits block.
+
+## The shared kit: games/_kit
+
+The host serves `games/_kit/` to every game, including imported and dev-folder games, so `import { startLoop } from "../_kit/loop.js"` works anywhere. Every module is optional and has no dependencies, and the pure ones load in Node for tests.
+
+| Module | What it gives you |
+|---|---|
+| `loop.js` | `startLoop({ step, render, stepSeconds, isPaused })`: a fixed-step loop with interpolation alpha, at most 5 steps per frame, and the debug dock's speed, freeze, step and `stepCost` built in. Returns `{ stop() }`. |
+| `input.js` | `readPad(party, id, { deadzone })`: `{ x, y, sx, sy, held[4], pressed[4] }`, buttons by index and the stick quantised to -1, 0 or 1. Call once per step. |
+| `results.js` | `drawResults(ctx, { width, height, ranking, secondsLeft })`, a results board on a canvas, and `resultHeadline(ranking)` ("Sam wins!", "Sam & Ada tie!", "It's a draw!"). |
+| `rng.js` | `mulberry32(seed)`, a seeded PRNG returning numbers in 0 to 1, for reproducible rounds. |
+| `tween.js` | `lerp(a, b, t)` and `ease.outCubic`, `ease.inOutQuad`, `ease.outBack`. |
+| `sfx.js` | `Synth`: synthesised sounds with no audio files. `play(name)` for `jump`, `land`, `hit`, `coin`, `boom`, `tick` and `win`; `tone(freq, dur, opts)`; `setVolume(v)`. The `AudioContext` starts lazily, so it is silent and safe in Node. |
+| `sfx2.js` | More recipes on a `Synth`: `noise` bursts, `chord`, pitch-stepped `blip` (`stepFreq`) and a crowd `swell`. |
+| `juice.js` | Game feel: `Shake` (trauma-based screen shake), `HitStop`, pooled `Particles`, a `FlashLimiter` (at most 3 flashes a second), `squash`, and `reducedMotion()`, which turns shake and flashes off. |
+| `quality.js` | `QualityGuard({ levels, onChange })`: feed it frame times; it steps quality down below 30 fps for 3 s and back up above 55 fps for 10 s. Report the level with `party.reportQuality`. |
+| `frame-guard.js` | `guardFrame(frame, log)`: keeps a `requestAnimationFrame` loop alive through one bad frame, logging the error at most once a second. |
+| `platformer.js` | Tile platformer bodies from Coin Clash: `createBody`, `stepBody` (coyote time, jump buffer, one-way platforms, drop-through, dashes) and `unstickX`. Pure. |
+| `sprites.js` | Code-drawn sprite sheets: `buildSheet`, `frameAt`, `frameOnce`, `frameRect`, `drawFrame`, and the pure `layoutSheet`. |
+| `dice.js` | Seeded `rollDice`, `counts`, a tumble animation (`tumbleFrame`, `TUMBLE_FRAMES`) and `drawDie` with pips that read by shape, not colour. |
+| `lockin.js` | Simultaneous secret choices: `createLockin`, `press`, `drop` and `tick`, which reveals once everyone has locked or time is up. Pure. |
+| `turns.js` | `padPush(party)`: per-player controller layouts and banners sent only when they change, for private info that `setTurn` can't carry. |
+| `pick.js` | Who drives a start card: `newPick`, `stepPick` and `padActive`. The pick passes to the next seat after 10 s (`PICK_IDLE_MS`) of no input. |
+
+Start with `loop.js`, `input.js` and `results.js`, as the starter template does, and add the others as your game needs them.

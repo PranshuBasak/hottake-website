@@ -1,0 +1,188 @@
+export const meta = { title: "Porting to macOS and Linux", description: "What is Windows-specific in HotTake today, what to change for macOS and Linux, a first-build plan, a checklist, and how to report results.", section: "Build & contribute", order: 3 };
+
+HotTake ships for Windows only today, but it was written to stay portable: Rust, Tauri 2 and plain web code, no Windows UI frameworks. This page lists what is Windows-specific right now and what a macOS or Linux build needs.
+
+Each item is marked:
+
+- **Verified in code**: found in the HotTake source as described.
+- **General guidance**: standard Tauri or OS practice, not yet tried with HotTake. Treat these as starting points and report back.
+
+## Audit: what is Windows-specific today
+
+### Config folder uses %APPDATA% (verified in code)
+
+`host_core::config_dir()` in `crates/host-core/src/lib.rs` returns `HOTTAKE_CONFIG_DIR` if set, else `%APPDATA%\HotTake`. macOS and Linux have no `APPDATA` variable, so it returns nothing. As a result:
+
+- The game library is off. Imports fail with "the game library is unavailable (no config folder)".
+- Online play finds no `online.json` and stays hidden.
+
+**Change:** add a per-OS fallback. A sketch, not yet in the code:
+
+```rust
+pub fn config_dir() -> Option<std::path::PathBuf> {
+    use std::path::PathBuf;
+    if let Some(dir) = std::env::var_os("HOTTAKE_CONFIG_DIR") {
+        return Some(dir.into());
+    }
+    #[cfg(windows)]
+    return std::env::var_os("APPDATA").map(|d| PathBuf::from(d).join("HotTake"));
+    #[cfg(target_os = "macos")]
+    return std::env::var_os("HOME").map(|h| PathBuf::from(h).join("Library/Application Support/HotTake"));
+    #[cfg(all(unix, not(target_os = "macos")))]
+    return std::env::var_os("XDG_CONFIG_HOME")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".config")))
+        .map(|d| d.join("HotTake"));
+}
+```
+
+Until then, set `HOTTAKE_CONFIG_DIR` when testing.
+
+### cloudflared lookup and lifetime (verified in code)
+
+In `crates/host-core/src/online.rs`:
+
+- `find_cloudflared()` checks `HOTTAKE_CLOUDFLARED`, then `PATH`, then `Program Files` folders. It already uses `cloudflared` (no `.exe`) off Windows.
+- On Windows, `cloudflared` is started with `CREATE_NO_WINDOW` and put in a job object (`windows-sys`, a `cfg(windows)` dependency in `crates/host-core/Cargo.toml`). The job kills the tunnel when HotTake exits, even on a forced close. Elsewhere only `kill_on_drop` is left, so a crash or force-quit can leave `cloudflared` running.
+
+**Change on macOS (general guidance):** apps started from Finder get a minimal `PATH` without Homebrew, so also check `/opt/homebrew/bin` and `/usr/local/bin`. There is no job-object equivalent. One option: remember the child PID and kill a stale `cloudflared` at the next start.
+
+**Change on Linux (general guidance):** add `/usr/local/bin` and `/usr/bin`. Use `prctl(PR_SET_PDEATHSIG)` in a `pre_exec` hook so the child dies with HotTake.
+
+### Hotspot detection and adapter names (verified in code)
+
+`crates/host-core/src/net.rs` picks the LAN addresses for the QR code:
+
+- `is_windows_hotspot()` treats `192.168.137.x` as Windows Mobile Hotspot or Wi-Fi Direct. It ranks it after the shared Wi-Fi and labels it "Laptop hotspot / direct link".
+- Virtual adapters are skipped by name hints: `vethernet`, `virtualbox`, `vmware`, `wsl`, `hyper-v`, `docker`, `tailscale`, `zerotier`, `loopback`.
+- Other addresses are labelled with the raw adapter name, which on Windows reads nicely ("Wi-Fi").
+
+**Change (general guidance, verify the subnets on a real machine):**
+
+- macOS Internet Sharing usually puts clients on a `bridge100` interface, commonly `192.168.2.x`. Add a macOS hotspot rule. Map `en0`-style names to friendlier labels.
+- NetworkManager hotspots on Linux commonly use `10.42.0.1`. Add hints for `virbr`, `veth`, `br-` and `lxc`.
+
+### Windows-only tests (verified in code)
+
+Three tests are `#[cfg(windows)]` and simply don't run elsewhere:
+
+- `library.rs`: `hidden_folders_are_refused_through_links_and_short_names`, which uses `cmd /C mklink /J` and 8.3 short names.
+- `library.rs`: `removing_a_locked_imported_game_is_a_disk_error`, which uses Windows share modes.
+- `tests/library.rs`: `a_junction_out_of_a_dev_folder_is_not_followed`, which uses `mklink /J`.
+
+The code they protect (canonical-path checks) is portable. **Change:** add `#[cfg(unix)]` twins that use `std::os::unix::fs::symlink`, so the escape guards are tested on macOS and Linux too.
+
+### Path rules that stay as they are (verified in code)
+
+Zip import and manifest paths refuse backslashes, drive letters, Windows device names (`con`, `nul`…), characters Windows cannot store, and names that differ only in case. These rules are stricter than macOS or Linux need, and that is deliberate: a game zipped on a Mac must still unpack on Windows. Keep them. Rust code joins paths with `PathBuf::join`; no hard-coded separators were found outside tests.
+
+### Firewall (verified in code)
+
+There is no `netsh` or firewall code. On Windows the OS prompts the first time HotTake listens on `0.0.0.0`. HotTake needs `47801/tcp` from the LAN and `47810–47899/udp` for WebRTC. Port `47802` is loopback-only.
+
+### Webview assumptions (verified in code, plus guidance)
+
+The window loads `http://127.0.0.1:47801/host/` as an external URL (`apps/desktop/src-tauri/src/main.rs`). No IPC is used, and no WebView2-only API was found in `web/`. WebRTC is handled in the Rust core, not the webview, so WebKitGTK's lack of `RTCPeerConnection` doesn't matter. Still check:
+
+- **macOS WKWebView (general guidance):** that plain-HTTP loads from `127.0.0.1` are allowed (if not, add `NSAllowsLocalNetworking` under `NSAppTransportSecurity`). Also check the Gamepad API, fullscreen, audio autoplay, and the WebGL games (Sushi Paws, Cartastrophe, Night Siege). The project's research notes say WKWebView caps `requestAnimationFrame` at about 60 fps.
+- **Linux WebKitGTK (general guidance):** it can silently fall back to software WebGL. Gamepad support depends on how WebKitGTK was built. Test the heavy games first.
+
+### Bundling (verified in code)
+
+`tauri.conf.json` sets `bundle.targets` to `["nsis"]` with a Windows-only `nsis` block. `icon.icns` is already in the icon list. The `windows_subsystem` attribute in `main.rs` is ignored on other targets. (`app.windows: []` in the config is the Tauri window list, not the OS.)
+
+### Tooling and docs (verified in code)
+
+- `scripts/screenshot-window.ps1` is PowerShell calling `user32.dll`: Windows only.
+- The README's automated runs use headless `msedge`, and `--cdp` against the desktop app uses `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`. WKWebView and WebKitGTK don't speak the Chrome DevTools Protocol. On macOS and Linux, run `--cdp` bot runs against `npm run dev` with headless Chrome or Chromium on the host page.
+- The Developer tab's path placeholder shows `C:\games\my-game`. The error page's font stack falls back to `Segoe UI`. Both are cosmetic.
+- `scripts/build-ports.mjs` and `scripts/disk-budget.mjs` already handle both platforms.
+- The website's upload script sends installers with a Windows executable content type, and the site offers a Windows download only.
+
+## macOS specifics (general guidance)
+
+- **Platform config:** add `apps/desktop/src-tauri/tauri.macos.conf.json`; Tauri merges it over `tauri.conf.json` on macOS:
+
+  ```json
+  {
+    "bundle": {
+      "targets": ["app", "dmg"],
+      "macOS": { "minimumSystemVersion": "11.0" }
+    }
+  }
+  ```
+
+- **Info.plist:** Tauri merges `src-tauri/Info.plist`. On macOS 15 and later, the laptop sends WebRTC checks to phones on the LAN, which triggers the Local Network prompt. Add a reason string:
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+  <plist version="1.0">
+  <dict>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>HotTake lets phones on your Wi-Fi join as game controllers.</string>
+  </dict>
+  </plist>
+  ```
+
+- **Firewall:** with the application firewall on, macOS asks to accept incoming connections. Unsigned builds may be asked again after every rebuild; a signed app keeps its answer.
+- **Universal binary:** `rustup target add aarch64-apple-darwin x86_64-apple-darwin`, then `npm run app:build -- --target universal-apple-darwin`.
+- **Signing and notarization:** needs an Apple Developer ID. Tauri signs and notarizes during `tauri build` when `APPLE_SIGNING_IDENTITY` and the notarization variables (`APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID`, or the App Store Connect API key variables) are set. Never commit them.
+
+## Linux specifics (general guidance)
+
+- **Build dependencies (Debian/Ubuntu):**
+
+  ```bash
+  sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+  ```
+
+- **Platform config:** `apps/desktop/src-tauri/tauri.linux.conf.json` with `"bundle": { "targets": ["deb", "appimage"] }`.
+- **Firewall:** nothing prompts. With ufw on, open the ports:
+
+  ```bash
+  sudo ufw allow 47801/tcp
+  sudo ufw allow 47810:47899/udp
+  ```
+
+- **Graphics:** if the window is blank or slow on some GPU drivers, try `WEBKIT_DISABLE_DMABUF_RENDERER=1`, and measure frame times.
+
+## First macOS build: step by step
+
+1. Install the Xcode command line tools (`xcode-select --install`), Rust via rustup, and Node 22.18 or newer.
+2. In the repo: `npm install`, then `npm test`.
+3. `cargo test --workspace`. Expect the three Windows-only tests to be skipped; everything else should pass. Note any failures.
+4. Run the headless host with a config folder: `HOTTAKE_CONFIG_DIR=$HOME/hottake-dev npm run dev`. Open `http://127.0.0.1:47801/host/` in Chrome and join from a phone on the same Wi-Fi. This checks the Rust core and networking without the webview.
+5. Patch `config_dir()` (above) so the app works without the variable.
+6. Add `tauri.macos.conf.json` and `Info.plist`, then `npm run app:dev`. Check the window, fullscreen (F11), phones joining, the firewall and Local Network prompts, the path shown on the phone, and a WebGL game.
+7. Run the bots against it: `node tests/e2e/bots.mjs 4 0 http://127.0.0.1:47801 --start --game=coin-clash --until-end`.
+8. `npm run app:build` and open the `.dmg` from `target/release/bundle/dmg/`.
+9. Optional: a universal build, then signing and notarization.
+10. Install on a second Mac that has never seen HotTake and repeat the phone test.
+
+Linux follows the same path with its dependencies and config file instead.
+
+## Porting checklist
+
+- [ ] `config_dir()` has macOS and Linux fallbacks
+- [ ] `cloudflared` found in Homebrew and system paths; orphan handling on macOS and Linux
+- [ ] Hotspot subnets and adapter labels for macOS and Linux in `net.rs`
+- [ ] Unix twins for the three Windows-only tests
+- [ ] `tauri.macos.conf.json` and `tauri.linux.conf.json` with bundle targets
+- [ ] `Info.plist` with `NSLocalNetworkUsageDescription`
+- [ ] Host screen, fullscreen, gamepads and audio checked in WKWebView and WebKitGTK
+- [ ] All built-in games pass a bot run on the new platform
+- [ ] Real phones join over Wi-Fi; online play works with `cloudflared`
+- [ ] Signed and notarized `.dmg`; `.deb` and AppImage install on a clean machine
+- [ ] Website upload script and download page handle more than one platform
+
+## How to help
+
+If you try HotTake on macOS or Linux, please share what happened, even if it's only "the tests pass". Open an issue, or a PR if you have a fix. Include:
+
+- OS and version, CPU (Apple silicon, Intel, x86_64, ARM) and, for Linux, the distro and WebKitGTK version.
+- Which steps above you got through, and the first one that failed, with the error text.
+- Which games ran well and which were slow, plus the phone path you saw (`WebRTC`, `WebRTC relay` or `WebSocket`).
+- Whether you changed code, and how.
+
+See [Contributing](/docs/contributing) for how to get the source and how changes are proposed.

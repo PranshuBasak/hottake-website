@@ -1,0 +1,111 @@
+export const meta = { title: "Networking", description: "How phone input reaches a game: WebRTC data channel with WebSocket fallback, packet formats, ping stats, reconnects and LAN address detection.", section: "Architecture", order: 3 };
+
+Phone input takes the shortest path HotTake can find: an unreliable, unordered WebRTC data channel straight to the laptop, with the phone's WebSocket as a fallback that is always open. This page follows a button press from the phone to the game and explains what happens when the network misbehaves.
+
+The code lives in `web/controller/net.js`, `web/controller/rtc-retry.js`, `web/shared/codec.js` and the host core's `phone.rs`, `rtc.rs`, `protocol.rs` and `net.rs` (see [/docs/contributing#getting-the-source](/docs/contributing#getting-the-source)).
+
+## The input path
+
+```text
+ phone pad ──encodeInput──► data channel "input" ──┐
+ (pad.js)                   (or WebSocket /ws) ────┤
+                                                   ▼
+                                     host core: phone.rs on_packet
+                                     classify → is_current → forward_input
+                                                   │ adds the seat byte
+                                                   ▼
+                                     /host/ws binary frame (loopback)
+                                                   │
+                                     shell: decodeShellInput → GameFrame.input
+                                                   │ { t: "in", id, b, x, y, x2, y2, c, s }
+                                                   ▼
+                                     game MessagePort → SDK keeps the latest state
+                                     party.input(id) reads it on the game's tick
+```
+
+The host core never interprets input. It validates the packet, checks that the connection still owns the seat, and forwards it to the shell without taking the room lock (`Hub::forward_input`). The shell maps the seat to a player id and posts it to the game. The SDK keeps only the latest state per player plus press counters, so `party.input(id)` is a synchronous read.
+
+## Two transports
+
+| | WebRTC data channel | WebSocket `/ws` |
+|---|---|---|
+| Carries | Input and ping packets only | Join, layouts, messages, menu actions, and input/ping when WebRTC is not open |
+| Delivery | Unordered, `maxRetransmits: 0` | Ordered and reliable (TCP) |
+| Set up | After `welcome`: phone sends `rtcOffer`, host replies `rtcAnswer` | First thing the page opens |
+| Status label | `WebRTC` or `WebRTC relay` | `WebSocket` |
+
+Why unreliable? Each input packet is a full snapshot (held buttons, stick position, press counters), so a lost packet is replaced by the next one. Over TCP a single lost packet holds up every packet behind it (head-of-line blocking), which shows as lag spikes on busy Wi-Fi.
+
+The channel is pre-negotiated on both sides (`negotiated: true`, id 1, label `input`), so no extra signalling is needed to open it. Signalling is non-trickle: the phone waits for ICE gathering (1.5 s on the LAN, 3 s online) and sends one offer with its candidates; the host answers the same way. On the host, `rtc.rs` allows only IPv4 UDP on ports 47810–47899 and only candidates on the LAN addresses it picked, so the answer never advertises a virtual adapter.
+
+`Connection.sendPacket` in `net.js` uses the data channel when it is open and the WebSocket otherwise. Nothing else in the controller needs to know which path is live.
+
+## Packet formats
+
+Binary packets are little-endian. `web/shared/codec.js` must match `crates/host-core/src/protocol.rs` byte for byte; both have unit tests for it.
+
+| Packet | Layout | Bytes | Direction |
+|---|---|---|---|
+| Ping | `[u8 1][u16 seq][f64 sentAtMs]` | 11 | phone to host, echoed back unchanged |
+| Input | `[u8 2][u16 seq][u8 buttons][i8 x][i8 y][u8 press0..3]` | 10 | phone to host |
+| Twin input | `[u8 3][u16 seq][u8 buttons][i8 x][i8 y][i8 x2][i8 y2][u8 press0..3]` | 12 | phone to host |
+| Shell input | `[u8 2][u8 seat]` + the input bytes after the type | 11 | host to shell |
+| Shell twin | `[u8 3][u8 seat]` + the twin bytes after the type | 13 | host to shell |
+
+- `buttons` is a bitmask of held buttons; bit `i` is button `i` of the layout (at most 4).
+- `x` and `y` are the stick in -127..127 (`axisToI8`); y is positive downwards. The shell divides by 127.
+- `press0..3` are wrapping 8-bit counters that go up on every press. The SDK subtracts the last value it read, so a tap shorter than one game tick is never lost (`pressed.Jump` is 1, or 2 for a double tap).
+- Type 3 is used only by the twin-stick layout, which adds the second stick.
+
+The host's `classify` accepts a packet only when the type byte and the exact length agree. Anything else counts as invalid; after 200 the host closes the socket with reason `invalid`.
+
+JSON messages travel as WebSocket text frames, tagged by `t`. From the phone: `hello`, `rtcOffer`, `rtt`, `msg`, `start`, `pause`, `menu`, `nav`. To the phone: `welcome`, `reject`, `rtcAnswer`, `lobby` (phase, layout, leader flag, tournament card, name, colour), `msg`.
+
+### Send rate
+
+The controller does not send on a fixed clock. A 16 ms timer in `app.js` sends a snapshot every 16 ms (about 60 Hz) while a control is held and for 200 ms after any change, and every 250 ms otherwise as a keepalive, so a lost "release" packet is corrected quickly. Every touch change also sends at once.
+
+## Ping and latency stats
+
+Every 500 ms the phone sends a ping packet stamped with `performance.now()`. The host echoes it on whichever path it arrived. The phone keeps the last 20 round-trip samples and uses their median as its ping, shown in the status bar as, for example, `WebRTC · 23 ms`. Above 80 ms the label is marked slow.
+
+Every 2 s the phone reports that median as `{ "t": "rtt", "ms": 23 }`. The host accepts at most one report per 900 ms per phone, stores it on the player and republishes the room. The host screen shows it:
+
+- on each player chip (`WebRTC · 23 ms`), and
+- in Options › Network › Connections, opened with **F3**: player, link, ping and **last input** age per player, refreshed four times a second. Ping above 80 ms is flagged as slow.
+
+"Last input" is measured in the shell from the arrival time of each frame, so it shows a phone that is connected but not sending. Games get the same idea per player as `ageMs` from `party.input(id)`.
+
+## Reconnects
+
+Phones drop all the time: screens lock, Wi-Fi roams, browsers background tabs. Several layers cover it.
+
+**WebSocket.** When the socket closes, the phone retries after 0.5, 1, 2, then every 4 s, and immediately when the page becomes visible again. It sends the same `playerId`, saved in `sessionStorage` under `hottake:session`, so it survives a reload of the tab. It gives up only on close code 4000 with reason `kicked`, `replaced`, `bad-key`, `full` or `slow-down`.
+
+**Seat hold.** On the host, a phone silent for 15 s is closed (`IDLE_TIMEOUT`). Its seat is held for 60 s. A `hello` with that player id within the hold takes the seat back with no key or code. The shell tells the game `leave` when the player drops and `reconnect` when they return; a phone that reloads without ever showing as disconnected is detected by its changed `epoch` and also gets `reconnect`.
+
+**Replacement.** If the same player joins from another tab, the older connection is closed with `replaced`, and its packets are ignored from that moment (`hub.is_current`).
+
+**WebRTC.** The phone falls back to the WebSocket the moment the data channel closes or the peer connection reports `disconnected`, `failed` or `closed`. `createRtcRetry` then retries in the background after 1, 2, 5, 10 and 20 s; an offer whose channel has not opened within 10 s counts as lost. A successful open resets the back-off. On the host, the player's path switches between `rtc` and `ws` as the channel opens and closes, and the chip follows.
+
+## LAN addresses, hotspots and AP isolation
+
+The QR code needs an address phones can reach. `net.rs` reads the laptop's IPv4 interfaces and:
+
+- drops virtual adapters by name (vEthernet, VirtualBox, VMware, WSL, Hyper-V, Docker, Tailscale, ZeroTier, loopback),
+- keeps private ranges, ranked 192.168.x, then the Windows hotspot address, then 10.x, then 172.16–31.x,
+- keeps at most 4, each labelled with its adapter name.
+
+Windows Mobile Hotspot and Wi-Fi Direct links always use `192.168.137.1`; that address is labelled "Laptop hotspot / direct link". The host re-reads the interfaces every 3 s, so turning the hotspot on mid-session adds it to Options › Network within a few seconds. Clicking an address there puts it in the QR code. The same list feeds the WebRTC candidate filter.
+
+HotTake does not detect AP or client isolation itself. The symptom is a phone browser saying the laptop's address is unreachable while both are on the same Wi-Fi: the router keeps wireless clients apart, which is common on ISP, guest and office networks. Fixes, in order of ease:
+
+1. Turn client isolation off in the router.
+2. Turn on Windows Mobile Hotspot and have the phones join it, then pick the hotspot address in Options › Network.
+3. Use online play, which goes through the internet instead of the LAN.
+
+The first launch also needs Windows Firewall to allow HotTake; without it phones cannot connect either.
+
+## Online play
+
+With online play on, phones load the controller from a public hostname such as `play.example.com` through a Cloudflare Tunnel. The page detects HTTPS, uses `wss://` for its socket and receives STUN (and TURN, when configured) servers in `welcome`, so WebRTC can still find a direct or relayed UDP path. The host screen and its socket are refused through the tunnel. Setup and trade-offs are on [/docs/online-play](/docs/online-play).

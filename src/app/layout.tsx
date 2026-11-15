@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Atkinson_Hyperlegible, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -79,7 +78,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Toaster theme="dark" position="bottom-center" richColors />
           </TooltipProvider>
         </ConsentProvider>
-        <Script src="/vendor/ascii-magic/runtime/ascii.js" type="module" strategy="lazyOnload" />
       </body>
     </html>
   );

@@ -18,7 +18,7 @@ export function CreatorTeaser() {
     <section aria-labelledby="creator-title" className="container-site py-24">
       <Reveal className="grid items-center gap-10 overflow-hidden rounded-[2rem] border border-border bg-bg-1 p-8 sm:p-12 lg:grid-cols-[auto_1fr]">
         <div data-reveal className="relative mx-auto size-40 overflow-hidden rounded-full border border-amber/30 bg-bg-2 sm:size-48">
-          <AsciiArt piece="lcd-handheld-game" size={7} className="absolute inset-0 block h-full w-full" />
+          <AsciiArt cover piece="lcd-handheld-game" size={7} className="absolute inset-0 overflow-hidden h-full w-full" />
         </div>
         <div>
           <p data-reveal className="eyebrow mb-3">Made by one person</p>
@@ -71,9 +71,6 @@ export function FinalCta() {
     <section ref={root} aria-labelledby="cta-title" className="px-3 py-16">
       <div data-cta-card className="grain relative isolate mx-auto max-w-[1280px] overflow-hidden rounded-[2rem] border border-border px-6 py-20 sm:px-12 sm:py-28">
         <ShaderBg variant="ember" />
-        <div aria-hidden className="absolute inset-0 -z-0 opacity-25 mix-blend-screen">
-          <AsciiArt piece="starfield-warp" size={10} className="block h-full w-full" />
-        </div>
         <div className="relative mx-auto max-w-3xl text-center">
           <p className="eyebrow mb-4">Game night, sorted</p>
           <SplitHeading className="text-4xl font-extrabold sm:text-7xl">

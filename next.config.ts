@@ -1,6 +1,8 @@
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  pageExtensions: ["ts", "tsx", "md", "mdx"],
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
@@ -38,4 +40,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Docs live in src/content/docs/*.mdx. Plugins are named by string so Turbopack can load them.
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ["remark-gfm"],
+    rehypePlugins: [
+      "rehype-slug",
+      ["rehype-autolink-headings", { behavior: "wrap", properties: { className: ["heading-anchor"] } }],
+      ["rehype-pretty-code", { theme: "github-dark-dimmed", keepBackground: false, defaultLang: "text" }],
+    ],
+  },
+});
+
+export default withMDX(nextConfig);

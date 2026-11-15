@@ -1,0 +1,119 @@
+export const meta = { title: "Phone controller", description: "The phone side in web/controller: joining, the lobby remote, pad layouts, turn banners, setController, fullscreen and reconnects.", section: "Architecture", order: 5 };
+
+The phone controller is a small web page the laptop serves at `http://<lan-ip>:47801/`. Players open it by scanning the QR code; nothing is installed. It joins the room, shows a lobby screen or a menu remote, and turns into a touch gamepad whose layout the running game chooses.
+
+The code is in `web/controller/` (see [/docs/contributing#getting-the-source](/docs/contributing#getting-the-source)):
+
+| File | Role |
+|---|---|
+| `index.html`, `style.css` | Markup for the join form, lobby, pause screen and the pad container |
+| `app.js` | Wires everything: join, screen switching, input sending, toasts, the pause and fullscreen buttons |
+| `net.js` | `Connection`: WebSocket, WebRTC upgrade, pings, reconnects |
+| `rtc-retry.js` | Background retries for a lost WebRTC link |
+| `pad.js` | `PadState`, `mountPad`, `holdButton`, layout helpers |
+| `screens.js` | Lobby, leader remote, tournament controls and pause screens |
+| `fullscreen.js` | "Play mode": fullscreen, landscape lock, wake lock, the iPhone tip |
+| `manifest.webmanifest` | Lets the page be added to the home screen as a fullscreen landscape app |
+
+## Joining
+
+The QR link carries the room key in the URL fragment: `http://192.168.1.20:47801/#k=<key>`. The fragment never reaches the server in an HTTP request; the page reads it and sends it in its `hello`. With a key present the form asks only for a name. Without one, for example when the player typed the address, it also asks for the 4-letter room code shown on the TV.
+
+The name (up to 16 characters) is remembered in local storage. Tapping **Join**:
+
+1. Enters play mode (below). Browsers allow fullscreen only from a tap, so it happens here.
+2. Creates a `Connection`, which opens `/ws` and sends `hello` with the name, the key or code, and a saved player id if this tab joined before.
+3. On `welcome`, saves the player id in session storage, sets the player's colour as the page accent and starts WebRTC.
+
+A `reject` puts the form back with a reason:
+
+| Reason | Message |
+|---|---|
+| `full` | The room is full (8 players). |
+| `slow-down` | Too many wrong codes. Wait a minute, then try again. |
+| `bad-key` with a link | This link has expired. Enter the 4-letter code shown on the screen. |
+| `bad-key` with a code | That code didn't work. Check the screen and try again. |
+
+An expired link happens after the host removes a player: the key and code rotate, so the old QR stops working and the phone asks for the new code.
+
+## What the phone shows
+
+Every screen change comes from a `lobby` message the host sends whenever the phase, layout or roster changes. `screenFor(m)` in `screens.js` picks the screen:
+
+| Phase | Leader | Screen |
+|---|---|---|
+| `playing` with a `gamepad` layout | either | the pad |
+| `paused` | yes | pause screen with Resume, Restart and Quit (Skip game and End tournament in a tournament) |
+| `paused` | no | pause screen with Resume ("Anyone can resume.") |
+| `lobby` | yes | "You're the leader": the menu remote and Start |
+| `lobby` or `playing` without a pad | no | "You're in!", "Up next: …" or "Game on! Watch the screen." |
+
+The leader is the connected phone in the lowest seat. Their remote has up, down, left, right and select keys that send `nav` on touch-down, plus **Start** and **Back**. During a tournament's setup and standings cards the remote shows the tournament controls instead: − and + for the game count, Reroll, Start, or Next. The host ignores all of these from anyone but the leader.
+
+The top bar shows the player's name, the connection status (`WebRTC · 23 ms`, `WebRTC relay · …`, `WebSocket · …`, "Connecting…"), a fullscreen button and a pause button. Pause is a hold button: hold ⏸ for 300 ms to pause; a short tap shows the hint "Hold ⏸ to pause". It is greyed out but keeps its place outside play, so the fullscreen button never moves under a thumb.
+
+## The pad
+
+`mountPad(root, layout, onChange)` builds the controls from a layout object:
+
+```json
+{ "type": "gamepad", "stick": "dpad", "buttons": ["Jump", "Dash"], "hold": ["Dash"] }
+```
+
+| Field | Values | Effect |
+|---|---|---|
+| `stick` | `"dpad"` (default), `"joystick"`, `"none"` | Left-hand control |
+| `buttons` | up to 4 labels | Buttons 0–3 on the right; extra labels are ignored |
+| `hold` | labels from `buttons` | Those buttons get a ring, telling the player to hold them |
+| `arrange` | `"split"` | With `stick: "none"` and exactly two buttons, one big button against each screen edge |
+| `layout` | `"twin"` | Twin stick: a move stick under the left thumb, an aim stick under the right, buttons above it |
+| `banner` | text, up to 40 characters | A banner across the top |
+| `dim` | `true` | Dims the pad (waiting for your turn) |
+
+### Controls
+
+- **D-pad** is one touch surface, not four buttons: the direction follows the finger as it slides. Horizontal directions trigger at 25% of the radius from the centre, vertical at 45%, so diagonals are deliberate.
+- **Joystick** is a well with a knob. The touch is captured, so the thumb can leave the well and keep steering. Values below a 0.2 dead zone read as 0, and the vector is clamped to length 1.
+- **Buttons** are multi-touch through Pointer Events. Each press sets a bit and increments that button's press counter, which is how a game sees taps shorter than its tick. Long labels shrink to fit.
+- **Twin stick** sends the 12-byte type 3 packet with the second stick; every other layout sends the 10-byte type 2 packet. See [/docs/networking](/docs/networking).
+
+With vibration on in the host's Options, a press buzzes for 12 ms. A laptop keyboard also drives the pad, for testing: WASD or arrows for the stick (arrows drive the aim stick in twin mode), Space/J/Z, K/X, L/C and I/V for buttons 1 to 4.
+
+### How a game changes the pad
+
+The manifest's `controller` block is the default layout when a game launches. A game changes it at any time:
+
+```js
+party.setController({ type: "gamepad", stick: "joystick", buttons: ["Fire"] });       // everyone
+party.setController({ stick: "none", buttons: ["Left", "Right"], arrange: "split" },
+                    { players: [id] });                                                // one player
+```
+
+The SDK posts `setController` to the shell, which sends `setLayout` to the host. The host stores it for everyone or per player and pushes a fresh `lobby` message to each phone. The phone compares `controlsKey(layout)`, built from the stick, buttons, arrangement, twin flag and hold labels. If those are unchanged it only updates the banner and dimming, so buttons being held stay held. Otherwise it destroys the pad and builds a new one.
+
+### Turn-based games
+
+`party.setTurn(activeId, { active, waiting })` is a helper over `setController`. The active player gets `active` with the banner "Your turn"; everyone else gets `waiting` with "`<name>`'s turn" and `dim: true`. Because only the banner and dimming differ, a turn change does not rebuild anyone's pad. Call it again whenever a player joins or leaves.
+
+## Sending input
+
+The pad reports every change, and `app.js` sends a snapshot immediately. A 16 ms timer also resends while anything is held and for 200 ms after a change, and every 250 ms when idle. The resend corrects a lost release packet on the unreliable channel within a quarter of a second. When the game pauses or ends, the pad is destroyed, so its keepalive cannot keep a button held.
+
+## Fullscreen
+
+`enterPlayMode()` runs from the Join, Start and Resume taps:
+
+- On touch browsers with the Fullscreen API (Android), it requests fullscreen with the navigation UI hidden, then locks landscape.
+- It requests a screen wake lock and takes it again whenever the page becomes visible. Wake lock needs a secure context, so it works over online play's HTTPS, not on plain LAN HTTP.
+- iPhone Safari supports neither fullscreen nor orientation lock, so the first time it shows a tip to use Share › Add to Home Screen; the web app manifest then opens HotTake fullscreen and landscape.
+
+Laptop browsers (no coarse pointer) are left alone. The top-bar button re-enters fullscreen after leaving the browser, exits it, or shows the iPhone tip again.
+
+## Reconnect behaviour
+
+- **Socket lost:** an overlay says "Reconnecting…" and the phone retries after 0.5, 1, 2, then every 4 s, and immediately when the page becomes visible. It rejoins with its saved player id and gets its seat back if it returns within the host's 60 s hold.
+- **WebRTC lost:** input switches to the WebSocket at once and WebRTC is retried in the background.
+- **Closed for good:** close reasons `kicked`, `replaced`, `bad-key`, `full` and `slow-down` stop the retries. The phone returns to the join form with "The host removed you from the room.", "You joined from another tab or device, so this one stopped." or a request for the current room code.
+- **Host screen closed:** the host puts the phase back to `lobby`, so phones leave the pad.
+
+For the transport details see [/docs/networking](/docs/networking); for the API games use to shape the pad see [/docs/sdk-reference](/docs/sdk-reference).

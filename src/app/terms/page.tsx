@@ -89,8 +89,8 @@ export default function TermsPage() {
         <h2>Online play</h2>
         <p>
           The app runs locally on your laptop, and players usually connect over your local network. The optional online
-          play mode uses a Cloudflare Tunnel to hottake.pranshubasak.site to relay phone controller traffic to the host
-          laptop. This relay is part of the app and is covered by these terms. It is offered as is and may be
+          play mode uses a Cloudflare Tunnel, on a hostname the host sets up themselves, to relay phone controller traffic to the host
+          laptop. The tunnel runs on the host&apos;s own Cloudflare account and under Cloudflare&apos;s terms; the app feature that uses it is covered by these terms. It is offered as is and may be
           unavailable at times. The website analytics described in our privacy policy don&apos;t apply to the app.
         </p>
       </section>

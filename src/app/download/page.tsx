@@ -59,7 +59,7 @@ export default async function DownloadPage({ searchParams }: PageProps<"/downloa
             </div>
           </div>
           <div className="relative hidden aspect-square overflow-hidden rounded-[2rem] border border-border bg-bg-0/50 lg:block" aria-hidden>
-            <AsciiArt piece="synthwave-grid" size={11} className="absolute inset-0 block h-full w-full" />
+            <AsciiArt cover piece="synthwave-grid" size={11} className="absolute inset-0 overflow-hidden h-full w-full" />
           </div>
         </div>
       </section>

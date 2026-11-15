@@ -1,0 +1,115 @@
+export const meta = { title: "Contributing", description: "How the HotTake repo is laid out, how to get the source, coding conventions, tests, the disk budget, specs and plans, and licence rules for third-party code.", section: "Build & contribute", order: 4 };
+
+HotTake is small enough to read end to end: one Rust crate, one Tauri app, plain web modules and a folder per game. This page explains how the repo is organised and how to get a change in.
+
+## Getting the source
+
+The HotTake app source is not public yet. Access is available on request: use the contact on [/creator](/creator) and say what you'd like to work on.
+
+The website, including these docs, is open source at https://github.com/PranshuBasak/hottake-website. Fixes to the docs and the site can go straight there as issues or pull requests.
+
+## Repo layout
+
+| Path | What lives there |
+|---|---|
+| `crates/` | `host-core`, the Rust library that does everything on the laptop: rooms and seats, phone WebSocket and WebRTC, the shell bridge, asset serving, the game library and the online tunnel. Also the headless `hottake-server` binary and the integration tests in `crates/host-core/tests/`. |
+| `apps/` | `apps/desktop`: the Tauri 2 app (`src-tauri/`), its icons, capability file and the small startup error page in `dist/`. |
+| `web/` | Everything served to browsers: `shell/` (host screen), `controller/` (phone page), `sdk/screen-sdk.js` (the SDK games import), `shared/` (codec, theme, fonts) and `vendor/` (third-party browser libraries). |
+| `games/` | One folder per built-in game, each with a `manifest.json`, plus `_kit/`, the shared helpers games import (fixed-step loop, platformer physics, RNG, results…). Built output of the ports is committed here too. |
+| `ports/` | Source for ported games: `upstream/` at a pinned commit, the `hottake/` adapter, `static/` files and a `PORT.md` per port. See [Porting games](/docs/porting-games). |
+| `templates/` | `templates/starter/`, the starter game the Developer tab hands out as a zip. |
+| `tests/` | `tests/js/` (node:test unit tests, run by `npm test`) and `tests/e2e/` (bot phones that play real rounds against a running host). |
+| `scripts/` | Node build helpers: `build-ports.mjs`, `disk-budget.mjs`, `make-icon.mjs`, plus `screenshot-window.ps1` for capturing the app window on Windows. |
+| `vendor/` | Patched Rust crates. Today only `webrtc-sctp` (see [Building from source](/docs/building)). |
+| `docs/` | `docs/research/` (background research) and `docs/superpowers/` (design specs and implementation plans). |
+
+At the root: `Cargo.toml` (workspace), `package.json` (scripts and the Tauri CLI), `README.md` and `NOTICE.md`.
+
+## Coding conventions
+
+None of this is enforced by a linter config; it is what the existing code does. Match it.
+
+### Rust
+
+- Every module starts with a `//!` comment that says what it is for. Comments explain *why*, often with the bug or attack they prevent.
+- `anyhow` for errors at the edges and `tracing` for logs (`tracing::info!`, `warn!` with structured fields). User-facing error strings are plain English and specific, because the host screen shows them verbatim.
+- Unit tests live in a `#[cfg(test)] mod tests` at the bottom of the same file. Anything that needs a live server goes in `crates/host-core/tests/`.
+- Anything that touches files from a game, a zip or a dev folder goes through the existing path checks (`manifest::safe_relative`, `library::resolve`). Never build paths from request input yourself.
+- Platform-specific code is behind `#[cfg(windows)]` with a comment saying why.
+
+### JavaScript
+
+- Plain ES modules, no bundler, for `web/` and the native games. Files are served as-is, so they must run directly in the browser.
+- Games keep their simulation pure: `sim.js` has no DOM and no SDK, is deterministic and fixed-step, and is unit-tested on its own. Rendering and SDK glue live in `render.js` and `main.js`. `games/coin-clash/` is the reference.
+- Games use shared code from `games/_kit/` instead of copying it.
+- Nothing loads from outside. The games origin has a strict CSP (`connect-src 'self'`), and `build:ports` fails a bundle that references `http(s)://` resources or uses `eval` or `new Function`.
+- Ports are TypeScript plus Vite, built by `npm run build:ports` into `games/<id>/`, and that output is committed.
+
+### Writing
+
+User-facing text, docs and specs use short sentences and plain words. The README is the reference manual: a change in behaviour updates it in the same PR. Line endings are LF (`.gitattributes` sets `eol=lf`).
+
+## Tests
+
+Run all of these before opening a PR:
+
+```bash
+npm test                    # JS: codec, SDK input tracking, pads, kit, every game's simulation
+cargo test --workspace      # Rust: room and seat logic, protocol, library, live-server integration tests
+```
+
+Then the end-to-end bots, against a running host with a host screen open:
+
+```bash
+npm run dev                 # in one terminal; open http://127.0.0.1:47801/host/ in a browser
+node tests/e2e/bots.mjs 7 30 http://127.0.0.1:47801 --start
+node tests/e2e/bots.mjs 4 0 http://127.0.0.1:47801 --start --game=coin-clash --until-end
+```
+
+If you touched a game, run its bot command with `--until-end`; it must exit 0. The full per-game list, timeouts and the `--cdp`, `--turns`, `--training` and `--tutorial` flags are on [Testing games](/docs/testing-games). If you touched `vendor/webrtc-sctp`, also run its own tests there (`cargo test --lib -- --skip fuzz_artifact`).
+
+New behaviour comes with a test. Bugs get a test that fails before the fix.
+
+## The disk budget
+
+Rust and Vite builds grow fast. The rule: build and debug leftovers stay under **10 GB** in total.
+
+```bash
+npm run disk                # table of leftovers and the total; exits 1 at 10 GB or more
+npm run disk -- --clean     # at 8 GB or more: deletes port node_modules, then target/debug,
+                            # then target/test-build, until the total is below 8 GB
+npm run disk -- --extra=../scratch   # count an extra folder too
+```
+
+It counts `target/debug`, `target/test-build`, `target/tmp`, `vendor/*/target`, `ports/*/node_modules` and `ports/*/dist`. `target/release` (the shipped exe and installer) is never counted or deleted. Check the budget before you finish a piece of work, and clean up screenshots, logs, browser profiles and scratch folders you made while testing.
+
+## Specs and plans
+
+Bigger changes are designed before they are built. The documents live in `docs/superpowers/`:
+
+- **Specs** (`docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`): why the change is needed, success criteria, non-goals, the approaches considered and the one chosen, constraints and testing. A spec starts as a draft and is marked approved when the maintainer agrees.
+- **Plans** (`docs/superpowers/plans/YYYY-MM-DD-<topic>.md`): the approved spec broken into small tasks with checkboxes, the files each task touches and the tests that prove it. They are written so a contributor (or a coding agent) can work through them one task at a time.
+
+Read the spec behind an area before changing it. The original platform design (`2026-11-08-party-platform-design.md`) and the local-first addendum explain most of the architecture.
+
+## How to propose a change
+
+1. **Open an issue.** Say what's wrong or missing, and how you'd know it's fixed. Small fixes (a typo, a one-line bug with a test) can go straight to a PR.
+2. **Write a spec** for anything bigger: a new feature, a protocol or SDK change, a new game, a port. Use the structure of the existing specs and put it in `docs/superpowers/specs/`. Agree on it in the issue before writing much code.
+3. **Write a plan** if the work has more than a few steps.
+4. **Open a PR** on a branch (not `main`) that links the issue and the spec. In the description, say which tests and bot runs you did and what you checked on a real phone. Update the README and these docs if behaviour changed.
+
+Changes to the SDK or the manifest rules affect every game, including ones you can't see. Call those out clearly.
+
+## Licences and credits for third-party code
+
+HotTake is MIT-licensed (`license = "MIT"` in the workspace). Anything third-party that ships with it must have a licence that allows that, and must be credited.
+
+- **`NOTICE.md`** lists every bundled third-party component: name, version or pinned commit, licence, and the path where its licence file sits. Add a row when you add a component, and update it when you upgrade one.
+- **Keep the licence file next to the component.** Fonts keep their `OFL.txt`, vendored libraries their `LICENSE` and `NOTICE`, the patched crate its `LICENSE-MIT` and `LICENSE-APACHE` plus `HOTTAKE-PATCH.md`.
+- **Every ported or derived game** keeps its upstream `LICENSE` and a `CREDITS.md` in its folder. Ports also record the upstream URL, pinned commit, licence or written permission, and every upstream file changed in `ports/<id>/PORT.md`. When code is used with permission rather than under a licence, keep the permission record (`PERMISSION.md`) with it.
+- **Game manifests** may carry a `credits` block. Its `license` must be one of `MIT`, `BSD-2-Clause`, `BSD-3-Clause`, `Apache-2.0`, `ISC`, `CC0-1.0` or `CC-BY-4.0`.
+- **Art and sound** need a licence or permission too. Attribution-required assets (CC-BY) are credited by name in `CREDITS.md` and `NOTICE.md`. Assets whose licence doesn't fit (the Unsplash-licensed ASCII Magic pieces, for example) are left out, and `NOTICE.md` says so.
+- The README's games table credits each port in its **Credits** column. Keep it in step.
+
+If you're not sure whether something can ship, ask in the issue before adding it.

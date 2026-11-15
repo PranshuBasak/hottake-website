@@ -212,8 +212,9 @@ export default function PrivacyPage() {
           The {site.name} desktop app runs on your own laptop. It has no accounts and no telemetry, and the website
           analytics described here don&apos;t apply to it. Gameplay happens on your local network; players&apos;
           phones send only what is needed to run a game session on the host laptop. The app&apos;s online-play option
-          uses a Cloudflare Tunnel to hottake.pranshubasak.site to relay phone controller traffic to the host laptop.
-          That relay is part of the app and is covered by our <Link href="/terms">terms of use</Link>.
+          uses a Cloudflare Tunnel, on a hostname the host sets up themselves, to relay phone controller traffic to the host laptop.
+          That tunnel runs on the host&apos;s own Cloudflare account; this website never sees or stores that traffic. The app
+          itself is covered by our <Link href="/terms">terms of use</Link>.
         </p>
       </section>
 

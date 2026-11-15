@@ -56,7 +56,7 @@ export default function CreatorPage() {
             {creator.photo ? (
               <Image src={creator.photo} alt={creator.name} fill sizes="320px" className="object-cover" priority />
             ) : (
-              <AsciiArt piece="lcd-handheld-game" size={9} className="absolute inset-0 block h-full w-full" />
+              <AsciiArt cover piece="lcd-handheld-game" size={9} className="absolute inset-0 overflow-hidden h-full w-full" />
             )}
           </div>
         </div>

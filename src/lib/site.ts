@@ -38,6 +38,7 @@ export const site = {
 export const nav = [
   { href: "/games", label: "Games" },
   { href: "/how-to-play", label: "How to play" },
+  { href: "/docs", label: "Docs" },
   { href: "/creator", label: "Creator" },
   { href: "/download", label: "Download" },
 ] as const;

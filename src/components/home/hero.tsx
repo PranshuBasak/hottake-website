@@ -27,7 +27,7 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
       tl.from(split.words, { y: "0.32em", rotate: 2, color: "#5a4a40", duration: 1.1, stagger: 0.05 }, 0)
         .from(q("[data-hero-eyebrow]"), { y: 20, autoAlpha: 0, duration: 0.8 }, 0)
         .from(q("[data-hero-copy]"), { y: 24, autoAlpha: 0, duration: 1 }, "-=0.9")
-        .from(q("[data-hero-cta] > *"), { y: 20, autoAlpha: 0, stagger: 0.08, duration: 0.9 }, "-=0.8")
+        .from(q("[data-hero-cta]"), { y: 20, autoAlpha: 0, duration: 0.9, clearProps: "transform" }, "-=0.8")
         .from(q("[data-hero-stat]"), { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.8 }, "-=0.7")
         .from(q("[data-laptop]"), { y: 80, rotateX: 18, autoAlpha: 0, duration: 1.6 }, 0.3)
         .from(q("[data-cover]"), { scale: 0.6, autoAlpha: 0, stagger: { each: 0.04, from: "random" }, duration: 0.9 }, 0.9)
@@ -42,11 +42,15 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
       // Pointer parallax on the device stage.
       const stage = q("[data-stage]")[0] as HTMLElement | undefined;
       if (stage && matchMedia("(pointer: fine)").matches) {
-        const rx = gsap.quickTo(stage, "rotateX", { duration: 0.8, ease: "power3.out" });
-        const ry = gsap.quickTo(stage, "rotateY", { duration: 0.8, ease: "power3.out" });
+        // gsap.quickTo can't drive rotateX/rotateY (they share one transform), so retarget a tween per move.
         const onMove = (e: PointerEvent) => {
-          ry((e.clientX / innerWidth - 0.5) * 10);
-          rx((e.clientY / innerHeight - 0.5) * -8);
+          gsap.to(stage, {
+            rotationY: (e.clientX / innerWidth - 0.5) * 10,
+            rotationX: (e.clientY / innerHeight - 0.5) * -8,
+            duration: 0.8,
+            ease: "power3.out",
+            overwrite: "auto",
+          });
         };
         addEventListener("pointermove", onMove);
         return () => {

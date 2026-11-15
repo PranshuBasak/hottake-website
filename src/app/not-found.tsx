@@ -5,8 +5,9 @@ export default function NotFound() {
   return (
     <section className="relative grid min-h-[85vh] place-items-center overflow-hidden px-4 pt-24 text-center">
       <div aria-hidden className="absolute inset-0 opacity-30">
-        <AsciiArt piece="starfield-warp" size={11} className="block h-full w-full" />
+        <AsciiArt cover piece="starfield-warp" size={11} className="relative overflow-hidden h-full w-full" />
       </div>
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(55%_50%_at_50%_50%,rgba(18,13,11,0.92),rgba(18,13,11,0.55)_60%,rgba(18,13,11,0.2))]" />
       <div className="relative">
         <p className="eyebrow">Error 404</p>
         <h1 className="mt-3 font-mono text-7xl font-bold tracking-[0.2em] sm:text-9xl">GAME OVER</h1>

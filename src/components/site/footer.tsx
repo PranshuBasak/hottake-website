@@ -21,7 +21,9 @@ const columns = [
     links: [
       { href: "/creator", label: "The creator" },
       { href: site.creator.linkedin, label: "LinkedIn", external: true },
-      { href: "/how-to-play#make-a-game", label: "Make your own game" },
+      { href: "/docs", label: "Documentation" },
+      { href: "/docs/making-games", label: "Make your own game" },
+      { href: "https://github.com/PranshuBasak/hottake-website", label: "Website source", external: true },
     ],
   },
   {
@@ -39,7 +41,7 @@ export function Footer() {
   return (
     <footer className="relative mt-24 overflow-hidden border-t border-border bg-bg-1">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-40 opacity-[0.18] [mask-image:linear-gradient(to_top,black,transparent)]">
-        <AsciiArt piece="campfire" size={9} className="block h-full w-full" />
+        <AsciiArt cover piece="campfire" size={9} className="relative overflow-hidden h-full w-full" />
       </div>
       <div className="container-site relative grid gap-12 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="space-y-4">
