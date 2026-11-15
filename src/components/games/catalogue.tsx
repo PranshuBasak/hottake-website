@@ -172,7 +172,7 @@ export function GameCard({ game: g }: { game: Game }) {
         className="group block overflow-hidden rounded-3xl border border-border bg-bg-1 transition-[border-color,box-shadow] duration-500 [transform-style:preserve-3d] hover:border-white/20 hover:shadow-[0_30px_60px_-30px_#ff6b4f80]"
       >
         <div className="relative aspect-[16/9] overflow-hidden">
-          <Image src={g.cover} alt={`${g.name} cover art`} fill unoptimized className="object-cover transition-transform duration-700 group-hover:scale-105" />
+          <Image src={g.thumb} alt={`${g.name} cover art`} fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute top-3 left-3 flex gap-1.5">
             {g.coop && <span className="rounded-full bg-ok/90 px-2.5 py-0.5 text-xs font-bold text-[#0d1f15]">Co-op</span>}
             {g.credit && <span className="rounded-full bg-bg-0/80 px-2.5 py-0.5 text-xs backdrop-blur">Port</span>}

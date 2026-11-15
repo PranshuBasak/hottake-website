@@ -12,6 +12,8 @@ export type Game = {
   stick: string;
   buttons: string[];
   cover: string;
+  /** 640×360 WebP of the cover, for animated lists. */
+  thumb: string;
   credit: GameCredit | null;
 };
 

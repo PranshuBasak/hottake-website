@@ -3,12 +3,13 @@
 import { readdirSync, readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const site = join(here, "..");
 const gamesDir = join(site, "..", "games");
 const outCovers = join(site, "public", "games");
-mkdirSync(outCovers, { recursive: true });
+mkdirSync(join(outCovers, "thumbs"), { recursive: true });
 
 /** House style: no em dashes. A pair becomes brackets, a single one a colon. */
 const EM = "\u2014";
@@ -42,10 +43,22 @@ const games = readdirSync(gamesDir, { withFileTypes: true })
       stick: stickLabel[stick] ?? stick,
       buttons,
       cover: `/games/${m.id}${ext}`,
+      thumb: `/games/thumbs/${m.id}.webp`,
       credit,
     };
   })
   .sort((a, b) => a.name.localeCompare(b.name));
+
+// Small raster thumbnails for moving/repeated cards: decoding a 640×360 WebP is far cheaper than
+// re-rasterising a detailed SVG while it animates.
+await Promise.all(
+  games.map((g) =>
+    sharp(join(outCovers, g.cover.slice("/games/".length)), { density: 160 })
+      .resize(640, 360, { fit: "cover" })
+      .webp({ quality: 82 })
+      .toFile(join(outCovers, "thumbs", `${g.id}.webp`)),
+  ),
+);
 
 writeFileSync(join(site, "src", "data", "games.json"), JSON.stringify(games, null, 2) + "\n");
 console.log(`synced ${games.length} games`);

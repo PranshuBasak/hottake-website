@@ -7,7 +7,7 @@ import { getGames } from "@/lib/games";
 
 export default function HomePage() {
   // Pass the client components only what they draw, so the page's inline data stays small.
-  const games = getGames().map(({ id, name, cover, players }) => ({ id, name, cover, players }));
+  const games = getGames().map(({ id, name, cover, thumb, players }) => ({ id, name, cover, thumb, players }));
   // Lead the laptop mock-up with the most colourful covers.
   const featured = ["coin-clash", "bombermoji", "sushi-paws", "night-siege", "tangle", "star-convoy", "putt-panic", "paint-the-plaza"];
   const covers = featured.map((id) => games.find((g) => g.id === id)!).filter(Boolean).map(({ id, name, cover }) => ({ id, name, cover }));

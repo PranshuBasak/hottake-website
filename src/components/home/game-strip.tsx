@@ -1,19 +1,27 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { SplitHeading } from "@/components/site/reveal";
-import { gsap, registerGsap, shouldAnimate, useGSAP } from "@/lib/motion";
+import { gsap, registerGsap, ScrollTrigger, shouldAnimate, useGSAP } from "@/lib/motion";
 import type { Game } from "@/lib/games";
 import { playersLabel } from "@/lib/games";
 
 registerGsap();
 
-/** Two rows of covers drifting in opposite directions; scroll speed nudges them. */
-export type StripGame = Pick<Game, "id" | "name" | "cover" | "players">;
+export type StripGame = Pick<Game, "id" | "name" | "thumb" | "players">;
 
+/**
+ * Two rows of game cards drifting in opposite directions.
+ *
+ * Built to stay cheap while it moves:
+ * - one GSAP tween per row on a GPU layer (translate3d + will-change), nothing else animates per frame;
+ * - small pre-rendered WebP thumbnails instead of detailed SVG covers;
+ * - edge fades are two static overlays, not a mask over the moving layer (a mask repaints every frame);
+ * - the copy each loop needs is cloned in the browser, and the rows only run while on screen.
+ * Hover or focus pauses a row. Reduced motion shows a still, scrollable row.
+ */
 export function GameStrip({ games }: { games: StripGame[] }) {
   const root = useRef<HTMLElement>(null);
   const half = Math.ceil(games.length / 2);
@@ -23,7 +31,7 @@ export function GameStrip({ games }: { games: StripGame[] }) {
     () => {
       if (!shouldAnimate()) return;
       const tracks = gsap.utils.toArray<HTMLElement>("[data-track-row]");
-      // The loop needs each row twice. The copy is cloned here instead of server-rendered, which keeps the HTML small.
+
       tracks.forEach((t) => {
         if (t.dataset.cloned) return;
         t.dataset.cloned = "1";
@@ -31,47 +39,49 @@ export function GameStrip({ games }: { games: StripGame[] }) {
           const copy = card.cloneNode(true) as HTMLElement;
           copy.dataset.clone = "1";
           copy.setAttribute("aria-hidden", "true");
-          copy.setAttribute("tabindex", "-1");
+          copy.querySelectorAll("a").forEach((a) => a.setAttribute("tabindex", "-1"));
           copy.querySelectorAll("img").forEach((img) => img.setAttribute("alt", ""));
           t.appendChild(copy);
         });
       });
+
       const tweens = tracks.map((t, i) =>
-        gsap.fromTo(t, { xPercent: i % 2 ? -50 : 0 }, { xPercent: i % 2 ? 0 : -50, duration: 60, ease: "none", repeat: -1, paused: true }),
+        gsap.fromTo(
+          t,
+          { xPercent: i % 2 ? -50 : 0, force3D: true },
+          { xPercent: i % 2 ? 0 : -50, duration: 70, ease: "none", repeat: -1, paused: true, force3D: true },
+        ),
       );
-      const st = gsap.timeline({
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top bottom",
-          end: "bottom top",
-          // Only spend frames on the marquee while it is on screen.
-          onToggle: (self) => tweens.forEach((tw) => (self.isActive ? tw.play() : tw.pause())),
-          onUpdate: (self) => {
-            const v = 1 + Math.min(Math.abs(self.getVelocity()) / 400, 5);
-            tweens.forEach((tw) => gsap.to(tw, { timeScale: v, duration: 0.2, overwrite: true, onComplete: () => void gsap.to(tw, { timeScale: 1, duration: 1.2 }) }));
-          },
-        },
+
+      const st = ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => tweens.forEach((tw) => (self.isActive ? tw.play() : tw.pause())),
       });
-      const pause = () => tweens.forEach((t) => gsap.to(t, { timeScale: 0, duration: 0.6 }));
-      const play = () => tweens.forEach((t) => gsap.to(t, { timeScale: 1, duration: 0.6 }));
-      tracks.forEach((t) => {
-        t.addEventListener("pointerenter", pause);
-        t.addEventListener("pointerleave", play);
-        t.addEventListener("focusin", pause);
-        t.addEventListener("focusout", play);
+
+      const cleanups = tracks.map((t, i) => {
+        const tw = tweens[i];
+        const slow = () => gsap.to(tw, { timeScale: 0, duration: 0.5, overwrite: true });
+        const go = () => gsap.to(tw, { timeScale: 1, duration: 0.5, overwrite: true });
+        t.addEventListener("pointerenter", slow);
+        t.addEventListener("pointerleave", go);
+        t.addEventListener("focusin", slow);
+        t.addEventListener("focusout", go);
+        return () => {
+          t.removeEventListener("pointerenter", slow);
+          t.removeEventListener("pointerleave", go);
+          t.removeEventListener("focusin", slow);
+          t.removeEventListener("focusout", go);
+        };
       });
+
       return () => {
-        // hand the rows back to React exactly as it rendered them
+        cleanups.forEach((c) => c());
+        st.kill();
         tracks.forEach((t) => {
           t.querySelectorAll("[data-clone]").forEach((c) => c.remove());
           delete t.dataset.cloned;
-        });
-        st.kill();
-        tracks.forEach((t) => {
-          t.removeEventListener("pointerenter", pause);
-          t.removeEventListener("pointerleave", play);
-          t.removeEventListener("focusin", pause);
-          t.removeEventListener("focusout", play);
         });
       };
     },
@@ -91,26 +101,41 @@ export function GameStrip({ games }: { games: StripGame[] }) {
           See every game <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden />
         </Link>
       </div>
-      <div className="space-y-5 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+
+      <div className="relative space-y-5 [contain:layout_paint]">
         {rows.map((row, r) => (
-          <div key={r} className="flex w-max" data-track-row>
-            {row.map((g) => (
-              <Link
-                key={g.id}
-                href={`/games/${g.id}`}
-                className="group relative mr-5 block w-[240px] shrink-0 overflow-hidden rounded-2xl border border-border bg-bg-1 sm:w-[300px]"
-              >
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  <Image src={g.cover} alt={`${g.name} cover art`} fill unoptimized className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                </div>
-                <div className="flex items-center justify-between gap-3 p-4">
-                  <span className="truncate font-heading text-lg font-bold">{g.name}</span>
-                  <span className="shrink-0 rounded-full bg-bg-3 px-2.5 py-0.5 text-xs text-muted-foreground">{playersLabel(g)} players</span>
-                </div>
-              </Link>
-            ))}
+          <div key={r} className="overflow-x-auto [scrollbar-width:none] motion-safe:overflow-hidden">
+            <ul data-track-row className="flex w-max will-change-transform">
+              {row.map((g) => (
+                <li key={g.id} className="mr-5 shrink-0">
+                  <Link
+                    href={`/games/${g.id}`}
+                    className="block w-[240px] overflow-hidden rounded-2xl border border-border bg-bg-1 transition-colors hover:border-white/25 sm:w-[300px]"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size local WebP; next/image adds nothing here */}
+                    <img
+                      src={g.thumb}
+                      alt={`${g.name} cover art`}
+                      width={300}
+                      height={169}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                      className="aspect-[16/9] w-full object-cover"
+                    />
+                    <div className="flex items-center justify-between gap-3 p-4">
+                      <span className="truncate font-heading text-lg font-bold">{g.name}</span>
+                      <span className="shrink-0 rounded-full bg-bg-3 px-2.5 py-0.5 text-xs text-muted-foreground">{playersLabel(g)} players</span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
+        {/* static edge fades (cheap) instead of a mask over the moving rows */}
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-bg-0 to-transparent sm:w-28" />
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-bg-0 to-transparent sm:w-28" />
       </div>
     </section>
   );

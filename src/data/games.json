@@ -20,6 +20,7 @@
       "Dash"
     ],
     "cover": "/games/beetle-ball.svg",
+    "thumb": "/games/thumbs/beetle-ball.webp",
     "credit": null
   },
   {
@@ -44,6 +45,7 @@
       "Liar"
     ],
     "cover": "/games/bluff-cup.svg",
+    "thumb": "/games/thumbs/bluff-cup.webp",
     "credit": null
   },
   {
@@ -66,6 +68,7 @@
       "Bomb"
     ],
     "cover": "/games/bombermoji.svg",
+    "thumb": "/games/thumbs/bombermoji.webp",
     "credit": {
       "author": "Johannes Wärn",
       "url": "https://github.com/JohannesWarn/Bombermoji",
@@ -93,6 +96,7 @@
       "Dash"
     ],
     "cover": "/games/bumper-bloom.svg",
+    "thumb": "/games/thumbs/bumper-bloom.webp",
     "credit": null
   },
   {
@@ -116,6 +120,7 @@
       "Ping"
     ],
     "cover": "/games/cartastrophe.svg",
+    "thumb": "/games/thumbs/cartastrophe.webp",
     "credit": {
       "author": "webdevcody (Web Dev Cody)",
       "url": "https://github.com/webdevcody/cartastrophe",
@@ -144,6 +149,7 @@
       "Dash"
     ],
     "cover": "/games/coin-clash.svg",
+    "thumb": "/games/thumbs/coin-clash.webp",
     "credit": null
   },
   {
@@ -167,6 +173,7 @@
       "Dash"
     ],
     "cover": "/games/crown-keep.svg",
+    "thumb": "/games/thumbs/crown-keep.webp",
     "credit": null
   },
   {
@@ -190,6 +197,7 @@
       "Climb"
     ],
     "cover": "/games/deep-dig.svg",
+    "thumb": "/games/thumbs/deep-dig.webp",
     "credit": null
   },
   {
@@ -214,6 +222,7 @@
       "Cheer"
     ],
     "cover": "/games/drop-line.svg",
+    "thumb": "/games/thumbs/drop-line.webp",
     "credit": null
   },
   {
@@ -237,6 +246,7 @@
       "Dance"
     ],
     "cover": "/games/flock-off.svg",
+    "thumb": "/games/thumbs/flock-off.webp",
     "credit": null
   },
   {
@@ -259,6 +269,7 @@
       "Pass"
     ],
     "cover": "/games/fuse-pass.svg",
+    "thumb": "/games/thumbs/fuse-pass.webp",
     "credit": null
   },
   {
@@ -281,6 +292,7 @@
       "Hide"
     ],
     "cover": "/games/lantern-sneak.svg",
+    "thumb": "/games/thumbs/lantern-sneak.webp",
     "credit": null
   },
   {
@@ -304,6 +316,7 @@
       "Attack"
     ],
     "cover": "/games/last-light.svg",
+    "thumb": "/games/thumbs/last-light.webp",
     "credit": null
   },
   {
@@ -326,6 +339,7 @@
       "Jump"
     ],
     "cover": "/games/lava-rise.svg",
+    "thumb": "/games/thumbs/lava-rise.webp",
     "credit": null
   },
   {
@@ -348,6 +362,7 @@
       "Fire"
     ],
     "cover": "/games/lob-squad.svg",
+    "thumb": "/games/thumbs/lob-squad.webp",
     "credit": null
   },
   {
@@ -370,6 +385,7 @@
       "Fire"
     ],
     "cover": "/games/nebula-knockout.svg",
+    "thumb": "/games/thumbs/nebula-knockout.webp",
     "credit": {
       "author": "Gregg Tavares",
       "url": "https://github.com/greggman/hft-powpow",
@@ -400,6 +416,7 @@
       "Craft"
     ],
     "cover": "/games/night-siege.svg",
+    "thumb": "/games/thumbs/night-siege.webp",
     "credit": {
       "author": "Web Dev Cody",
       "url": "https://github.com/webdevcody/survive-the-night-game",
@@ -428,6 +445,7 @@
       "▶"
     ],
     "cover": "/games/orbit-snakes.svg",
+    "thumb": "/games/thumbs/orbit-snakes.webp",
     "credit": null
   },
   {
@@ -450,6 +468,7 @@
       "Boost"
     ],
     "cover": "/games/paint-the-plaza.svg",
+    "thumb": "/games/thumbs/paint-the-plaza.webp",
     "credit": null
   },
   {
@@ -472,6 +491,7 @@
       "Putt"
     ],
     "cover": "/games/putt-panic.svg",
+    "thumb": "/games/thumbs/putt-panic.webp",
     "credit": null
   },
   {
@@ -495,6 +515,7 @@
       "B"
     ],
     "cover": "/games/reflex-rumble.svg",
+    "thumb": "/games/thumbs/reflex-rumble.webp",
     "credit": null
   },
   {
@@ -519,6 +540,7 @@
       "Right"
     ],
     "cover": "/games/rhythm-rowers.svg",
+    "thumb": "/games/thumbs/rhythm-rowers.webp",
     "credit": null
   },
   {
@@ -541,6 +563,7 @@
       "Fire"
     ],
     "cover": "/games/ricochet-tanks.svg",
+    "thumb": "/games/thumbs/ricochet-tanks.webp",
     "credit": {
       "author": "AbyssWhalen",
       "url": "https://github.com/AbyssWhalen/tank-trouble",
@@ -570,6 +593,7 @@
       "Score"
     ],
     "cover": "/games/roll-call.svg",
+    "thumb": "/games/thumbs/roll-call.webp",
     "credit": null
   },
   {
@@ -592,6 +616,7 @@
       "Jump"
     ],
     "cover": "/games/scroll-sprint.svg",
+    "thumb": "/games/thumbs/scroll-sprint.webp",
     "credit": null
   },
   {
@@ -614,6 +639,7 @@
       "Bump"
     ],
     "cover": "/games/shard-rink.svg",
+    "thumb": "/games/thumbs/shard-rink.webp",
     "credit": null
   },
   {
@@ -636,6 +662,7 @@
       "Slide"
     ],
     "cover": "/games/slide-stones.svg",
+    "thumb": "/games/thumbs/slide-stones.webp",
     "credit": null
   },
   {
@@ -661,6 +688,7 @@
       "Cheer"
     ],
     "cover": "/games/spoke-race.svg",
+    "thumb": "/games/thumbs/spoke-race.webp",
     "credit": null
   },
   {
@@ -683,6 +711,7 @@
       "Fire"
     ],
     "cover": "/games/star-convoy.svg",
+    "thumb": "/games/thumbs/star-convoy.webp",
     "credit": {
       "author": "Couchfriends",
       "url": "https://github.com/Couchfriends/Space-Shooter",
@@ -711,6 +740,7 @@
       "Grab"
     ],
     "cover": "/games/sushi-paws.svg",
+    "thumb": "/games/thumbs/sushi-paws.webp",
     "credit": {
       "author": "Clyde Junior",
       "url": "https://github.com/clydejuniorscripts/sushi-paws-conveyor-clash",
@@ -739,6 +769,7 @@
       "Right ▶"
     ],
     "cover": "/games/tangle.svg",
+    "thumb": "/games/thumbs/tangle.webp",
     "credit": {
       "author": "Eigil Nikolajsen",
       "url": "https://github.com/eigilnikolajsen/achtung-die-kurve",
@@ -767,6 +798,7 @@
       "Drop"
     ],
     "cover": "/games/tilt-tower.svg",
+    "thumb": "/games/thumbs/tilt-tower.webp",
     "credit": null
   }
 ]
