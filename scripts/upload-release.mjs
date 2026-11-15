@@ -6,7 +6,8 @@ import { readFile, stat } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
-const [file = "../release/HotTake_0.1.0_x64-setup.exe", version = "0.1.0", notes = null] = process.argv.slice(2);
+const [file = "../release/HotTake_0.1.0_x64-setup.exe", version = "0.1.0", ...rest] = process.argv.slice(2);
+const notes = rest.length ? rest.join(" ") : null; // npm splits quoted notes into words; join them back
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SECRET_KEY;
 if (!url || !key) {
