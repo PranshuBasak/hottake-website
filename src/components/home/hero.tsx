@@ -20,11 +20,12 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
     () => {
       if (!shouldAnimate()) return;
       const q = gsap.utils.selector(root);
-      const split = SplitText.create(q("[data-hero-title]")[0], { type: "words,lines", mask: "lines", linesClass: "pb-[0.12em] -mb-[0.12em]" });
+      // No mask: the headline is the LCP element, so its words stay painted from the first frame and only slide and brighten.
+      const split = SplitText.create(q("[data-hero-title]")[0], { type: "words" });
       keepGradientWords(split.words);
       const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-      tl.from(q("[data-hero-eyebrow]"), { y: 20, autoAlpha: 0, duration: 0.8 })
-        .from(split.words, { yPercent: 115, rotate: 5, duration: 1.3, stagger: 0.05 }, "-=0.5")
+      tl.from(split.words, { y: "0.32em", rotate: 2, color: "#5a4a40", duration: 1.1, stagger: 0.05 }, 0)
+        .from(q("[data-hero-eyebrow]"), { y: 20, autoAlpha: 0, duration: 0.8 }, 0)
         .from(q("[data-hero-copy]"), { y: 24, autoAlpha: 0, duration: 1 }, "-=0.9")
         .from(q("[data-hero-cta] > *"), { y: 20, autoAlpha: 0, stagger: 0.08, duration: 0.9 }, "-=0.8")
         .from(q("[data-hero-stat]"), { y: 16, autoAlpha: 0, stagger: 0.06, duration: 0.8 }, "-=0.7")
@@ -32,8 +33,9 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
         .from(q("[data-cover]"), { scale: 0.6, autoAlpha: 0, stagger: { each: 0.04, from: "random" }, duration: 0.9 }, 0.9)
         .from(q("[data-phone]"), { y: 160, rotate: (i) => [-18, 14, -10, 16][i] ?? 0, autoAlpha: 0, stagger: 0.12, duration: 1.4, ease: "back.out(1.4)" }, 1.0);
 
-      // Idle float on the phones.
-      q("[data-phone]").forEach((el, i) => {
+      // Idle float on the phones (desktop only: it's decoration, not worth a phone's battery).
+      const desktop = matchMedia("(min-width: 1024px) and (pointer: fine)").matches;
+      if (desktop) q("[data-phone]").forEach((el, i) => {
         gsap.to(el, { y: "+=10", duration: 2.4 + i * 0.3, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2.4 + i * 0.2 });
       });
 
@@ -110,7 +112,7 @@ export function Hero({ covers }: { covers: Pick<Game, "id" | "name" | "cover">[]
           </dl>
         </div>
 
-        <div className="relative [perspective:1400px]" aria-hidden>
+        <div className="relative [perspective:1400px] lg:mt-6 lg:self-start" aria-hidden>
           <div data-stage className="relative mx-auto aspect-[4/3] w-full max-w-[620px] [transform-style:preserve-3d]">
             <div data-laptop className="absolute inset-x-[4%] top-[6%] [transform-style:preserve-3d]">
               <div className="rounded-[18px] border border-white/10 bg-[#0b0807] p-2.5 shadow-[0_40px_120px_-20px_rgba(255,107,79,0.45)]">

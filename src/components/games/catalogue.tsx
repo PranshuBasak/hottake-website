@@ -130,6 +130,7 @@ export function Catalogue({ games, tags }: { games: Game[]; tags: string[] }) {
         )}
       </p>
 
+      <h2 className="sr-only">Games</h2>
       <ul ref={grid} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((g) => (
           <li key={g.id} data-game data-flip-id={g.id}>

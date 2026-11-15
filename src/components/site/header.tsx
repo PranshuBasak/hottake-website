@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import { Download } from "lucide-react";
-import { IconMorph } from "@/components/interior/icon-morph";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import dynamic from "next/dynamic";
+import { Download, Menu, X } from "lucide-react";
 import { gsap, registerGsap, ScrollTrigger, useGSAP } from "@/lib/motion";
 import { nav } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 
 registerGsap();
+
+// The menu sheet (Radix dialog) is only downloaded when someone opens it.
+const MobileMenu = dynamic(() => import("./mobile-menu"), { ssr: false });
 
 export function Header() {
   const pathname = usePathname();
@@ -79,44 +81,18 @@ export function Header() {
           >
             <Download className="size-4" aria-hidden /> Get HotTake
           </a>
-          <div className="md:hidden">
-            <IconMorph preset="menu-close" semantics="expanded" active={open} onActiveChange={(i) => setOpen(i === 1)} labels={["Open menu", "Close menu"]} size={22} />
-          </div>
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+            className="grid size-10 place-items-center rounded-full border border-border bg-bg-1/60 md:hidden"
+          >
+            {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+          </button>
         </div>
       </div>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="right" className="w-[82vw] max-w-sm border-border bg-bg-1">
-          <SheetHeader>
-            <SheetTitle>
-              <Logo />
-            </SheetTitle>
-          </SheetHeader>
-          <nav aria-label="Mobile" className="px-4">
-            <ul className="space-y-1">
-              {[{ href: "/", label: "Home" }, ...nav].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-xl px-3 py-3 font-heading text-2xl font-bold hover:bg-bg-3"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <a
-              href="/api/download"
-              data-track="download_click"
-              data-track-label="mobile-menu"
-              data-no-transition
-              className="mt-6 flex h-12 items-center justify-center gap-2 rounded-full bg-ember font-semibold text-[#1a120d]"
-            >
-              <Download className="size-4" aria-hidden /> Download for Windows
-            </a>
-          </nav>
-        </SheetContent>
-      </Sheet>
+      {open && <MobileMenu open={open} onOpenChange={setOpen} />}
     </header>
   );
 }

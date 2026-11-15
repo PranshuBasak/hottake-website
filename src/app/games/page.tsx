@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Every game that ships with HotTake: platform brawls, bluffing dice, rhythm races, mini golf and co-op survival for 1–8 players, all controlled from your phones.",
   alternates: { canonical: "/games" },
-  openGraph: { url: "/games", title: "All 32 HotTake party games" },
+  openGraph: { url: "/games", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], title: "All 32 HotTake party games" },
 };
 
 export default function GamesPage() {

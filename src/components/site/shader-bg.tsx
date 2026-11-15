@@ -8,13 +8,36 @@ const Canvas = dynamic(() => import("./shader-canvas"), { ssr: false });
 
 export type ShaderVariant = "hero" | "ember" | "dusk";
 
-const noopSubscribe = () => () => {};
+/**
+ * Becomes true on the visitor's first interaction (pointer move, scroll, touch or key), so the WebGL scene
+ * and its three.js bundle never compete with first paint. One shared flag for every ShaderBg on the page.
+ */
+let idle = false;
+const idleListeners = new Set<() => void>();
+function subscribeIdle(fn: () => void) {
+  idleListeners.add(fn);
+  if (!idle && idleListeners.size === 1) {
+    const go = () => {
+      idle = true;
+      idleListeners.forEach((l) => l());
+    };
+    const events = ["pointermove", "scroll", "touchstart", "keydown"] as const;
+    const first = () => {
+      events.forEach((e) => removeEventListener(e, first));
+      ("requestIdleCallback" in window ? requestIdleCallback : setTimeout)(go);
+    };
+    events.forEach((e) => addEventListener(e, first, { once: true, passive: true }));
+  }
+  return () => idleListeners.delete(fn);
+}
 
-/** WebGL2 present, motion allowed, not on data-saver. Evaluated once per page load. */
+/** Desktop-class device, WebGL2 present, motion allowed, not on data-saver. Evaluated once per page load. */
 let cachedLive: boolean | null = null;
 function canAnimate(): boolean {
+  if (!idle) return false;
   if (cachedLive !== null) return cachedLive;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const desktop = window.matchMedia("(min-width: 768px) and (pointer: fine)").matches && (navigator.hardwareConcurrency ?? 4) >= 4;
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   let gl = false;
   try {
@@ -22,7 +45,7 @@ function canAnimate(): boolean {
   } catch {
     gl = false;
   }
-  cachedLive = !reduce && !conn?.saveData && gl;
+  cachedLive = desktop && !reduce && !conn?.saveData && gl;
   return cachedLive;
 }
 
@@ -32,7 +55,7 @@ function canAnimate(): boolean {
  * or on data-saver connections the static layer is all you see.
  */
 export function ShaderBg({ variant = "hero", className }: { variant?: ShaderVariant; className?: string }) {
-  const live = useSyncExternalStore(noopSubscribe, canAnimate, () => false);
+  const live = useSyncExternalStore(subscribeIdle, canAnimate, () => false);
 
   return (
     <div aria-hidden className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>

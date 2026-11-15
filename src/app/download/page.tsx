@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Download HotTake for Windows (free)",
   description: "Download the free HotTake installer for Windows 10 and 11. Version, file size, SHA-256 checksum and what to expect on first launch.",
   alternates: { canonical: "/download" },
-  openGraph: { url: "/download", title: "Download HotTake for Windows" },
+  openGraph: { url: "/download", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], title: "Download HotTake for Windows" },
 };
 
 export default async function DownloadPage({ searchParams }: PageProps<"/download">) {

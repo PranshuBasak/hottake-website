@@ -22,13 +22,15 @@ export function GameStrip({ games }: { games: Game[] }) {
       if (!shouldAnimate()) return;
       const tracks = gsap.utils.toArray<HTMLElement>("[data-track-row]");
       const tweens = tracks.map((t, i) =>
-        gsap.fromTo(t, { xPercent: i % 2 ? -50 : 0 }, { xPercent: i % 2 ? 0 : -50, duration: 60, ease: "none", repeat: -1 }),
+        gsap.fromTo(t, { xPercent: i % 2 ? -50 : 0 }, { xPercent: i % 2 ? 0 : -50, duration: 60, ease: "none", repeat: -1, paused: true }),
       );
       const st = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
           start: "top bottom",
           end: "bottom top",
+          // Only spend frames on the marquee while it is on screen.
+          onToggle: (self) => tweens.forEach((tw) => (self.isActive ? tw.play() : tw.pause())),
           onUpdate: (self) => {
             const v = 1 + Math.min(Math.abs(self.getVelocity()) / 400, 5);
             tweens.forEach((tw) => gsap.to(tw, { timeScale: v, duration: 0.2, overwrite: true, onComplete: () => void gsap.to(tw, { timeScale: 1, duration: 1.2 }) }));

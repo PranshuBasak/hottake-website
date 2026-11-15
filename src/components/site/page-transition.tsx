@@ -81,7 +81,7 @@ export function PageTransition() {
       className="pointer-events-none fixed inset-0 z-[100] invisible grid place-items-center overflow-hidden bg-bg-0"
     >
       {active && (
-        <AsciiArt piece="pixel-fire" size={14} speed={1.6} className="absolute inset-0 block h-full w-full opacity-80" />
+        <AsciiArt eager piece="pixel-fire" size={14} speed={1.6} className="absolute inset-0 block h-full w-full opacity-80" />
       )}
       <div className="relative flex flex-col items-center gap-3">
         <span className="eyebrow text-amber/80">now loading</span>

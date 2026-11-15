@@ -32,15 +32,13 @@ export function LegalPage({
         <h1 className="text-4xl font-extrabold sm:text-6xl">{title}</h1>
         <p className="mt-5 text-lg text-muted-foreground">{intro}</p>
       </header>
-      <div className="mt-14 grid gap-12 lg:grid-cols-[220px_1fr]">
-        <aside className="hidden lg:block">
-          <div className="sticky top-28">
-            <ScrollSpy sections={sections} offset={120} label="On this page" />
-          </div>
-        </aside>
+      <div className="mt-12 max-w-3xl">
+        <div className="sticky top-[76px] z-30 mb-10 rounded-[12px] bg-bg-0/80 backdrop-blur">
+          <ScrollSpy sections={sections} offset={140} label="On this page" />
+        </div>
         <article
           ref={article}
-          className="prose-legal max-w-3xl space-y-12 [&_a]:text-amber [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_section]:scroll-mt-28 [&_table]:mt-4 [&_table]:w-full [&_table]:text-sm [&_td]:border-t [&_td]:border-border [&_td]:p-3 [&_td]:align-top [&_td]:text-muted-foreground [&_th]:p-3 [&_th]:text-left [&_th]:font-semibold [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-muted-foreground"
+          className="prose-legal max-w-3xl space-y-12 [&_a]:text-amber [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_section]:scroll-mt-36 [&_table]:mt-4 [&_table]:w-full [&_table]:text-sm [&_td]:border-t [&_td]:border-border [&_td]:p-3 [&_td]:align-top [&_td]:text-muted-foreground [&_th]:p-3 [&_th]:text-left [&_th]:font-semibold [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-muted-foreground"
         >
           {children}
         </article>

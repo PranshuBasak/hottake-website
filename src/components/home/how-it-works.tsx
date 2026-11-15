@@ -41,7 +41,7 @@ export function HowItWorks() {
         const panels = q<HTMLElement>("[data-step-visual]");
         const texts = q<HTMLElement>("[data-step-text]");
         gsap.set(panels.slice(1), { autoAlpha: 0, yPercent: 12, scale: 0.94 });
-        gsap.set(texts.slice(1), { autoAlpha: 0.25 });
+        gsap.set(texts.slice(1), { autoAlpha: 0.72 });
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -56,7 +56,7 @@ export function HowItWorks() {
         steps.slice(1).forEach((_, i) => {
           tl.to(panels[i], { autoAlpha: 0, yPercent: -12, scale: 0.94 }, i)
             .to(panels[i + 1], { autoAlpha: 1, yPercent: 0, scale: 1 }, i)
-            .to(texts[i], { autoAlpha: 0.25 }, i)
+            .to(texts[i], { autoAlpha: 0.72 }, i)
             .to(texts[i + 1], { autoAlpha: 1 }, i);
         });
         tl.to(q("[data-progress]"), { scaleY: 1, ease: "none", duration: steps.length - 1 }, 0);
@@ -137,25 +137,21 @@ export function HowItWorks() {
 }
 
 function QrMock() {
-  // Deterministic pseudo-QR pattern (decorative).
-  const cells = Array.from({ length: 21 * 21 }, (_, i) => {
-    const x = i % 21;
-    const y = Math.floor(i / 21);
-    const finder = (cx: number, cy: number) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7;
-    if (finder(0, 0) || finder(14, 0) || finder(0, 14)) {
-      const lx = x % 14 === x ? x : x - 14;
-      const ly = y % 14 === y ? y : y - 14;
-      const r = Math.max(Math.abs(lx - 3), Math.abs(ly - 3));
-      return r !== 2;
+  // Deterministic pseudo-QR pattern (decorative), drawn as one SVG path instead of 441 DOM nodes.
+  let d = "";
+  for (let y = 0; y < 21; y++)
+    for (let x = 0; x < 21; x++) {
+      const finder = (cx: number, cy: number) => x >= cx && x < cx + 7 && y >= cy && y < cy + 7;
+      let on: boolean;
+      if (finder(0, 0) || finder(14, 0) || finder(0, 14)) {
+        const lx = x >= 14 ? x - 14 : x, ly = y >= 14 ? y - 14 : y;
+        on = Math.max(Math.abs(lx - 3), Math.abs(ly - 3)) !== 2;
+      } else on = (x * 7 + y * 13 + x * y) % 5 < 2;
+      if (on) d += `M${x} ${y}h1v1h-1z`;
     }
-    return ((x * 7 + y * 13 + x * y) % 5) < 2;
-  });
   return (
-    <div className="grid size-40 grid-cols-[repeat(21,1fr)] rounded-lg bg-[#f6ece3] p-2">
-      {cells.map((on, i) => (
-        <span key={i} className={on ? "bg-[#120d0b]" : ""} />
-      ))}
-    </div>
+    <svg viewBox="-1 -1 23 23" className="size-40 rounded-lg bg-[#f6ece3]" aria-hidden>
+      <path d={d} fill="#120d0b" />
+    </svg>
   );
 }
-

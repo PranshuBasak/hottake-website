@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Install HotTake on a Windows laptop, have friends scan the QR code, and play. Setup steps, phone/gamepad/keyboard controls, tournaments, online play and troubleshooting.",
   alternates: { canonical: "/how-to-play" },
-  openGraph: { url: "/how-to-play", title: "How to play HotTake" },
+  openGraph: { url: "/how-to-play", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], title: "How to play HotTake" },
 };
 
 const sections = [
@@ -64,14 +64,12 @@ export default function HowToPlayPage() {
         </div>
       </section>
 
-      <div className="container-site grid gap-12 pb-16 lg:grid-cols-[220px_1fr]">
-        <aside className="hidden lg:block">
-          <div className="sticky top-28">
+      <div className="container-site pb-16">
+        <div className="mx-auto max-w-3xl">
+          <div className="sticky top-[76px] z-30 mb-12 rounded-[12px] bg-bg-0/80 backdrop-blur">
             <GuideNav sections={sections} />
           </div>
-        </aside>
-
-        <div className="max-w-3xl space-y-24 [&_section]:scroll-mt-28">
+        <div className="space-y-24 [&_section]:scroll-mt-36">
           <section id="before" aria-labelledby="before-h">
             <h2 id="before-h" className="text-3xl font-bold">Before you start</h2>
             <Reveal className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -107,6 +105,17 @@ export default function HowToPlayPage() {
           <section id="controls" aria-labelledby="controls-h">
             <h2 id="controls-h" className="text-3xl font-bold">Controls</h2>
             <p className="mt-3 text-muted-foreground">Phones, gamepads and keyboards can all play in the same round.</p>
+            <figure className="mt-6 overflow-hidden rounded-3xl border border-border bg-[#0b0b0b]">
+              <iframe
+                src="/figures/relay.html?theme=dark"
+                title="Interactive drawing: press a pad on the phone and the player on the laptop moves, jumps or dashes"
+                loading="lazy"
+                className="block aspect-[10/12] w-full sm:aspect-[11/10]"
+              />
+              <figcaption className="border-t border-border px-5 py-3 text-sm text-muted-foreground">
+                Hover the phone&apos;s stick or buttons: each press travels to the laptop and the player answers. Drawn with <a href="https://hairline.lucasmarkes.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-foreground">Hairline</a> (MIT).
+              </figcaption>
+            </figure>
             <div className="mt-6 rounded-3xl border border-border bg-bg-1 p-5 sm:p-6">
               <ControlsTabs />
             </div>
@@ -182,6 +191,7 @@ export default function HowToPlayPage() {
               Still stuck? <Link href="/creator" className="text-amber underline underline-offset-4">Get in touch</Link>.
             </p>
           </section>
+        </div>
         </div>
       </div>
     </>

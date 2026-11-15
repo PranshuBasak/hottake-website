@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: `${creator.name} — the developer behind HotTake`,
   description: `Meet ${creator.name}, who built HotTake: a Rust + WebRTC party-game console that turns any Windows laptop and a room full of phones into game night.`,
   alternates: { canonical: "/creator" },
-  openGraph: { url: "/creator", type: "profile", title: `${creator.name} · HotTake` },
+  openGraph: { url: "/creator", images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "HotTake" }], type: "profile", title: `${creator.name} · HotTake` },
 };
 
 export default function CreatorPage() {

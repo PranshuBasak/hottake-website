@@ -45,7 +45,7 @@ export function Footer() {
         <div className="space-y-4">
           <Logo />
           <p className="max-w-xs text-sm text-muted-foreground">{site.tagline}</p>
-          <p className="text-xs text-muted-foreground/70">Windows 10/11 · free · v{site.version}</p>
+          <p className="text-xs text-muted-foreground">Windows 10/11 · free · v{site.version}</p>
         </div>
         {columns.map((col) => (
           <div key={col.title}>

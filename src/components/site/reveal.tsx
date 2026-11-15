@@ -65,11 +65,13 @@ export function SplitHeading({
     () => {
       if (!ref.current) return;
       if (!shouldAnimate()) return;
-      const split = SplitText.create(ref.current, { type: "words,lines", mask: "lines", linesClass: "pb-[0.12em] -mb-[0.12em]" });
+      // Above the fold (onScroll false) the heading is usually the LCP element: keep it painted and only slide/brighten.
+      const split = onScroll
+        ? SplitText.create(ref.current, { type: "words,lines", mask: "lines", linesClass: "pb-[0.12em] -mb-[0.12em]" })
+        : SplitText.create(ref.current, { type: "words" });
       keepGradientWords(split.words);
       gsap.from(split.words, {
-        yPercent: 110,
-        rotate: 4,
+        ...(onScroll ? { yPercent: 110, rotate: 4 } : { y: "0.3em", rotate: 2, color: "#5a4a40" }),
         duration: 1.1,
         stagger: 0.045,
         delay,

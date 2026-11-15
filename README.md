@@ -30,8 +30,8 @@ Without the secret key the site still works; it just records nothing.
 
 ## Supabase setup (once)
 
-1. Apply the migrations in `supabase/migrations/` in order (Supabase MCP `apply_migration`, the SQL editor,
-   or `npx supabase db push`). They create the tables, the write functions (service role only), the
+1. Run `supabase/setup.sql` once in the Supabase SQL editor (it is both files in `supabase/migrations/`, in
+   order), or apply the migrations with the Supabase MCP / `npx supabase db push`. They create the tables, the write functions (service role only), the
    retention job (`pg_cron`, daily: IPs/user agents nulled after 90 days, events/sessions deleted after
    13 months), the reporting views and the public `releases` storage bucket.
 2. Upload the installer and mark it as the latest release:
@@ -64,10 +64,23 @@ Metrics are read in the Supabase dashboard: views `metrics_daily`, `metrics_top_
 - **ASCII pieces**: `npm run vendor:ascii` copies the runtime + pieces listed in `scripts/vendor-ascii.mjs` to
   `public/vendor/ascii-magic/` (self-hosted, MIT).
 
+## PWA
+
+`src/app/manifest.ts` (installable, standalone, maskable icon, shortcuts) and `public/sw.js`: pages are
+network-first with an offline fallback (`/offline`), static assets stale-while-revalidate, `/api/*` never
+cached. The worker registers in production builds only. Bump `VERSION` in `sw.js` to drop old caches.
+Icons are rendered from `src/app/icon.svg` by `node scripts/make-icons.mjs`.
+
+## Hairline figure
+
+`design/hairline/relay.js` is the source of the interactive phone → laptop drawing on /how-to-play. Rebuild it
+with the hairline-create skill (`node .claude/skills/hairline-create/build.mjs design/hairline/relay.js`) and copy
+`hairline-relay.html` to `public/figures/relay.html`.
+
 ## Deploy (Vercel)
 
-Import the repo in Vercel with **Root Directory = `site`** (framework: Next.js), add the env variables above for
-Production and Preview, and set `NEXT_PUBLIC_SITE_URL` to the final domain. Or, from `site/`: `npx vercel login`,
-then `npx vercel --prod`.
+The Vercel project is linked to this GitHub repo: every push to `main` deploys to production, every other
+branch gets a preview. Env variables are set per environment in the Vercel project (the secret key only by hand).
+If the domain changes, update `NEXT_PUBLIC_SITE_URL` (canonical links, sitemap, robots and OG images use it).
 
 `three` is pinned to `0.169.0`: newer versions removed a shader chunk ShaderGradient 2.4 uses.

@@ -7,6 +7,7 @@ import { ConsentProvider } from "@/components/site/consent";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { PageTransition } from "@/components/site/page-transition";
+import { ServiceWorkerRegister } from "@/components/site/sw-register";
 import { Tracker } from "@/components/site/tracker";
 import { JsonLd, organizationLd, softwareLd, websiteLd } from "@/lib/seo";
 import { site } from "@/lib/site";
@@ -14,7 +15,7 @@ import "./globals.css";
 
 const head = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-head", display: "swap" });
 const body = Atkinson_Hyperlegible({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-body", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-face", display: "swap" });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-face", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -40,11 +41,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/opengraph-image"],
     title: "HotTake — party games where every phone is a controller",
     description: site.description,
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   formatDetection: { telephone: false },
+  appleWebApp: { capable: true, title: site.name, statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {
@@ -72,10 +75,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
             <PageTransition />
             <Tracker />
+            <ServiceWorkerRegister />
             <Toaster theme="dark" position="bottom-center" richColors />
           </TooltipProvider>
         </ConsentProvider>
-        <Script src="/vendor/ascii-magic/runtime/ascii.js" type="module" strategy="afterInteractive" />
+        <Script src="/vendor/ascii-magic/runtime/ascii.js" type="module" strategy="lazyOnload" />
       </body>
     </html>
   );

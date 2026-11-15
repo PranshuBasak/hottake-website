@@ -9,6 +9,9 @@ import { ShaderBg } from "@/components/site/shader-bg";
 import { controlsLabel, getGame, getGames, playersLabel } from "@/lib/games";
 import { JsonLd, breadcrumbLd, gameLd } from "@/lib/seo";
 
+/** Cuts at a word boundary so search snippets never end mid-word. */
+const clip = (s: string, n: number) => (s.length <= n ? s : `${s.slice(0, s.lastIndexOf(" ", n - 1))}…`);
+
 export function generateStaticParams() {
   return getGames().map((g) => ({ id: g.id }));
 }
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/games/[id]">): Pr
   const players = `${playersLabel(g)} players`;
   return {
     title: `${g.name} — ${g.coop ? "co-op" : "party"} game for ${players}`,
-    description: `${g.tagline} Play ${g.name} in HotTake with phones as controllers (${players}, ${controlsLabel(g)}).`,
+    description: clip(`${g.tagline} Play ${g.name} in HotTake with phones as controllers (${players}, ${controlsLabel(g)}).`, 158),
     alternates: { canonical: `/games/${g.id}` },
     keywords: [g.name, ...g.tags, "phone controller game", "HotTake"],
     openGraph: { url: `/games/${g.id}`, title: `${g.name} · HotTake`, description: g.tagline, type: "article" },

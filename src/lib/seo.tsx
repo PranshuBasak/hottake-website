@@ -28,7 +28,7 @@ export const personLd = (): Ld => ({
   "@id": `${site.url}/creator#person`,
   name: site.creator.name,
   url: absoluteUrl("/creator"),
-  sameAs: [site.creator.linkedin, site.creator.github],
+  sameAs: [site.creator.linkedin, site.creator.github, site.creator.website],
   jobTitle: "Software developer",
   knowsAbout: ["Rust", "WebRTC", "Game development", "Tauri", "TypeScript"],
 });
