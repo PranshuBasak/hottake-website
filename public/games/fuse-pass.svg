@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <pattern id="tiles" width="160" height="160" patternUnits="userSpaceOnUse">
+      <rect width="160" height="160" fill="#f7e6c4"/>
+      <rect width="80" height="80" fill="#eaa877"/>
+      <rect x="80" y="80" width="80" height="80" fill="#eaa877"/>
+      <path d="M0 0H160M0 80H160M0 0V160M80 0V160" stroke="#c98a5c" stroke-opacity="0.45" stroke-width="3"/>
+    </pattern>
+    <radialGradient id="sun" cx="0.25" cy="0.15" r="1">
+      <stop offset="0" stop-color="#fffbe6" stop-opacity="0.35"/>
+      <stop offset="0.6" stop-color="#fffbe6" stop-opacity="0"/>
+      <stop offset="1" stop-color="#6b2d10" stop-opacity="0.18"/>
+    </radialGradient>
+    <radialGradient id="water" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#a8ebff"/>
+      <stop offset="1" stop-color="#3aa6d6"/>
+    </radialGradient>
+    <radialGradient id="bomb" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#6b6f80"/>
+      <stop offset="0.5" stop-color="#2c2e3a"/>
+      <stop offset="1" stop-color="#14151c"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff7a3c" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#ff7a3c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spark" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.35" stop-color="#fff3b0"/>
+      <stop offset="1" stop-color="#ffb547" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- garden and the courtyard wall -->
+  <rect width="1600" height="900" fill="#79bf63"/>
+  <rect x="40" y="250" width="1520" height="700" rx="54" fill="#d8b98a"/>
+  <rect x="72" y="282" width="1456" height="700" rx="30" fill="url(#tiles)"/>
+  <rect x="72" y="282" width="1456" height="700" rx="30" fill="url(#sun)"/>
+  <rect x="72" y="282" width="1456" height="18" fill="#5a3218" fill-opacity="0.16"/>
+
+  <!-- the fountain -->
+  <ellipse cx="1290" cy="690" rx="150" ry="146" fill="#5a3218" fill-opacity="0.2"/>
+  <circle cx="1278" cy="676" r="146" fill="#cdb48c" stroke="#a28457" stroke-width="6"/>
+  <circle cx="1278" cy="676" r="122" fill="url(#water)"/>
+  <circle cx="1278" cy="676" r="60" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="4"/>
+  <circle cx="1278" cy="676" r="95" fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="4"/>
+  <circle cx="1278" cy="676" r="26" fill="#d9c49d" stroke="#a28457" stroke-width="4"/>
+  <circle cx="1278" cy="668" r="11" fill="#fff"/>
+
+  <!-- scorch mark from an earlier bang -->
+  <path d="M330 760 l40 -18 l10 -40 l28 32 l44 -6 l-20 38 l26 34 l-44 4 l-18 40 l-22 -36 l-44 -2 l24 -30z" fill="#3b2418" fill-opacity="0.25"/>
+
+  <!-- the throw: a dotted arc from the holder to the catcher -->
+  <path d="M620 610 Q 830 380 1040 560" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 22"/>
+  <path d="M1012 530 L1046 566 L996 572" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- critter: catcher (blue), wide-eyed -->
+  <g transform="translate(1090 610)">
+    <ellipse cx="6" cy="58" rx="74" ry="22" fill="#46230f" fill-opacity="0.25"/>
+    <ellipse cx="-26" cy="52" rx="20" ry="13" fill="#1f5f86"/>
+    <ellipse cx="26" cy="52" rx="20" ry="13" fill="#1f5f86"/>
+    <ellipse cx="-40" cy="-56" rx="16" ry="21" transform="rotate(-28 -40 -56)" fill="#4fb3ea" stroke="#1f5f86" stroke-width="6"/>
+    <ellipse cx="40" cy="-56" rx="16" ry="21" transform="rotate(28 40 -56)" fill="#4fb3ea" stroke="#1f5f86" stroke-width="6"/>
+    <circle r="66" fill="#4fb3ea" stroke="#1f5f86" stroke-width="7"/>
+    <ellipse cx="-16" cy="-28" rx="26" ry="14" fill="#fff" fill-opacity="0.3"/>
+    <ellipse cx="0" cy="22" rx="34" ry="24" fill="#fff" fill-opacity="0.3"/>
+    <ellipse cx="-24" cy="-10" rx="16" ry="18" fill="#fff"/>
+    <ellipse cx="22" cy="-10" rx="16" ry="18" fill="#fff"/>
+    <circle cx="-28" cy="-10" r="7" fill="#2b1a12"/>
+    <circle cx="18" cy="-10" r="7" fill="#2b1a12"/>
+    <ellipse cx="-4" cy="26" rx="10" ry="12" fill="#2b1a12"/>
+    <circle cx="-42" cy="14" r="8" fill="#ff6e78" fill-opacity="0.5"/>
+    <circle cx="38" cy="14" r="8" fill="#ff6e78" fill-opacity="0.5"/>
+  </g>
+
+  <!-- critter: running away (green) -->
+  <g transform="translate(860 800) scale(0.85)">
+    <ellipse cx="6" cy="58" rx="74" ry="22" fill="#46230f" fill-opacity="0.25"/>
+    <ellipse cx="-36" cy="50" rx="20" ry="13" fill="#3b7d2a"/>
+    <ellipse cx="22" cy="56" rx="20" ry="13" fill="#3b7d2a"/>
+    <ellipse cx="-40" cy="-56" rx="16" ry="21" transform="rotate(-28 -40 -56)" fill="#8bd65a" stroke="#3b7d2a" stroke-width="6"/>
+    <ellipse cx="40" cy="-56" rx="16" ry="21" transform="rotate(28 40 -56)" fill="#8bd65a" stroke="#3b7d2a" stroke-width="6"/>
+    <circle r="66" fill="#8bd65a" stroke="#3b7d2a" stroke-width="7"/>
+    <ellipse cx="-16" cy="-28" rx="26" ry="14" fill="#fff" fill-opacity="0.3"/>
+    <ellipse cx="22" cy="-10" rx="15" ry="17" fill="#fff"/>
+    <ellipse cx="54" cy="-10" rx="12" ry="16" fill="#fff"/>
+    <circle cx="28" cy="-8" r="7" fill="#2b1a12"/>
+    <circle cx="58" cy="-8" r="6" fill="#2b1a12"/>
+    <path d="M24 22 Q38 34 52 22" fill="none" stroke="#2b1a12" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <path d="M760 790 h-60 M770 820 h-80 M760 850 h-50" stroke="#fff" stroke-opacity="0.7" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- critter: the holder (coral), worried, with the bomb -->
+  <g transform="translate(520 660)">
+    <circle cx="0" cy="0" r="150" fill="url(#glow)"/>
+    <ellipse cx="0" cy="62" rx="98" ry="34" fill="none" stroke="#ff5a28" stroke-width="9"/>
+    <ellipse cx="6" cy="58" rx="74" ry="22" fill="#46230f" fill-opacity="0.25"/>
+    <ellipse cx="-26" cy="52" rx="20" ry="13" fill="#a83a2a"/>
+    <ellipse cx="26" cy="52" rx="20" ry="13" fill="#a83a2a"/>
+    <ellipse cx="-40" cy="-56" rx="16" ry="21" transform="rotate(-28 -40 -56)" fill="#ff7a5c" stroke="#a83a2a" stroke-width="6"/>
+    <ellipse cx="40" cy="-56" rx="16" ry="21" transform="rotate(28 40 -56)" fill="#ff7a5c" stroke="#a83a2a" stroke-width="6"/>
+    <circle r="66" fill="#ff7a5c" stroke="#a83a2a" stroke-width="7"/>
+    <ellipse cx="-16" cy="-28" rx="26" ry="14" fill="#fff" fill-opacity="0.3"/>
+    <ellipse cx="0" cy="22" rx="34" ry="24" fill="#fff" fill-opacity="0.3"/>
+    <ellipse cx="-14" cy="-10" rx="15" ry="17" fill="#fff"/>
+    <ellipse cx="26" cy="-10" rx="15" ry="17" fill="#fff"/>
+    <circle cx="-10" cy="-8" r="6" fill="#2b1a12"/>
+    <circle cx="30" cy="-8" r="6" fill="#2b1a12"/>
+    <path d="M-30 -36 L-2 -28 M42 -36 L14 -28" stroke="#2b1a12" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="8" cy="26" rx="10" ry="8" fill="none" stroke="#2b1a12" stroke-width="5"/>
+    <path d="M-60 -50 q-8 14 0 22 q8 -8 0 -22z" fill="#9fe6ff"/>
+  </g>
+
+  <!-- the bomb, mid-air, sparking -->
+  <g transform="translate(700 470)">
+    <circle r="96" fill="url(#glow)"/>
+    <circle r="54" fill="url(#bomb)"/>
+    <circle r="54" fill="#ff4628" fill-opacity="0.18"/>
+    <ellipse cx="-18" cy="-20" rx="14" ry="9" transform="rotate(-35 -18 -20)" fill="#fff" fill-opacity="0.55"/>
+    <g transform="rotate(25)">
+      <rect x="-16" y="-66" width="32" height="18" rx="4" fill="#9aa0b2"/>
+      <path d="M0 -66 Q26 -96 8 -120" fill="none" stroke="#c79a5b" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="8" cy="-120" r="36" fill="url(#spark)"/>
+      <g stroke="#ffd23f" stroke-width="6" stroke-linecap="round">
+        <path d="M8 -150 v-18 M38 -126 h18 M-22 -128 h-18 M30 -146 l12 -12 M-14 -146 l-12 -12"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- a ghost of someone already out -->
+  <g transform="translate(250 470)" opacity="0.75">
+    <path d="M-40 34 V-8 A40 40 0 0 1 40 -8 V34 q-10 -12 -20 0 q-10 12 -20 0 q-10 -12 -20 0 q-10 12 -20 0z" fill="#fff" stroke="#c77dff" stroke-width="6"/>
+    <ellipse cx="-13" cy="-6" rx="6" ry="9" fill="#c77dff"/>
+    <ellipse cx="13" cy="-6" rx="6" ry="9" fill="#c77dff"/>
+  </g>
+
+  <!-- bunting across the top of the courtyard -->
+  <path d="M40 252 Q800 330 1560 252" fill="none" stroke="#5a3c28" stroke-width="5"/>
+  <g stroke="none">
+    <path d="M110 260 h44 l-22 40z" fill="#ff6b5a"/>
+    <path d="M230 272 h44 l-22 40z" fill="#ffd23f"/>
+    <path d="M350 282 h44 l-22 40z" fill="#4fc3f7"/>
+    <path d="M470 289 h44 l-22 40z" fill="#7ed957"/>
+    <path d="M590 293 h44 l-22 40z" fill="#ff8fd1"/>
+    <path d="M710 295 h44 l-22 40z" fill="#ffa94d"/>
+    <path d="M830 295 h44 l-22 40z" fill="#ff6b5a"/>
+    <path d="M950 293 h44 l-22 40z" fill="#ffd23f"/>
+    <path d="M1070 289 h44 l-22 40z" fill="#4fc3f7"/>
+    <path d="M1190 282 h44 l-22 40z" fill="#7ed957"/>
+    <path d="M1310 272 h44 l-22 40z" fill="#ff8fd1"/>
+    <path d="M1430 260 h44 l-22 40z" fill="#ffa94d"/>
+  </g>
+
+  <!-- title at the top -->
+  <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" stroke-linejoin="round" text-anchor="middle">
+    <text x="800" y="190" font-size="170" fill="none" stroke="#5a2a10" stroke-width="26">Fuse Pass</text>
+    <text x="800" y="190" font-size="170" fill="#fff6e0">Fuse <tspan fill="#ff6a3d">Pass</tspan></text>
+  </g>
+</svg>

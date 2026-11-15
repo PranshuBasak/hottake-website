@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f5a9e"/>
+      <stop offset="0.55" stop-color="#e98d8a"/>
+      <stop offset="1" stop-color="#ffc796"/>
+    </linearGradient>
+    <linearGradient id="ice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eefaff"/>
+      <stop offset="1" stop-color="#c6e4f3"/>
+    </linearGradient>
+    <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6efff"/>
+      <stop offset="1" stop-color="#d9d0f2"/>
+    </linearGradient>
+    <g id="stone">
+      <ellipse cx="4" cy="9" rx="50" ry="44" fill="#28325a" opacity="0.22"/>
+      <circle r="48" fill="#8d8798"/>
+      <circle r="37" fill="#b6b0c2"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1310" cy="300" r="64" fill="#fff3d6" opacity="0.9"/>
+  <path d="M0 330 C200 260 360 300 520 270 C700 236 860 300 1040 262 C1220 226 1400 290 1600 250 L1600 400 L0 400 Z" fill="#9a7fb4"/>
+  <g fill="#4a3f6e">
+    <path d="M80 360 l26 -84 l26 84 Z"/><path d="M150 362 l20 -64 l20 64 Z"/><path d="M300 358 l30 -96 l30 96 Z"/>
+    <path d="M520 360 l22 -70 l22 70 Z"/><path d="M900 362 l28 -90 l28 90 Z"/><path d="M960 362 l20 -62 l20 62 Z"/>
+    <path d="M1180 360 l26 -82 l26 82 Z"/><path d="M1440 362 l30 -96 l30 96 Z"/><path d="M1510 362 l20 -60 l20 60 Z"/>
+  </g>
+  <path d="M0 370 C300 350 600 380 900 360 C1200 345 1400 372 1600 356 L1600 900 L0 900 Z" fill="url(#snow)"/>
+
+  <!-- the sheet in perspective, running away to the rings -->
+  <path d="M520 400 L1080 400 L1500 900 L100 900 Z" fill="#a8683f"/>
+  <path d="M540 406 L1060 406 L1460 900 L140 900 Z" fill="url(#ice)"/>
+  <path d="M300 760 L1300 760" stroke="#ff7a5c" stroke-width="12" opacity="0.8"/>
+  <path d="M800 406 L800 900" stroke="#2b2540" stroke-width="4" opacity="0.15"/>
+
+  <!-- rings -->
+  <ellipse cx="800" cy="500" rx="250" ry="78" fill="#3a8fb0"/>
+  <ellipse cx="800" cy="500" rx="176" ry="55" fill="#f7fbff"/>
+  <ellipse cx="800" cy="500" rx="110" ry="34" fill="#ff7a5c"/>
+  <ellipse cx="800" cy="500" rx="40" ry="13" fill="#f7fbff"/>
+
+  <!-- stones: a coral one on the button, a teal one knocked away, a yellow one gliding in -->
+  <g transform="translate(790 498) scale(0.7 0.55)">
+    <use href="#stone"/>
+    <circle r="27" fill="#ff6b5a"/>
+    <rect x="-8" y="-28" width="16" height="44" rx="6" fill="#b8402f"/>
+  </g>
+  <g transform="translate(1040 470) scale(0.62 0.5)">
+    <use href="#stone"/>
+    <circle r="27" fill="#3fc1b0"/>
+    <rect x="-8" y="-28" width="16" height="44" rx="6" fill="#23786d" transform="rotate(50)"/>
+  </g>
+  <g stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.85">
+    <path d="M1080 444 l46 -22"/><path d="M1090 474 l52 -2"/><path d="M1076 500 l44 20"/>
+  </g>
+  <g transform="translate(700 700) scale(1.15 0.95)">
+    <use href="#stone"/>
+    <circle r="27" fill="#ffc94d"/>
+    <rect x="-8" y="-28" width="16" height="44" rx="6" fill="#b5852a" transform="rotate(-20)"/>
+    <circle cx="-12" cy="-12" r="5" fill="#ffffff" opacity="0.8"/>
+  </g>
+  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.7">
+    <path d="M640 790 L590 870"/><path d="M700 800 L690 880"/><path d="M760 790 L800 870"/>
+  </g>
+  <g fill="#ffffff" opacity="0.85">
+    <circle cx="160" cy="120" r="5"/><circle cx="420" cy="220" r="4"/><circle cx="1180" cy="160" r="5"/>
+    <circle cx="1480" cy="110" r="4"/><circle cx="980" cy="230" r="3"/><circle cx="260" cy="300" r="3"/>
+  </g>
+
+  <g font-family="Segoe UI Rounded, Arial Rounded MT Bold, Segoe UI, system-ui, sans-serif" font-weight="900" text-anchor="middle">
+    <text x="800" y="160" font-size="140" fill="#2b2540" opacity="0.18" transform="translate(6 10)">SLIDE STONES</text>
+    <text x="800" y="160" font-size="140" fill="#fff" stroke="#2b2540" stroke-width="16" stroke-linejoin="round" paint-order="stroke">SLIDE STONES</text>
+  </g>
+</svg>

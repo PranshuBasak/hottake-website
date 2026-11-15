@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f271a"/>
+      <stop offset="1" stop-color="#1f120b"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.45" r="0.65">
+      <stop offset="0" stop-color="#ffc878" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.5"/>
+    </radialGradient>
+    <radialGradient id="felt" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#2c9064"/>
+      <stop offset="1" stop-color="#13452d"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8f5e34"/>
+      <stop offset="1" stop-color="#4a2b16"/>
+    </linearGradient>
+    <linearGradient id="die" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#e6dcc4"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5a2a16"/>
+      <stop offset="0.45" stop-color="#a5552e"/>
+      <stop offset="1" stop-color="#4a2010"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffeaa0" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#ffb43c" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffb43c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe680"/>
+      <stop offset="1" stop-color="#e09a1a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- the table -->
+  <rect width="1600" height="900" fill="url(#wood)"/>
+  <g stroke="#ffd2a0" stroke-opacity="0.05" stroke-width="3" fill="none">
+    <path d="M0 140 Q400 128 800 146 T1600 136"/>
+    <path d="M0 300 Q420 316 820 296 T1600 310"/>
+    <path d="M0 470 Q380 458 800 478 T1600 462"/>
+    <path d="M0 640 Q420 652 800 632 T1600 648"/>
+    <path d="M0 800 Q400 790 800 806 T1600 794"/>
+  </g>
+  <rect width="1600" height="900" fill="url(#lamp)"/>
+
+  <!-- title -->
+  <text x="800" y="150" text-anchor="middle" font-family="Segoe UI, Arial Rounded MT Bold, sans-serif" font-weight="900" font-size="148" fill="url(#gold)" stroke="#3a1a08" stroke-width="10" paint-order="stroke">ROLL CALL</text>
+
+  <!-- the felt tray -->
+  <rect x="210" y="230" width="1180" height="560" rx="46" fill="url(#rim)"/>
+  <rect x="236" y="256" width="1128" height="508" rx="34" fill="url(#felt)"/>
+  <rect x="236" y="256" width="1128" height="508" rx="34" fill="none" stroke="#000" stroke-opacity="0.3" stroke-width="18"/>
+  <rect x="210" y="230" width="1180" height="560" rx="46" fill="none" stroke="#ffd34d" stroke-width="8"/>
+
+  <!-- the dice cup, tipped, dice tumbling out -->
+  <g transform="translate(1180 470) rotate(-28)">
+    <path d="M-62 0 L-76 -170 Q0 -186 76 -170 L62 0 Q0 14 -62 0Z" fill="url(#cup)" stroke="#2a1208" stroke-width="5"/>
+    <path d="M-66 -30 Q0 -20 66 -30 M-74 -142 Q0 -132 74 -142" stroke="#e0b070" stroke-width="4" stroke-dasharray="9 9" fill="none"/>
+    <ellipse cx="0" cy="-172" rx="76" ry="15" fill="#2a1208"/>
+  </g>
+
+  <!-- five dice: two held (raised, glowing, locked) -->
+  <g>
+    <ellipse cx="420" cy="540" rx="120" ry="110" fill="url(#glow)"/>
+    <ellipse cx="610" cy="540" rx="120" ry="110" fill="url(#glow)"/>
+    <!-- die 1: six (held) -->
+    <g transform="translate(420 520)">
+      <rect x="-66" y="-66" width="132" height="132" rx="24" fill="url(#die)" stroke="#2a2430" stroke-width="10"/>
+      <g fill="#1d1a24"><circle cx="-34" cy="-34" r="12"/><circle cx="34" cy="-34" r="12"/><circle cx="-34" cy="0" r="12"/><circle cx="34" cy="0" r="12"/><circle cx="-34" cy="34" r="12"/><circle cx="34" cy="34" r="12"/></g>
+    </g>
+    <!-- die 2: six (held) -->
+    <g transform="translate(610 520)">
+      <rect x="-66" y="-66" width="132" height="132" rx="24" fill="url(#die)" stroke="#2a2430" stroke-width="10"/>
+      <g fill="#1d1a24"><circle cx="-34" cy="-34" r="12"/><circle cx="34" cy="-34" r="12"/><circle cx="-34" cy="0" r="12"/><circle cx="34" cy="0" r="12"/><circle cx="-34" cy="34" r="12"/><circle cx="34" cy="34" r="12"/></g>
+    </g>
+    <!-- die 3: six, just landed -->
+    <g transform="translate(800 560) rotate(8)">
+      <rect x="-66" y="-66" width="132" height="132" rx="24" fill="url(#die)" stroke="#2a2430" stroke-width="7"/>
+      <g fill="#1d1a24"><circle cx="-34" cy="-34" r="12"/><circle cx="34" cy="-34" r="12"/><circle cx="-34" cy="0" r="12"/><circle cx="34" cy="0" r="12"/><circle cx="-34" cy="34" r="12"/><circle cx="34" cy="34" r="12"/></g>
+    </g>
+    <!-- die 4: tumbling in the air -->
+    <g transform="translate(980 420) rotate(-24) scale(1 0.82)">
+      <rect x="-60" y="-60" width="120" height="120" rx="22" fill="url(#die)" stroke="#2a2430" stroke-width="7"/>
+      <g fill="#1d1a24"><circle cx="-30" cy="-30" r="11"/><circle cx="0" cy="0" r="11"/><circle cx="30" cy="30" r="11"/></g>
+    </g>
+    <path d="M900 360 A120 120 0 0 1 1060 380" stroke="#fff" stroke-opacity="0.3" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- die 5: leaving the cup -->
+    <g transform="translate(1090 300) rotate(30) scale(0.9 0.75)">
+      <rect x="-56" y="-56" width="112" height="112" rx="20" fill="url(#die)" stroke="#2a2430" stroke-width="7"/>
+      <g fill="#1d1a24"><circle cx="-28" cy="-28" r="10"/><circle cx="28" cy="-28" r="10"/><circle cx="-28" cy="28" r="10"/><circle cx="28" cy="28" r="10"/></g>
+    </g>
+    <!-- padlocks on the held dice -->
+    <g transform="translate(470 452)">
+      <path d="M-14 -4 V-16 A14 14 0 0 1 14 -16 V-4" stroke="#d0d4dc" stroke-width="7" fill="none"/>
+      <rect x="-22" y="-6" width="44" height="34" rx="8" fill="#f2b632" stroke="#6a4608" stroke-width="3"/>
+    </g>
+    <g transform="translate(660 452)">
+      <path d="M-14 -4 V-16 A14 14 0 0 1 14 -16 V-4" stroke="#d0d4dc" stroke-width="7" fill="none"/>
+      <rect x="-22" y="-6" width="44" height="34" rx="8" fill="#f2b632" stroke="#6a4608" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- category badges along the bottom: house, crown, run, heap -->
+  <g font-family="Segoe UI, sans-serif" font-weight="800">
+    <rect x="300" y="652" width="230" height="86" rx="18" fill="#ff7a6b"/>
+    <path d="M326 700 L352 676 L378 700Z" fill="#fff4e2"/><rect x="332" y="698" width="40" height="28" rx="3" fill="#fff4e2"/>
+    <text x="510" y="709" text-anchor="end" font-size="40" fill="#2a1006">25</text>
+
+    <rect x="556" y="652" width="230" height="86" rx="18" fill="rgba(8,30,20,0.75)" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+    <path d="M582 722 V686 L596 702 L610 678 L624 702 L638 686 V722Z" fill="#ffd34d" stroke="#8a5a00" stroke-width="3"/>
+    <text x="766" y="709" text-anchor="end" font-size="40" fill="#ffd34d">50</text>
+
+    <rect x="812" y="652" width="230" height="86" rx="18" fill="rgba(8,30,20,0.75)" stroke="#ffffff" stroke-opacity="0.2" stroke-width="3"/>
+    <g><rect x="838" y="706" width="12" height="16" fill="#7fd0ff"/><rect x="853" y="696" width="12" height="26" fill="#8ee08a"/><rect x="868" y="686" width="12" height="36" fill="#ffd34d"/><rect x="883" y="676" width="12" height="46" fill="#ff9a5c"/><rect x="898" y="666" width="12" height="56" fill="#ff6f9a"/></g>
+    <text x="1022" y="709" text-anchor="end" font-size="40" fill="#ffd34d">40</text>
+
+    <rect x="1068" y="652" width="230" height="86" rx="18" fill="rgba(60,56,52,0.85)"/>
+    <rect x="1094" y="676" width="44" height="44" rx="10" fill="#f7f1e1" opacity="0.5"/>
+    <text x="1278" y="709" text-anchor="end" font-size="40" fill="#ffffff" fill-opacity="0.6">22</text>
+  </g>
+</svg>

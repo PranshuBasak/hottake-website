@@ -1,0 +1,772 @@
+[
+  {
+    "id": "beetle-ball",
+    "name": "Beetle Ball",
+    "tagline": "Beetles, a seed ball and two flower-pot goals. Three minutes, most goals wins.",
+    "description": "Two teams of beetles, Moss (striped shells) and Amber (spotted shells), play ball on a mossy garden pitch. Run with the stick, tap Kick for a pass or hold it up to 0.8 s for a power shot the way your beetle faces, and Dash to bump rivals and knock the ball loose. Score in the far flower pot; uneven teams get a computer keeper. Three minutes, most goals wins.",
+    "tags": [
+      "party",
+      "sport",
+      "team"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Kick",
+      "Dash"
+    ],
+    "cover": "/games/beetle-ball.svg",
+    "credit": null
+  },
+  {
+    "id": "bluff-cup",
+    "name": "Bluff Cup",
+    "tagline": "Hide your dice, raise the bid, and call out the liars.",
+    "description": "Everyone hides dice under a leather cup and only sees their own, on their phone. Take turns raising the bid (\"four 5s on the table!\") with more dice or a higher face; 1s are wild. Don't believe the last bid? Call Liar: every cup lifts and the dice are counted. Short of the bid, the bidder loses a die; enough, the caller does. Run out of dice and you're out. The last cup standing wins (8-minute cap).",
+    "tags": [
+      "party",
+      "dice",
+      "board",
+      "bluff"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Bid",
+      "Liar"
+    ],
+    "cover": "/games/bluff-cup.svg",
+    "credit": null
+  },
+  {
+    "id": "bombermoji",
+    "name": "Bombermoji",
+    "tagline": "Blast bricks, grab power-ups, be the last emoji standing. First to 3 wins.",
+    "description": "Emoji bomb battle: blast bricks, grab power-ups, be the last emoji standing. First to 3 round wins.",
+    "tags": [
+      "party",
+      "arena",
+      "bombs"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Bomb"
+    ],
+    "cover": "/games/bombermoji.svg",
+    "credit": {
+      "author": "Johannes Wärn",
+      "url": "https://github.com/JohannesWarn/Bombermoji",
+      "license": "MIT",
+      "notes": "Ported to HotTake from commit 3cea2e7. Emoji art: Twemoji by Twitter, Inc and other contributors, CC-BY 4.0 (twemoji/LICENSE-GRAPHICS). See CREDITS.md."
+    }
+  },
+  {
+    "id": "bumper-bloom",
+    "name": "Bumper Bloom",
+    "tagline": "Roll, dash and bump rivals off a shrinking lily pad. Last flower blooms.",
+    "description": "Flower bumper brawl on a shrinking lily pad: roll, dash and bump everyone into the pond. Best of 3 rounds.",
+    "tags": [
+      "party",
+      "arena",
+      "bumper"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Dash"
+    ],
+    "cover": "/games/bumper-bloom.svg",
+    "credit": null
+  },
+  {
+    "id": "cartastrophe",
+    "name": "Cartastrophe",
+    "tagline": "Run one chaotic supermarket shift together: restock, ring up, mop, survive.",
+    "description": "Co-op supermarket shift for 1-6: order stock, restock the shelves, ring up shoppers, mop spills and survive the chaos together. The whole crew earns the stars.",
+    "tags": [
+      "co-op",
+      "chaos",
+      "teamwork"
+    ],
+    "players": {
+      "min": 1,
+      "max": 6
+    },
+    "coop": true,
+    "stick": "Joystick",
+    "buttons": [
+      "Grab",
+      "Ping"
+    ],
+    "cover": "/games/cartastrophe.svg",
+    "credit": {
+      "author": "webdevcody (Web Dev Cody)",
+      "url": "https://github.com/webdevcody/cartastrophe",
+      "license": "permission",
+      "notes": "Used with permission of webdevcody (Web Dev Cody), stated by Pranshu, 9 Nov 2026"
+    }
+  },
+  {
+    "id": "coin-clash",
+    "name": "Coin Clash",
+    "tagline": "Grab coins, stomp rivals, dash to bump. Most coins in 90 seconds wins.",
+    "description": "Platform brawl: grab coins, stomp heads, dash to bump. Most coins in 90 seconds wins.",
+    "tags": [
+      "party",
+      "platformer",
+      "brawl"
+    ],
+    "players": {
+      "min": 1,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Dash"
+    ],
+    "cover": "/games/coin-clash.svg",
+    "credit": null
+  },
+  {
+    "id": "crown-keep",
+    "name": "Crown Keep",
+    "tagline": "Grab the crown, keep the crown. Stomp or dash the holder to steal it.",
+    "description": "King of the castle on moonlit rooftops: grab the crown, hold it to score a point a second, and stomp or dash the holder to steal it. Most points in 90 seconds wins.",
+    "tags": [
+      "party",
+      "platformer",
+      "brawl"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Dash"
+    ],
+    "cover": "/games/crown-keep.svg",
+    "credit": null
+  },
+  {
+    "id": "deep-dig",
+    "name": "Deep Dig",
+    "tagline": "Dig deeper or climb out? Bank your gems before the tunnel caves in.",
+    "description": "Ride the mine cart down five dives. Each step every miner secretly presses Dig or Climb, and the choices flip together. Diggers split the gems on the next tile; climbers bank what they carry and share the loose gems left behind, and a lone climber grabs the relic. But a second hazard of the same kind collapses the tunnel, and everyone still inside loses their haul. Most banked gems after 5 dives wins.",
+    "tags": [
+      "party",
+      "push-your-luck",
+      "decisions"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Buttons only",
+    "buttons": [
+      "Dig",
+      "Climb"
+    ],
+    "cover": "/games/deep-dig.svg",
+    "credit": null
+  },
+  {
+    "id": "drop-line",
+    "name": "Drop Line",
+    "tagline": "Suns against moons: drop tokens, line up four, cheer your team on.",
+    "description": "Sun against Moon on a wooden board of 7 columns and 6 rows. Take turns picking a column and dropping a token: it falls to the lowest free hole. Get four of yours in a line (across, up or diagonally) to win the board. Two players duel; 3-8 split into two teams by seat and take turns in rotation, while the others cheer from their phones. Best of 3 boards; level after 3, sudden death.",
+    "tags": [
+      "party",
+      "board",
+      "team",
+      "turns"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Drop",
+      "Cheer"
+    ],
+    "cover": "/games/drop-line.svg",
+    "credit": null
+  },
+  {
+    "id": "flock-off",
+    "name": "Flock Off",
+    "tagline": "Hide in a flock of identical penguins. Find the fish holes, peck the impostors.",
+    "description": "Everyone is a penguin in a flock of 40 identical penguins on an ice floe, and nobody can see which one is whose. Waddle with the stick (everyone walks at the same pace) and blend in. Visit all 4 fish holes to win the round, or Peck the penguin in front of you: a player is out for the round, but peck a real penguin and you're stunned, flashing for all to see. Dance with the flock for cover. Last one standing also wins. Five rounds, most points wins.",
+    "tags": [
+      "party",
+      "hidden",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Peck",
+      "Dance"
+    ],
+    "cover": "/games/flock-off.svg",
+    "credit": null
+  },
+  {
+    "id": "fuse-pass",
+    "name": "Fuse Pass",
+    "tagline": "Toss the ticking bomb before the hidden fuse runs out. Last one standing wins.",
+    "description": "A bomb with a hidden fuse bounces around a sunny courtyard. Aim with the stick and Pass to throw it on before it goes bang. Three lives each; the last one standing wins.",
+    "tags": [
+      "party",
+      "arena",
+      "tension"
+    ],
+    "players": {
+      "min": 3,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Pass"
+    ],
+    "cover": "/games/fuse-pass.svg",
+    "credit": null
+  },
+  {
+    "id": "lantern-sneak",
+    "name": "Lantern Sneak",
+    "tagline": "Creep to the shrine. Move in the lantern's light and you turn to stone.",
+    "description": "A moonlit courtyard and one lantern. Its holder sweeps a 40° cone of light with the stick; everyone else creeps from the far wall toward the shrine. Move while the light is on you and you turn to stone until the round ends. Hide behind hedges and statues, hold Hide to crouch small, and reach the shrine to score a point and take the lantern. 5 rounds or 180 s; most points wins.",
+    "tags": [
+      "party",
+      "stealth",
+      "night"
+    ],
+    "players": {
+      "min": 3,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Hide"
+    ],
+    "cover": "/games/lantern-sneak.svg",
+    "credit": null
+  },
+  {
+    "id": "last-light",
+    "name": "Last Light",
+    "tagline": "Guard the lantern together through five waves of night until dawn.",
+    "description": "Co-op survival on the village green: guard the last lantern through five waves of night crawlers and flyers. Swat them away, revive downed friends by standing beside them, and hold out until dawn.",
+    "tags": [
+      "co-op",
+      "platformer",
+      "survival"
+    ],
+    "players": {
+      "min": 1,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Attack"
+    ],
+    "cover": "/games/last-light.svg",
+    "credit": null
+  },
+  {
+    "id": "lava-rise",
+    "name": "Lava Rise",
+    "tagline": "Race up a volcanic shaft as the lava rises. Stomp rivals, climb highest.",
+    "description": "Vertical platform race up a volcanic shaft: jump up through ledges, stomp rivals and outclimb the rising lava. Highest climb wins, +50 for the last one standing.",
+    "tags": [
+      "party",
+      "platformer",
+      "race"
+    ],
+    "players": {
+      "min": 1,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump"
+    ],
+    "cover": "/games/lava-rise.svg",
+    "credit": null
+  },
+  {
+    "id": "lob-squad",
+    "name": "Lob Squad",
+    "tagline": "Lob shells over rolling hills in turns. Read the wind, dig craters, outlast all.",
+    "description": "Turn-based artillery on rolling hills: aim your lobber, charge the shot, read the wind and blast craters under your rivals. Damage dealt scores, +100 for the last critter standing.",
+    "tags": [
+      "party",
+      "turn-based",
+      "artillery"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Fire"
+    ],
+    "cover": "/games/lob-squad.svg",
+    "credit": null
+  },
+  {
+    "id": "nebula-knockout",
+    "name": "Nebula Knockout",
+    "tagline": "Six ships, one sun, 150 seconds. Shoot them down and stay out of the fire.",
+    "description": "Up to six ships fly at once in a wrapping nebula arena with a sun at its heart. Turn with the d-pad, push up to thrust, tap or hold Fire. Every ship you shoot down scores 1; fly into the sun and you lose 1, so mind its pull. A fresh ship launches with a shield. Extra pilots wait in a visible queue and steer the ghost together until a ship goes down and their turn comes. Most points after 150 seconds wins.",
+    "tags": [
+      "party",
+      "arena",
+      "shooter"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Fire"
+    ],
+    "cover": "/games/nebula-knockout.svg",
+    "credit": {
+      "author": "Gregg Tavares",
+      "url": "https://github.com/greggman/hft-powpow",
+      "license": "BSD-3-Clause",
+      "notes": "Gameplay ported to HotTake from commit 98bd4d2 (LICENSE). Renderer, sounds, sun, thrust and match timer are HotTake's own. See CREDITS.md."
+    }
+  },
+  {
+    "id": "night-siege",
+    "name": "Night Siege",
+    "tagline": "Scavenge by day, hold the base by night: five nights, together.",
+    "description": "Top-down zombie survival for 1-6 on one shared screen: scavenge and craft by day, hold the base through five nights of growing waves, and revive downed friends before they bleed out.",
+    "tags": [
+      "co-op",
+      "survival",
+      "zombies"
+    ],
+    "players": {
+      "min": 1,
+      "max": 6
+    },
+    "coop": true,
+    "stick": "Twin stick",
+    "buttons": [
+      "Fire",
+      "Use",
+      "Item",
+      "Craft"
+    ],
+    "cover": "/games/night-siege.svg",
+    "credit": {
+      "author": "Web Dev Cody",
+      "url": "https://github.com/webdevcody/survive-the-night-game",
+      "license": "MIT",
+      "notes": "MIT code; tileset by Ittai Manero (itch.io), other sprites and sounds from the upstream repo, used with permission"
+    }
+  },
+  {
+    "id": "orbit-snakes",
+    "name": "Orbit Snakes",
+    "tagline": "Steer neon snakes round gravity wells. Eat orbs, dodge every body.",
+    "description": "Neon snakes in deep space, where 2 to 4 gravity wells bend every path. Steer with ◀ ▶, eat orbs to grow, and never fly into a body: a rival's, your own, or a well's core. The last snake flying takes the round; the longest survivor takes it when the 120 s match clock runs out. Most points wins.",
+    "tags": [
+      "party",
+      "arena",
+      "space"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Buttons only",
+    "buttons": [
+      "◀",
+      "▶"
+    ],
+    "cover": "/games/orbit-snakes.svg",
+    "credit": null
+  },
+  {
+    "id": "paint-the-plaza",
+    "name": "Paint the Plaza",
+    "tagline": "Roll paint over every tile. Fresh paint from rivals stops you dead.",
+    "description": "Run round a sunny town plaza with a paint roller and colour every tile you cross. Boost for a 1.6× sprint (3 s cooldown). Don't step on a rival's fresh paint: anything painted in the last 1.5 s stuns you for 1 s. After 90 s the most tiles wins. With 6 to 8 players it's Orange vs Blue, split by seat.",
+    "tags": [
+      "party",
+      "arena",
+      "teams"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Boost"
+    ],
+    "cover": "/games/paint-the-plaza.svg",
+    "credit": null
+  },
+  {
+    "id": "putt-panic",
+    "name": "Putt Panic",
+    "tagline": "Mini golf against the clock. Windmills, sliders and everyone's balls in the way.",
+    "description": "Turn-based mini golf on a seaside boardwalk, with windmills, sliders and bumpers: 6 holes for 2-3 players, 4 for 4-5, 3 for 6-8. On your turn, aim with the stick, hold Putt to set the power and let go to hit; the 15 s shot clock putts for you. The farthest ball putts next, and balls knock each other about. Everyone has their own 25 s time bank per hole, used while you aim; a ball still out after 6 strokes, or when your bank runs dry, is picked up and scores 7. Fewest total strokes wins.",
+    "tags": [
+      "party",
+      "golf",
+      "turn-based"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Putt"
+    ],
+    "cover": "/games/putt-panic.svg",
+    "credit": null
+  },
+  {
+    "id": "reflex-rumble",
+    "name": "Reflex Rumble",
+    "tagline": "Eight lightning rounds of reflex games. Fastest fingers take the points.",
+    "description": "Eight lightning rounds of tiny reflex games on a game-show stage: wait for the green light, mash to win the race, tap on the beat, and pick the matching colour. 1st, 2nd and 3rd in each round score 3, 2 and 1 points; jump the gun and you score nothing. Most points after 8 rounds wins.",
+    "tags": [
+      "party",
+      "reflex",
+      "micro-games"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Buttons only",
+    "buttons": [
+      "A",
+      "B"
+    ],
+    "cover": "/games/reflex-rumble.svg",
+    "credit": null
+  },
+  {
+    "id": "rhythm-rowers",
+    "name": "Rhythm Rowers",
+    "tagline": "Row on the drum beat, Left then Right. Miss it and you lose speed!",
+    "description": "Crews of up to two race boats down a rocky river to the beat of a drum. Press Left and Right in turn, on the beat: every stroke on time drives your boat on, and both rowers on the same beat earn a sync bonus. Off the beat, or the same side twice, and your boat loses a little speed. Your last stroke steers round the rocks; rapids rush you on and shove you about. First boat over the finish line wins, and the crew shares the credit. Races are capped at 150 s, when the boat furthest along wins.",
+    "tags": [
+      "party",
+      "rhythm",
+      "teams",
+      "race"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Buttons only",
+    "buttons": [
+      "Left",
+      "Right"
+    ],
+    "cover": "/games/rhythm-rowers.svg",
+    "credit": null
+  },
+  {
+    "id": "ricochet-tanks",
+    "name": "Ricochet Tanks",
+    "tagline": "Bank shots in a random maze. Every bullet bounces, and every bullet bites.",
+    "description": "Top-down tank duels in a fresh maze every round. Shots bounce off the walls and hit anyone, you included. Last tank rolling scores; first to 3 + players points, or most points when time is up (2 min for 2 players, plus 2 min per extra player).",
+    "tags": [
+      "party",
+      "arena",
+      "shooter"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Fire"
+    ],
+    "cover": "/games/ricochet-tanks.svg",
+    "credit": {
+      "author": "AbyssWhalen",
+      "url": "https://github.com/AbyssWhalen/tank-trouble",
+      "license": "MIT",
+      "notes": "Ricochet Tanks — gameplay ported from tank-trouble by AbyssWhalen"
+    }
+  },
+  {
+    "id": "roll-call",
+    "name": "Roll Call",
+    "tagline": "Five dice, three rolls, nine ways to score. Everyone rolls at once!",
+    "description": "Everyone rolls at once on their own felt tray. Each round your first roll is automatic; hold the dice you like and roll the rest, up to 3 rolls. Then pick one of nine categories — Low, High, Three alike, Four alike, Full house, Short run, Long run, Anything or Five alike — to score your dice in. Each category counts once, and you get only 6 rounds, so 3 stay unused: choose well. 35 seconds a round; most points wins.",
+    "tags": [
+      "party",
+      "dice",
+      "board"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Roll",
+      "Hold",
+      "Score"
+    ],
+    "cover": "/games/roll-call.svg",
+    "credit": null
+  },
+  {
+    "id": "scroll-sprint",
+    "name": "Scroll Sprint",
+    "tagline": "Outrun the storm as the screen speeds up. Last runner standing, best of 3.",
+    "description": "Side-scrolling dash with a storm on your heels: the screen rolls right on its own and speeds up every lap. Jump the pits, hop the walls, stomp rivals. Last runner standing takes the round; best of 3.",
+    "tags": [
+      "party",
+      "platformer",
+      "race"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump"
+    ],
+    "cover": "/games/scroll-sprint.svg",
+    "credit": null
+  },
+  {
+    "id": "shard-rink",
+    "name": "Shard Rink",
+    "tagline": "Guard your edge of the ice. Bump pucks back. Last paddle standing wins.",
+    "description": "Every player guards one edge of an ice polygon with a neon paddle. Push the stick the way you want it to slide on the TV and tap Bump to kick a puck back faster and curving. A puck through your edge costs one of 3 lives; at 0 your edge freezes into crystal wall and you become a ghost whose Bump pulses pucks away from your wall. A second puck joins at 30 s and every 10 s they speed up. Last one standing wins the round; first to 2 round wins takes the match.",
+    "tags": [
+      "party",
+      "arena",
+      "paddle"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Bump"
+    ],
+    "cover": "/games/shard-rink.svg",
+    "credit": null
+  },
+  {
+    "id": "slide-stones",
+    "name": "Slide Stones",
+    "tagline": "Glide your stones to the rings. Knock your rivals off the ice.",
+    "description": "A frosty sheet of ice and a ringed target at the far end. On your turn, steer your aim with the stick, hold Slide to build power and let go to send your stone gliding. Stones clack, bounce and can be knocked clean off the ice. Everyone throws 2 stones an end; after each end the stone closest to the centre scores 1, plus 1 for every other stone of yours closer than anyone else's. 3 ends; most points wins.",
+    "tags": [
+      "party",
+      "turn-based",
+      "ice"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Slide"
+    ],
+    "cover": "/games/slide-stones.svg",
+    "credit": null
+  },
+  {
+    "id": "spoke-race",
+    "name": "Spoke Race",
+    "tagline": "Shake the die, race your tops round the wheel, bonk rivals back to base.",
+    "description": "Race your spinning tops once round a painted wagon wheel and up your own spoke to the hub. On your turn hold Roll to shake the die and let go to roll; a 5 or 6 brings a top out of your pod. Pick which top moves with the d-pad. Land on a rival to bonk it back to base, unless it sits on a safe star. A 6 rolls again, and home takes the exact roll. Everyone else cheers from their phones. The race ends once the podium is decided: the first one home with 2 players, the top 2 with 3, the top 3 with 4-6, the top 2 with 7-8 (8-minute cap).",
+    "tags": [
+      "party",
+      "board",
+      "dice",
+      "turns"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Roll",
+      "Move",
+      "Cheer"
+    ],
+    "cover": "/games/spoke-race.svg",
+    "credit": null
+  },
+  {
+    "id": "star-convoy",
+    "name": "Star Convoy",
+    "tagline": "Fly together through 5 sectors of asteroids, saucers and one angry flagship.",
+    "description": "A co-op space shooter for the whole room. Everyone flies a ship in their own colour up a scrolling star field: push the stick to fly, hold Fire to keep shooting. Asteroids, saucers and cruisers come down through 5 sectors that get busier every minute, and a flagship waits in the last one. A downed ship is back in 5 seconds while a teammate still flies, but if everyone is down at once the run ends. Every kill scores for whoever made it; grab stars, gun upgrades and hull repairs on the way.",
+    "tags": [
+      "party",
+      "co-op",
+      "shooter"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "Joystick",
+    "buttons": [
+      "Fire"
+    ],
+    "cover": "/games/star-convoy.svg",
+    "credit": {
+      "author": "Couchfriends",
+      "url": "https://github.com/Couchfriends/Space-Shooter",
+      "license": "MIT",
+      "notes": "Gameplay ported to HotTake from commit 41ada9f (LICENSE). Ship, UFO, cruiser and flagship sprites by MillionthVector (millionthvector.blogspot.com), CC BY 4.0, tinted (assets/CC-BY-4.0.txt). Renderer, sounds, sectors, respawns and the flagship are HotTake's own. See CREDITS.md."
+    }
+  },
+  {
+    "id": "sushi-paws",
+    "name": "Sushi Paws",
+    "tagline": "Cats, a spinning sushi belt and 75 seconds. Grab, chain, out-eat everyone.",
+    "description": "A cosy, chaotic cat sushi party in 3D. Up to 8 cats sit round a spinning conveyor and grab plates as they pass. Same dish again builds a chain; wasabi sends you wild, catnip gives you zoomies. Most points after 75 seconds wins, ties go to the most plates.",
+    "tags": [
+      "party",
+      "3d",
+      "arena",
+      "food"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Grab"
+    ],
+    "cover": "/games/sushi-paws.svg",
+    "credit": {
+      "author": "Clyde Junior",
+      "url": "https://github.com/clydejuniorscripts/sushi-paws-conveyor-clash",
+      "license": "MIT",
+      "notes": "Sushi Paws — ported from Sushi Paws: Conveyor Clash by Clyde Junior (@clydejuniordev). 3D with three.js (MIT)."
+    }
+  },
+  {
+    "id": "tangle",
+    "name": "Tangle",
+    "tagline": "Steer your growing line, dodge every trail, be the last curve alive.",
+    "description": "Curve battle: steer a line that never stops growing, dodge every trail, outlast everyone. Race to 10 points per opponent.",
+    "tags": [
+      "party",
+      "arena",
+      "classic"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Buttons only",
+    "buttons": [
+      "◀ Left",
+      "Right ▶"
+    ],
+    "cover": "/games/tangle.svg",
+    "credit": {
+      "author": "Eigil Nikolajsen",
+      "url": "https://github.com/eigilnikolajsen/achtung-die-kurve",
+      "license": "MIT",
+      "notes": "Tangle — based on achtung-die-kurve by Eigil Nikolajsen"
+    }
+  },
+  {
+    "id": "tilt-tower",
+    "name": "Tilt Tower",
+    "tagline": "Stack it high, drop it true, and pray the wind is kind.",
+    "description": "Take turns stacking crates, planks and beams on a narrow sea stack. On your turn slide the hovering piece with the stick, Rotate it a quarter turn and Drop it; you have 15 s. Everyone else can hold Gust to charge one sideways blast a turn. If a piece falls into the sea or the tower leans past 25°, whoever dropped the last piece loses the round and everyone else scores. Best of 3.",
+    "tags": [
+      "party",
+      "turns",
+      "physics"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Rotate",
+      "Drop"
+    ],
+    "cover": "/games/tilt-tower.svg",
+    "credit": null
+  }
+]

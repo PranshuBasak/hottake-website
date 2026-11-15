@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1a5e"/>
+      <stop offset="1" stop-color="#ff7a59"/>
+    </linearGradient>
+    <radialGradient id="coin" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fff3a8"/>
+      <stop offset="0.6" stop-color="#ffc931"/>
+      <stop offset="1" stop-color="#e08a00"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1280" cy="210" r="120" fill="#ffe9a8" opacity="0.85"/>
+  <circle cx="1280" cy="210" r="170" fill="#ffe9a8" opacity="0.18"/>
+  <!-- platforms -->
+  <g fill="#1a1238">
+    <rect x="0" y="780" width="1600" height="120"/>
+    <rect x="120" y="560" width="360" height="36" rx="10"/>
+    <rect x="620" y="420" width="360" height="36" rx="10"/>
+    <rect x="1120" y="580" width="360" height="36" rx="10"/>
+  </g>
+  <g fill="#7be0a0">
+    <rect x="0" y="770" width="1600" height="16"/>
+    <rect x="120" y="552" width="360" height="12" rx="6"/>
+    <rect x="620" y="412" width="360" height="12" rx="6"/>
+    <rect x="1120" y="572" width="360" height="12" rx="6"/>
+  </g>
+  <!-- coins -->
+  <g fill="url(#coin)" stroke="#a65f00" stroke-width="6">
+    <circle cx="240" cy="480" r="36"/><circle cx="360" cy="480" r="36"/>
+    <circle cx="740" cy="340" r="36"/><circle cx="860" cy="340" r="36"/>
+    <circle cx="1240" cy="500" r="36"/><circle cx="1360" cy="500" r="36"/>
+    <circle cx="800" cy="700" r="36"/>
+  </g>
+  <g fill="#a65f00" opacity="0.7">
+    <rect x="232" y="466" width="16" height="28" rx="6"/><rect x="352" y="466" width="16" height="28" rx="6"/>
+    <rect x="732" y="326" width="16" height="28" rx="6"/><rect x="852" y="326" width="16" height="28" rx="6"/>
+    <rect x="1232" y="486" width="16" height="28" rx="6"/><rect x="1352" y="486" width="16" height="28" rx="6"/>
+    <rect x="792" y="686" width="16" height="28" rx="6"/>
+  </g>
+  <!-- blobs -->
+  <g>
+    <rect x="200" y="498" width="88" height="62" rx="26" fill="#ff4d8d"/>
+    <rect x="684" y="358" width="88" height="62" rx="26" fill="#4dc3ff"/>
+    <rect x="1180" y="518" width="88" height="62" rx="26" fill="#a96bff"/>
+    <rect x="1010" y="688" width="88" height="62" rx="26" fill="#7be0a0"/>
+    <rect x="420" y="708" width="88" height="62" rx="26" fill="#ffc931"/>
+  </g>
+  <g fill="#fff">
+    <circle cx="228" cy="520" r="11"/><circle cx="262" cy="520" r="11"/>
+    <circle cx="712" cy="380" r="11"/><circle cx="746" cy="380" r="11"/>
+    <circle cx="1208" cy="540" r="11"/><circle cx="1242" cy="540" r="11"/>
+    <circle cx="1038" cy="710" r="11"/><circle cx="1072" cy="710" r="11"/>
+    <circle cx="448" cy="730" r="11"/><circle cx="482" cy="730" r="11"/>
+  </g>
+  <g fill="#1a1238">
+    <circle cx="231" cy="522" r="5"/><circle cx="265" cy="522" r="5"/>
+    <circle cx="715" cy="382" r="5"/><circle cx="749" cy="382" r="5"/>
+    <circle cx="1211" cy="542" r="5"/><circle cx="1245" cy="542" r="5"/>
+    <circle cx="1041" cy="712" r="5"/><circle cx="1075" cy="712" r="5"/>
+    <circle cx="451" cy="732" r="5"/><circle cx="485" cy="732" r="5"/>
+  </g>
+  <!-- dash streak -->
+  <g stroke="#fff" stroke-width="8" stroke-linecap="round" opacity="0.6">
+    <line x1="880" y1="716" x2="990" y2="716"/><line x1="900" y1="740" x2="990" y2="740"/>
+  </g>
+</svg>

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6dc"/>
+      <stop offset="1" stop-color="#ffc46a"/>
+    </linearGradient>
+    <radialGradient id="beam" cx="1360" cy="560" r="1100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd27a" stop-opacity="0.85"/>
+      <stop offset="0.6" stop-color="#ffb04a" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ff9a3a" stop-opacity="0.05"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="1360" cy="560" r="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe2a0" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffb04a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- the courtyard at night -->
+  <rect width="1600" height="900" fill="#1a2433"/>
+  <g fill="#212d3f">
+    <rect x="10" y="250" width="150" height="80" rx="10"/><rect x="175" y="250" width="120" height="80" rx="10"/>
+    <rect x="310" y="250" width="160" height="80" rx="10"/><rect x="485" y="250" width="130" height="80" rx="10"/>
+    <rect x="630" y="250" width="150" height="80" rx="10"/><rect x="795" y="250" width="140" height="80" rx="10"/>
+    <rect x="80" y="345" width="140" height="80" rx="10"/><rect x="235" y="345" width="160" height="80" rx="10"/>
+    <rect x="410" y="345" width="120" height="80" rx="10"/><rect x="545" y="345" width="150" height="80" rx="10"/>
+    <rect x="710" y="345" width="140" height="80" rx="10"/>
+    <rect x="10" y="440" width="130" height="80" rx="10"/><rect x="155" y="440" width="150" height="80" rx="10"/>
+    <rect x="320" y="440" width="140" height="80" rx="10"/><rect x="475" y="440" width="160" height="80" rx="10"/>
+    <rect x="650" y="440" width="130" height="80" rx="10"/>
+    <rect x="80" y="535" width="150" height="80" rx="10"/><rect x="245" y="535" width="130" height="80" rx="10"/>
+    <rect x="390" y="535" width="150" height="80" rx="10"/><rect x="555" y="535" width="140" height="80" rx="10"/>
+    <rect x="10" y="630" width="140" height="80" rx="10"/><rect x="165" y="630" width="160" height="80" rx="10"/>
+    <rect x="340" y="630" width="130" height="80" rx="10"/><rect x="485" y="630" width="150" height="80" rx="10"/>
+    <rect x="80" y="725" width="130" height="80" rx="10"/><rect x="225" y="725" width="150" height="80" rx="10"/>
+    <rect x="390" y="725" width="140" height="80" rx="10"/>
+    <rect x="10" y="820" width="160" height="80" rx="10"/><rect x="185" y="820" width="140" height="80" rx="10"/>
+  </g>
+
+  <!-- the lantern's cone, with a statue's and a hedge's shadows cut out of it -->
+  <path d="M1360 560 L60 230 L60 900 L520 900 Z" fill="url(#beam)"/>
+  <path d="M1360 560 L60 230 L60 900 L520 900 Z" fill="none" stroke="#ffd9a0" stroke-width="4" opacity="0.6"/>
+  <path d="M1000 470 L1020 520 L60 560 L60 330 Z" fill="#1a2433" opacity="0.92"/>
+  <path d="M900 640 L930 700 L190 900 L60 900 L60 820 Z" fill="#1a2433" opacity="0.92"/>
+
+  <!-- shrine steps -->
+  <g>
+    <rect x="1250" y="240" width="350" height="660" fill="#2a2a3e"/>
+    <rect x="1270" y="240" width="70" height="660" fill="#3a3550"/>
+    <rect x="1350" y="240" width="70" height="660" fill="#34304a"/>
+    <rect x="1430" y="240" width="70" height="660" fill="#3a3550"/>
+    <rect x="1510" y="240" width="70" height="660" fill="#34304a"/>
+  </g>
+
+  <!-- a statue and a hedge -->
+  <g>
+    <circle cx="1004" cy="484" r="46" fill="#8a7a66" stroke="#6e6252" stroke-width="5"/>
+    <ellipse cx="981" cy="476" rx="8" ry="14" fill="#a89a86" transform="rotate(-28 981 476)"/>
+    <ellipse cx="1027" cy="476" rx="8" ry="14" fill="#a89a86" transform="rotate(28 1027 476)"/>
+    <ellipse cx="1004" cy="488" rx="24" ry="16" fill="#a89a86"/>
+    <circle cx="1004" cy="485" r="12" fill="#d8c8ae"/>
+    <rect x="858" y="600" width="120" height="70" rx="22" fill="#22361a"/>
+    <g fill="#3c5a22"><circle cx="880" cy="625" r="18"/><circle cx="912" cy="640" r="20"/><circle cx="948" cy="628" r="18"/><circle cx="930" cy="610" r="14"/></g>
+    <g fill="#5f8a32"><circle cx="896" cy="618" r="9"/><circle cx="940" cy="646" r="9"/></g>
+  </g>
+
+  <!-- the plinth and the lantern -->
+  <circle cx="1360" cy="560" r="170" fill="url(#halo)"/>
+  <circle cx="1360" cy="560" r="64" fill="#8a7a66"/>
+  <circle cx="1360" cy="560" r="40" fill="#b8a88e"/>
+  <g transform="translate(1360 560) rotate(196)">
+    <rect x="-28" y="-28" width="56" height="56" rx="10" fill="#3a2a1a"/>
+    <rect x="-18" y="-18" width="36" height="36" rx="6" fill="#ffd682"/>
+    <circle r="9" fill="#fff6d8"/>
+    <path d="M28 -20 L46 -28 L46 28 L28 20 Z" fill="#ffd27a"/>
+  </g>
+  <!-- the holder -->
+  <g transform="translate(1440 590)">
+    <ellipse cx="6" cy="10" rx="40" ry="34" fill="#000" opacity="0.35"/>
+    <ellipse rx="36" ry="40" fill="#5a8cff"/>
+    <circle cx="-8" r="22" fill="#3b5fb8"/>
+  </g>
+
+  <!-- sneakers: one frozen to stone in the light, one creeping in the shadow, one crouched -->
+  <g transform="translate(420 560)">
+    <circle r="44" fill="none" stroke="#ff6f61" stroke-width="7"/>
+    <circle r="34" fill="#8d8778"/>
+    <circle cx="-4" cy="-4" r="19" fill="#b8b1a0"/>
+    <path d="M-20 -6 L-4 4 L8 -10 M4 18 L16 4" stroke="#5a554a" stroke-width="3" fill="none"/>
+  </g>
+  <g transform="translate(620 470) rotate(-8)">
+    <ellipse cx="6" cy="10" rx="36" ry="30" fill="#000" opacity="0.35"/>
+    <ellipse rx="34" ry="36" fill="#2fd3c4"/>
+    <circle cx="8" r="20" fill="#1f8f85"/>
+    <circle cx="14" cy="-4" r="8" fill="#a6fff5"/>
+  </g>
+  <g transform="translate(380 820) rotate(-15)">
+    <ellipse cx="4" cy="6" rx="24" ry="20" fill="#000" opacity="0.35"/>
+    <ellipse rx="22" ry="24" fill="#c99a1e"/>
+    <circle cx="5" r="13" fill="#8a6914"/>
+  </g>
+
+  <!-- the night sky band for the title -->
+  <rect width="1600" height="240" fill="#0d1424"/>
+  <g fill="#ffe9c4">
+    <circle cx="90" cy="60" r="4"/><circle cx="260" cy="190" r="3"/><circle cx="1480" cy="70" r="5"/>
+    <circle cx="1350" cy="200" r="3"/><circle cx="1540" cy="170" r="3"/><circle cx="40" cy="150" r="3"/>
+  </g>
+  <circle cx="96" cy="112" r="46" fill="#f4ecd2"/>
+  <circle cx="116" cy="98" r="42" fill="#0d1424"/>
+  <rect y="232" width="1600" height="10" fill="#2a3850"/>
+
+  <!-- title -->
+  <g font-family="'Arial Black', 'Segoe UI', sans-serif" font-weight="900" text-anchor="middle">
+    <text x="806" y="168" font-size="116" fill="#05080f" opacity="0.6" letter-spacing="4">LANTERN SNEAK</text>
+    <text x="800" y="160" font-size="116" fill="url(#title)" stroke="#1a0c22" stroke-width="12" paint-order="stroke" letter-spacing="4">LANTERN SNEAK</text>
+  </g>
+</svg>

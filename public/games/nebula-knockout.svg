@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <radialGradient id="space" cx="50%" cy="55%" r="75%">
+      <stop offset="0" stop-color="#241448"/>
+      <stop offset="0.55" stop-color="#0e0a28"/>
+      <stop offset="1" stop-color="#04030c"/>
+    </radialGradient>
+    <radialGradient id="nebA" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#8a3cd8" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#8a3cd8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebB" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#2a8ad0" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#2a8ad0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebC" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#d83c8a" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#d83c8a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="corona" cx="50%" cy="50%" r="50%">
+      <stop offset="0.3" stop-color="#ffc85a" stop-opacity="0.85"/>
+      <stop offset="0.6" stop-color="#ff7a2a" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#ff5a1a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="core" cx="40%" cy="38%" r="65%">
+      <stop offset="0" stop-color="#fffbe0"/>
+      <stop offset="0.5" stop-color="#ffd45a"/>
+      <stop offset="1" stop-color="#ff8a2a"/>
+    </radialGradient>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffbe0"/>
+      <stop offset="0.4" stop-color="#ffc850"/>
+      <stop offset="1" stop-color="#ff5028" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe7a0"/>
+      <stop offset="1" stop-color="#ff8a4a"/>
+    </linearGradient>
+    <!-- the arrowhead hull, nose up, size 40 -->
+    <g id="hull">
+      <path d="M0,-40 L40,40 L0,26 Z" fill="currentColor"/>
+      <path d="M0,-40 L0,26 L-40,40 Z" fill="currentColor" opacity="0.55"/>
+      <path d="M0,-40 L40,40 L0,26 L-40,40 Z" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+      <ellipse cx="0" cy="-6" rx="7" ry="12" fill="#e9fbff"/>
+    </g>
+    <path id="fire" d="M-13,30 Q-8,70 0,100 Q8,70 13,30 Z" fill="url(#flame)"/>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#space)"/>
+  <ellipse cx="300" cy="230" rx="420" ry="260" fill="url(#nebA)"/>
+  <ellipse cx="1320" cy="660" rx="460" ry="280" fill="url(#nebB)"/>
+  <ellipse cx="1180" cy="170" rx="300" ry="200" fill="url(#nebC)"/>
+
+  <!-- stars -->
+  <g fill="#ffffff">
+    <circle cx="120" cy="80" r="2"/><circle cx="260" cy="420" r="1.5"/><circle cx="380" cy="120" r="2.5"/>
+    <circle cx="520" cy="300" r="1.5"/><circle cx="640" cy="70" r="2"/><circle cx="910" cy="110" r="1.5"/>
+    <circle cx="1040" cy="300" r="2"/><circle cx="1230" cy="90" r="2.5"/><circle cx="1480" cy="200" r="2"/>
+    <circle cx="1530" cy="460" r="1.5"/><circle cx="1400" cy="820" r="2"/><circle cx="1120" cy="860" r="1.5"/>
+    <circle cx="760" cy="840" r="2"/><circle cx="420" cy="860" r="1.5"/><circle cx="90" cy="700" r="2.5"/>
+    <circle cx="200" cy="560" r="1.5"/><circle cx="1560" cy="640" r="2"/><circle cx="980" cy="520" r="1.5"/>
+    <circle cx="560" cy="560" r="2"/><circle cx="1300" cy="380" r="1.5"/>
+  </g>
+
+  <!-- the sun and its pull -->
+  <circle cx="800" cy="500" r="190" fill="none" stroke="#ff6e50" stroke-opacity="0.35" stroke-width="5" stroke-dasharray="22 16"/>
+  <circle cx="800" cy="500" r="200" fill="url(#corona)"/>
+  <g fill="#ffd27a" opacity="0.8">
+    <path d="M800,370 L812,420 L788,420 Z"/><path d="M800,630 L812,580 L788,580 Z"/>
+    <path d="M670,500 L720,488 L720,512 Z"/><path d="M930,500 L880,488 L880,512 Z"/>
+    <path d="M708,408 L748,438 L734,452 Z"/><path d="M892,592 L852,562 L866,548 Z"/>
+    <path d="M892,408 L866,452 L852,438 Z"/><path d="M708,592 L734,548 L748,562 Z"/>
+  </g>
+  <circle cx="800" cy="500" r="82" fill="url(#core)"/>
+
+  <!-- shots: diamonds with trails -->
+  <g>
+    <line x1="560" y1="300" x2="610" y2="330" stroke="#ff5a5a" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+    <path d="M560,288 L572,300 L560,312 L548,300 Z" fill="#ffff00" stroke="#fff" stroke-width="2"/>
+    <line x1="480" y1="252" x2="530" y2="282" stroke="#ff5a5a" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
+    <path d="M480,240 L492,252 L480,264 L468,252 Z" fill="#ff8000" stroke="#fff" stroke-width="2"/>
+    <line x1="1120" y1="640" x2="1080" y2="676" stroke="#45c4ff" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+    <path d="M1120,628 L1132,640 L1120,652 L1108,640 Z" fill="#ffffff" stroke="#fff" stroke-width="2"/>
+  </g>
+
+  <!-- ships -->
+  <g transform="translate(700 400) rotate(-120) scale(1.35)" color="#ff5a5a">
+    <use href="#fire"/><use href="#hull"/>
+  </g>
+  <g transform="translate(1210 600) rotate(55) scale(1.35)" color="#45c4ff">
+    <use href="#fire"/><use href="#hull"/>
+  </g>
+  <g transform="translate(1180 290) rotate(200) scale(1.2)" color="#7be05a">
+    <use href="#hull"/>
+  </g>
+  <circle cx="1180" cy="290" r="62" fill="none" stroke="#9aa0ff" stroke-width="5" opacity="0.8"/>
+  <g transform="translate(380 650) rotate(-30) scale(1.2)" color="#ffc83c">
+    <use href="#fire"/><use href="#hull"/>
+  </g>
+
+  <!-- a blast -->
+  <g transform="translate(470 230)">
+    <circle r="60" fill="#ffe14a" opacity="0.35"/>
+    <circle r="34" fill="#fff6c0" opacity="0.8"/>
+    <g fill="#ff5a5a">
+      <rect x="40" y="-30" width="14" height="10" transform="rotate(30)"/><rect x="-70" y="10" width="12" height="9" transform="rotate(-20)"/>
+      <rect x="10" y="50" width="10" height="12"/><rect x="-30" y="-70" width="12" height="8" transform="rotate(15)"/>
+    </g>
+  </g>
+
+  <!-- the ghost -->
+  <g transform="translate(1400 420) rotate(-15)" opacity="0.85">
+    <path d="M0,-50 Q50,-10 46,44 Q34,66 23,44 Q12,66 0,44 Q-12,66 -23,44 Q-34,66 -46,44 Q-50,-10 0,-50 Z" fill="#e1d7ff" fill-opacity="0.6" stroke="#ffffff" stroke-width="4"/>
+    <ellipse cx="-16" cy="-6" rx="7" ry="10" fill="#2a1f4a"/>
+    <ellipse cx="16" cy="-6" rx="7" ry="10" fill="#2a1f4a"/>
+  </g>
+
+  <!-- title -->
+  <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',system-ui,sans-serif" font-weight="800" text-anchor="middle">
+    <text x="800" y="160" font-size="132" fill="url(#title)" stroke="#2a1040" stroke-width="10" paint-order="stroke">NEBULA KNOCKOUT</text>
+  </g>
+</svg>

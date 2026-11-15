@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a2c48"/>
+      <stop offset="1" stop-color="#11557c"/>
+    </linearGradient>
+    <radialGradient id="ice" cx="0.5" cy="0.45" r="0.7">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d3ebfa"/>
+    </radialGradient>
+    <radialGradient id="water" cx="0.4" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#1c6a96"/>
+      <stop offset="1" stop-color="#06223a"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3b0"/>
+      <stop offset="1" stop-color="#ffc93c"/>
+    </linearGradient>
+    <linearGradient id="fish" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5ea6dc"/>
+      <stop offset="0.6" stop-color="#bfe3ff"/>
+      <stop offset="1" stop-color="#f2fbff"/>
+    </linearGradient>
+    <g id="feet"><ellipse cx="-10" cy="0" rx="9" ry="4" fill="#ff9b2f"/><ellipse cx="10" cy="0" rx="9" ry="4" fill="#ff9b2f"/></g>
+    <g id="pf">
+      <ellipse cx="0" cy="3" rx="26" ry="8" fill="#285f8c" opacity="0.2"/>
+      <use href="#feet"/>
+      <ellipse cx="-19" cy="-26" rx="6" ry="15" fill="#121722" transform="rotate(20 -19 -26)"/>
+      <ellipse cx="19" cy="-26" rx="6" ry="15" fill="#121722" transform="rotate(-20 19 -26)"/>
+      <ellipse cx="0" cy="-31" rx="21" ry="30" fill="#1b2230"/>
+      <ellipse cx="0" cy="-24" rx="14.5" ry="21.5" fill="#f7fbff"/>
+      <ellipse cx="0" cy="-45" rx="11" ry="7.5" fill="#f7fbff"/>
+      <circle cx="-6.5" cy="-47" r="4.6" fill="#fff"/><circle cx="6.5" cy="-47" r="4.6" fill="#fff"/>
+      <circle cx="-6" cy="-46" r="2.6" fill="#141a24"/><circle cx="7" cy="-46" r="2.6" fill="#141a24"/>
+      <path d="M-4.5 -42.5 L4.5 -42.5 L0 -36 Z" fill="#ff9b2f" stroke="#9a4d0c" stroke-width="1.4"/>
+    </g>
+    <g id="ps">
+      <ellipse cx="0" cy="3" rx="24" ry="8" fill="#285f8c" opacity="0.2"/>
+      <ellipse cx="0" cy="0" rx="10" ry="4" fill="#ff9b2f"/>
+      <ellipse cx="-1" cy="-31" rx="19" ry="30" fill="#1b2230"/>
+      <ellipse cx="6" cy="-26" rx="11" ry="21" fill="#f7fbff"/>
+      <ellipse cx="-4" cy="-24" rx="5.5" ry="15" fill="#121722" transform="rotate(20 -4 -24)"/>
+      <circle cx="9" cy="-47" r="4.6" fill="#fff"/><circle cx="10" cy="-46" r="2.6" fill="#141a24"/>
+      <path d="M15 -45 L27 -41 L15 -37.5 Z" fill="#ff9b2f" stroke="#9a4d0c" stroke-width="1.4"/>
+    </g>
+    <g id="pb">
+      <ellipse cx="0" cy="3" rx="26" ry="8" fill="#285f8c" opacity="0.2"/>
+      <use href="#feet"/>
+      <ellipse cx="-19" cy="-26" rx="6" ry="15" fill="#121722" transform="rotate(20 -19 -26)"/>
+      <ellipse cx="19" cy="-26" rx="6" ry="15" fill="#121722" transform="rotate(-20 19 -26)"/>
+      <ellipse cx="0" cy="-31" rx="21" ry="30" fill="#1b2230"/>
+      <ellipse cx="-6" cy="-40" rx="7" ry="12" fill="#fff" opacity="0.08"/>
+    </g>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sea)"/>
+  <g stroke="#a0dcff" stroke-opacity="0.18" stroke-width="4" fill="none">
+    <path d="M60 120 q30 -10 60 0"/><path d="M1460 90 q30 -10 60 0"/><path d="M90 860 q30 -10 60 0"/><path d="M1490 870 q30 -10 60 0"/><path d="M40 420 q30 -10 60 0"/>
+  </g>
+  <ellipse cx="1530" cy="420" rx="34" ry="18" fill="#cfe8f7"/><ellipse cx="80" cy="640" rx="26" ry="14" fill="#cfe8f7"/>
+  <path d="M120 470 Q90 360 260 345 L1350 330 Q1520 340 1500 470 L1515 790 Q1510 880 1340 878 L250 885 Q95 880 100 790 Z" fill="#7fb6d6" transform="translate(0 22)"/>
+  <path d="M120 470 Q90 360 260 345 L1350 330 Q1520 340 1500 470 L1515 790 Q1510 880 1340 878 L250 885 Q95 880 100 790 Z" fill="url(#ice)" stroke="#ffffff" stroke-width="5"/>
+  <g stroke="#4682af" stroke-opacity="0.5" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M1130 560 l-30 -14 l-18 6 l-22 -12"/><path d="M1230 566 l26 10 l14 18"/><path d="M1180 590 l-6 28 l12 22"/><path d="M1185 530 l10 -22 l-8 -18"/>
+  </g>
+  <ellipse cx="1180" cy="562" rx="62" ry="46" fill="#ffffff"/>
+  <ellipse cx="1180" cy="560" rx="52" ry="38" fill="url(#water)"/>
+  <g transform="translate(1196 470) rotate(-35)">
+    <path d="M-30 0 L-46 -12 L-42 0 L-46 12 Z" fill="#4f8fc0"/>
+    <ellipse cx="-6" cy="0" rx="28" ry="13" fill="url(#fish)" stroke="#2c5f88" stroke-width="2.5"/>
+    <circle cx="10" cy="-3" r="3" fill="#141a24"/>
+  </g>
+  <g fill="#d8f2ff"><circle cx="1150" cy="520" r="6"/><circle cx="1215" cy="512" r="5"/><circle cx="1170" cy="500" r="4"/><circle cx="1232" cy="538" r="4"/></g>
+    <use href="#pb" transform="translate(1419 487) scale(0.77 0.77)"/>
+    <use href="#pf" transform="translate(862 493) scale(0.78 0.78)"/>
+    <use href="#pb" transform="translate(996 496) scale(0.79 0.79)"/>
+    <use href="#ps" transform="translate(241 503) scale(-0.80 0.80)"/>
+    <use href="#ps" transform="translate(571 524) scale(-0.83 0.83)"/>
+    <use href="#pf" transform="translate(311 550) scale(0.86 0.86)"/>
+    <use href="#pf" transform="translate(916 565) scale(0.88 0.88)"/>
+    <use href="#pf" transform="translate(739 578) scale(0.90 0.90)"/>
+    <use href="#pf" transform="translate(847 602) scale(0.93 0.93)"/>
+    <use href="#pb" transform="translate(981 604) scale(0.94 0.94)"/>
+    <use href="#pf" transform="translate(155 621) scale(0.96 0.96)"/>
+    <use href="#pb" transform="translate(225 653) scale(1.00 1.00)"/>
+    <use href="#pf" transform="translate(467 677) scale(1.04 1.04)"/>
+    <use href="#pf" transform="translate(385 679) scale(1.04 1.04)"/>
+    <use href="#pf" transform="translate(558 681) scale(1.04 1.04)"/>
+    <use href="#ps" transform="translate(1054 684) scale(1.05 1.05)"/>
+    <use href="#ps" transform="translate(766 709) scale(-1.08 1.08)"/>
+    <use href="#ps" transform="translate(652 711) scale(1.08 1.08)"/>
+    <use href="#pf" transform="translate(1389 719) scale(1.10 1.10)"/>
+    <use href="#pf" transform="translate(1183 722) scale(1.10 1.10)"/>
+    <use href="#pf" transform="translate(227 747) scale(1.13 1.13)"/>
+    <use href="#pf" transform="translate(551 764) scale(1.16 1.16)"/>
+    <use href="#pf" transform="translate(702 768) scale(1.16 1.16)"/>
+    <use href="#pb" transform="translate(833 785) scale(1.19 1.19)"/>
+    <use href="#pb" transform="translate(1242 810) scale(1.22 1.22)"/>
+    <use href="#pb" transform="translate(966 811) scale(1.22 1.22)"/>
+  <g transform="translate(330 520)">
+    <use href="#pf" transform="scale(1.0)"/>
+    <ellipse cx="0" cy="-40" rx="46" ry="58" fill="none" stroke="#fff27a" stroke-width="5" stroke-dasharray="10 10"/>
+    <text x="0" y="-112" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="900" fill="#fff27a" stroke="#0b2236" stroke-width="7" paint-order="stroke" text-anchor="middle">?</text>
+  </g>
+  <text x="800" y="200" font-family="'Arial Rounded MT Bold', 'Segoe UI', Arial, sans-serif" font-size="168" font-weight="900" fill="url(#title)" stroke="#0b2236" stroke-width="16" paint-order="stroke" text-anchor="middle">FLOCK OFF</text>
+  <text x="800" y="275" font-family="'Segoe UI', Arial, sans-serif" font-size="46" font-weight="700" fill="#e8f4ff" stroke="#0b2236" stroke-width="8" paint-order="stroke" text-anchor="middle">Which penguin is you?</text>
+</svg>

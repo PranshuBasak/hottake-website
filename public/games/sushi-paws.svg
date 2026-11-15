@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6d9e3"/>
+      <stop offset="1" stop-color="#e7bdcc"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6ec"/>
+      <stop offset="1" stop-color="#ffd7e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#wall)"/>
+  <!-- floor tiles -->
+  <g fill="#f5e5cf" opacity="0.55">
+    <path d="M0 520 L1600 520 L1600 900 L0 900 Z"/>
+  </g>
+  <g fill="#e7c0cb" opacity="0.6">
+    <path d="M0 520 L160 520 L60 900 L-140 900 Z"/><path d="M320 520 L480 520 L420 900 L220 900 Z"/>
+    <path d="M640 520 L800 520 L780 900 L580 900 Z"/><path d="M960 520 L1120 520 L1140 900 L940 900 Z"/>
+    <path d="M1280 520 L1440 520 L1500 900 L1300 900 Z"/>
+  </g>
+  <!-- lanterns -->
+  <g transform="translate(-130 0)">
+    <line x1="230" y1="0" x2="230" y2="90" stroke="#4f3b30" stroke-width="5"/>
+    <ellipse cx="230" cy="150" rx="56" ry="72" fill="#fff3f8"/>
+    <rect x="196" y="78" width="68" height="14" rx="6" fill="#c19aaf"/><rect x="196" y="210" width="68" height="14" rx="6" fill="#c19aaf"/>
+    <line x1="1630" y1="0" x2="1630" y2="90" stroke="#4f3b30" stroke-width="5"/>
+    <ellipse cx="1630" cy="150" rx="56" ry="72" fill="#fff3f8"/>
+    <rect x="1596" y="78" width="68" height="14" rx="6" fill="#c19aaf"/><rect x="1596" y="210" width="68" height="14" rx="6" fill="#c19aaf"/>
+  </g>
+  <!-- the conveyor ring -->
+  <ellipse cx="800" cy="640" rx="700" ry="235" fill="#c7a88e"/>
+  <ellipse cx="800" cy="626" rx="690" ry="228" fill="#f5e3ce"/>
+  <ellipse cx="800" cy="626" rx="640" ry="205" fill="#f0ccdb"/>
+  <ellipse cx="800" cy="626" rx="520" ry="160" fill="#f5e3ce"/>
+  <ellipse cx="800" cy="632" rx="500" ry="150" fill="#e8d3c0"/>
+  <ellipse cx="800" cy="632" rx="270" ry="80" fill="#f5e7d8"/>
+  <!-- plates and sushi along the belt (back row first) -->
+  <g>
+    <g transform="translate(470 470)"><ellipse rx="62" ry="22" fill="#b4d4c7"/><ellipse rx="50" ry="16" cy="-4" fill="#fff4e8"/><rect x="-36" y="-30" width="72" height="22" rx="10" fill="#fff9ea"/><rect x="-40" y="-40" width="80" height="16" rx="8" fill="#ff896b"/></g>
+    <g transform="translate(800 440)"><ellipse rx="62" ry="22" fill="#eed5ab"/><ellipse rx="50" ry="16" cy="-4" fill="#fff4e8"/><rect x="-32" y="-46" width="64" height="40" rx="12" fill="#203f36"/><ellipse cy="-46" rx="32" ry="10" fill="#f98531"/></g>
+    <g transform="translate(1130 470)"><ellipse rx="62" ry="22" fill="#cda8a0"/><ellipse rx="50" ry="16" cy="-4" fill="#fff4e8"/><ellipse cy="-18" rx="30" ry="14" fill="#9bc34f"/><ellipse cy="-32" rx="20" ry="10" fill="#bad96d"/><ellipse cy="-42" rx="10" ry="8" fill="#a4c956"/></g>
+    <g transform="translate(250 640)"><ellipse rx="70" ry="25" fill="#9dbdc9"/><ellipse rx="56" ry="18" cy="-4" fill="#fff4e8"/><rect x="-40" y="-34" width="80" height="24" rx="10" fill="#fff9ea"/><rect x="-44" y="-46" width="88" height="18" rx="8" fill="#df5266"/></g>
+    <g transform="translate(1350 640)"><ellipse rx="70" ry="25" fill="#b4d4c7"/><ellipse rx="56" ry="18" cy="-4" fill="#fff4e8"/><rect x="-40" y="-34" width="80" height="24" rx="10" fill="#fff9ea"/><rect x="-44" y="-48" width="88" height="20" rx="8" fill="#ffd65a"/><rect x="-14" y="-50" width="28" height="22" fill="#335e45"/></g>
+    <g transform="translate(560 830)"><ellipse rx="80" ry="28" fill="#cda8a0"/><ellipse rx="64" ry="20" cy="-4" fill="#fff4e8"/><rect x="-44" y="-38" width="88" height="28" rx="12" fill="#fff9ea"/><rect x="-48" y="-52" width="96" height="20" rx="9" fill="#f9d35f"/><rect x="-10" y="-54" width="20" height="44" fill="#29473b"/></g>
+    <g transform="translate(1040 830)"><ellipse rx="80" ry="28" fill="#eed5ab"/><ellipse rx="64" ry="20" cy="-4" fill="#fff4e8"/><rect x="-36" y="-54" width="72" height="46" rx="14" fill="#203f36"/><ellipse cy="-54" rx="36" ry="11" fill="#fff7e7"/><ellipse cx="-10" cy="-56" rx="12" ry="6" fill="#ed917b"/><ellipse cx="12" cy="-56" rx="9" ry="6" fill="#a6d363"/></g>
+  </g>
+  <!-- cats inside the ring: a ginger reaching for the belt, a tuxedo and a pink one -->
+  <g transform="translate(560 640)">
+    <ellipse cy="40" rx="70" ry="18" fill="#a07484" opacity="0.35"/>
+    <ellipse cy="-10" rx="62" ry="58" fill="#efa451"/>
+    <ellipse cy="-6" rx="36" ry="38" fill="#ce7332"/>
+    <path d="M-40 -18 L-110 -60 L-96 -40 Z" fill="#efa451"/><path d="M40 -18 L-30 -78 L-10 -60 Z" fill="#efa451"/>
+    <ellipse cy="-96" rx="70" ry="58" fill="#efa451"/>
+    <path d="M-62 -122 L-46 -182 L-14 -138 Z" fill="#efa451"/><path d="M62 -122 L46 -182 L14 -138 Z" fill="#efa451"/>
+    <path d="M-50 -132 L-44 -164 L-26 -140 Z" fill="#e7a3a0"/><path d="M50 -132 L44 -164 L26 -140 Z" fill="#e7a3a0"/>
+    <ellipse cx="-24" cy="-96" rx="9" ry="13" fill="#304750"/><ellipse cx="24" cy="-96" rx="9" ry="13" fill="#304750"/>
+    <ellipse cx="-14" cy="-76" rx="14" ry="9" fill="#fff0d5"/><ellipse cx="14" cy="-76" rx="14" ry="9" fill="#fff0d5"/>
+    <ellipse cy="-84" rx="7" ry="5" fill="#b36b72"/>
+    <path d="M-30 -48 L30 -48 L0 -14 Z" fill="#ff5a8a"/>
+  </g>
+  <g transform="translate(830 600) scale(0.88)">
+    <ellipse cy="40" rx="70" ry="18" fill="#a07484" opacity="0.35"/>
+    <ellipse cy="-10" rx="62" ry="58" fill="#343d49"/>
+    <ellipse cy="-6" rx="36" ry="38" fill="#faf1dd"/>
+    <ellipse cy="-96" rx="70" ry="58" fill="#343d49"/>
+    <path d="M-62 -122 L-46 -182 L-14 -138 Z" fill="#343d49"/><path d="M62 -122 L46 -182 L14 -138 Z" fill="#343d49"/>
+    <path d="M-50 -132 L-44 -164 L-26 -140 Z" fill="#e7a3a0"/><path d="M50 -132 L44 -164 L26 -140 Z" fill="#e7a3a0"/>
+    <ellipse cx="-24" cy="-96" rx="9" ry="13" fill="#95bf75"/><ellipse cx="24" cy="-96" rx="9" ry="13" fill="#95bf75"/>
+    <ellipse cx="-14" cy="-76" rx="14" ry="9" fill="#fff0d5"/><ellipse cx="14" cy="-76" rx="14" ry="9" fill="#fff0d5"/>
+    <ellipse cy="-84" rx="7" ry="5" fill="#b36b72"/>
+    <path d="M-30 -48 L30 -48 L0 -14 Z" fill="#4dc3ff"/>
+  </g>
+  <g transform="translate(1070 650)">
+    <ellipse cy="40" rx="70" ry="18" fill="#a07484" opacity="0.35"/>
+    <ellipse cy="-10" rx="62" ry="58" fill="#efb5c5"/>
+    <ellipse cy="-6" rx="36" ry="38" fill="#cc82a6"/>
+    <ellipse cy="-96" rx="70" ry="58" fill="#efb5c5"/>
+    <path d="M-62 -122 L-46 -182 L-14 -138 Z" fill="#efb5c5"/><path d="M62 -122 L46 -182 L14 -138 Z" fill="#efb5c5"/>
+    <path d="M-50 -132 L-44 -164 L-26 -140 Z" fill="#e7a3a0"/><path d="M50 -132 L44 -164 L26 -140 Z" fill="#e7a3a0"/>
+    <path d="M-34 -96 Q-24 -110 -14 -96" stroke="#8b62a1" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M14 -96 Q24 -110 34 -96" stroke="#8b62a1" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-14" cy="-76" rx="14" ry="9" fill="#fff0d5"/><ellipse cx="14" cy="-76" rx="14" ry="9" fill="#fff0d5"/>
+    <ellipse cy="-84" rx="7" ry="5" fill="#b36b72"/>
+    <path d="M-30 -48 L30 -48 L0 -14 Z" fill="#7be0a0"/>
+  </g>
+  <!-- title -->
+  <g font-family="Segoe UI Rounded, Arial Rounded MT Bold, Segoe UI, system-ui, sans-serif" font-weight="900" text-anchor="middle">
+    <text x="800" y="200" font-size="160" fill="none" stroke="#a7466e" stroke-width="24" stroke-linejoin="round" letter-spacing="4">SUSHI PAWS</text>
+    <text x="800" y="200" font-size="160" fill="url(#title)" letter-spacing="4">SUSHI PAWS</text>
+  </g>
+</svg>

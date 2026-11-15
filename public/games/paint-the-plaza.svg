@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd98a"/>
+      <stop offset="1" stop-color="#ffb35c"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#fff0c4"/>
+    </linearGradient>
+    <pattern id="slabs" width="60" height="60" patternUnits="userSpaceOnUse">
+      <rect width="60" height="60" fill="#a5967f"/>
+      <rect x="2.5" y="2.5" width="55" height="55" rx="7" fill="#d9caae"/>
+      <rect x="8" y="5" width="44" height="3" fill="#ffffff" opacity="0.25"/>
+    </pattern>
+    <radialGradient id="sun" cx="0.18" cy="0.12" r="0.9">
+      <stop offset="0" stop-color="#fff6d8" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#fff6d8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+
+  <!-- shop roofs and awnings along the top -->
+  <g>
+    <rect x="0" y="0" width="300" height="190" fill="#b8472f"/>
+    <rect x="300" y="0" width="260" height="190" fill="#2a7f7a"/>
+    <rect x="560" y="0" width="330" height="190" fill="#d8962e"/>
+    <rect x="890" y="0" width="250" height="190" fill="#a43c63"/>
+    <rect x="1140" y="0" width="230" height="190" fill="#456fb3"/>
+    <rect x="1370" y="0" width="230" height="190" fill="#c45f2c"/>
+  </g>
+  <g fill="#000" opacity="0.12">
+    <rect x="0" y="40" width="1600" height="10"/><rect x="0" y="90" width="1600" height="10"/><rect x="0" y="140" width="1600" height="10"/>
+  </g>
+  <g>
+    <path d="M0 190 h1600 v34 h-1600z" fill="#fff8ec"/>
+    <g fill="#e2583f">
+      <path d="M0 190h50v34a25 25 0 0 1-50 0z"/><path d="M100 190h50v34a25 25 0 0 1-50 0z"/><path d="M200 190h50v34a25 25 0 0 1-50 0z"/>
+      <path d="M300 190h50v34a25 25 0 0 1-50 0z"/><path d="M400 190h50v34a25 25 0 0 1-50 0z"/><path d="M500 190h50v34a25 25 0 0 1-50 0z"/>
+      <path d="M600 190h50v34a25 25 0 0 1-50 0z"/><path d="M700 190h50v34a25 25 0 0 1-50 0z"/><path d="M800 190h50v34a25 25 0 0 1-50 0z"/>
+      <path d="M900 190h50v34a25 25 0 0 1-50 0z"/><path d="M1000 190h50v34a25 25 0 0 1-50 0z"/><path d="M1100 190h50v34a25 25 0 0 1-50 0z"/>
+      <path d="M1200 190h50v34a25 25 0 0 1-50 0z"/><path d="M1300 190h50v34a25 25 0 0 1-50 0z"/><path d="M1400 190h50v34a25 25 0 0 1-50 0z"/>
+      <path d="M1500 190h50v34a25 25 0 0 1-50 0z"/>
+    </g>
+  </g>
+
+  <!-- the plaza -->
+  <rect x="0" y="250" width="1600" height="650" fill="url(#slabs)"/>
+  <circle cx="800" cy="600" r="150" fill="#e9b964" opacity="0.8"/>
+  <circle cx="800" cy="600" r="70" fill="#efc36a"/>
+  <circle cx="800" cy="600" r="185" fill="none" stroke="#c4825f" stroke-width="24"/>
+
+  <!-- painted territory: blocky swathes with round corners -->
+  <path d="M0 330 h300 v60 h120 v180 h-180 v120 h-240z" fill="#ff8a1f"/>
+  <path d="M0 330 h300 v8 h-300z" fill="#ffc48a"/>
+  <path d="M240 690 h-240 v-10 h240z" fill="#b55c0c"/>
+  <path d="M1600 420 h-360 v120 h120 v240 h-240 v120 h480z" fill="#2f74ff"/>
+  <path d="M1600 420 h-360 v8 h360z" fill="#9cbcff"/>
+  <path d="M580 780 h240 v-60 h120 v180 h-360z" fill="#ff5d73"/>
+  <path d="M1000 300 h180 v120 h-60 v60 h-120z" fill="#7ee081"/>
+  <path d="M480 300 h60 v240 h-60z" fill="#ffd23f"/>
+
+  <!-- fresh trail sheen -->
+  <g fill="#ffffff" opacity="0.35">
+    <rect x="304" y="392" width="112" height="56" rx="6"/>
+    <rect x="1124" y="544" width="112" height="56" rx="6"/>
+  </g>
+  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.8">
+    <path d="M320 440 l26 -40"/><path d="M380 440 l26 -40"/>
+    <path d="M1140 592 l26 -40"/><path d="M1200 592 l26 -40"/>
+  </g>
+
+  <!-- splats -->
+  <g fill="#ff8a1f">
+    <circle cx="455" cy="430" r="26"/><circle cx="495" cy="404" r="11"/><circle cx="488" cy="462" r="8"/><circle cx="430" cy="470" r="7"/>
+  </g>
+  <g fill="#2f74ff">
+    <circle cx="1090" cy="560" r="28"/><circle cx="1050" cy="530" r="10"/><circle cx="1062" cy="600" r="9"/><circle cx="1125" cy="520" r="7"/>
+  </g>
+
+  <!-- painter: orange, rolling right -->
+  <g transform="translate(400 470)">
+    <ellipse cx="8" cy="22" rx="56" ry="30" fill="#3c2a14" opacity="0.28"/>
+    <path d="M24 0 L72 0" stroke="#5b4636" stroke-width="9" stroke-linecap="round"/>
+    <rect x="66" y="-36" width="26" height="72" rx="12" fill="#b55c0c"/>
+    <rect x="69" y="-31" width="20" height="62" rx="9" fill="#ff8a1f"/>
+    <circle r="56" fill="none" stroke="#ffffff" stroke-width="20"/>
+    <circle r="56" fill="none" stroke="#ff5d73" stroke-width="12"/>
+    <circle r="45" fill="#ff8a1f" stroke="#8a4206" stroke-width="5"/>
+    <circle cx="-14" cy="-16" r="16" fill="#ffc48a" opacity="0.7"/>
+    <circle cx="18" cy="-15" r="12" fill="#fff"/><circle cx="18" cy="15" r="12" fill="#fff"/>
+    <circle cx="23" cy="-15" r="6" fill="#2a1a10"/><circle cx="23" cy="15" r="6" fill="#2a1a10"/>
+  </g>
+
+  <!-- painter: blue, stunned with stars -->
+  <g transform="translate(1190 600)">
+    <ellipse cx="8" cy="22" rx="56" ry="30" fill="#3c2a14" opacity="0.28"/>
+    <path d="M-24 0 L-72 0" stroke="#5b4636" stroke-width="9" stroke-linecap="round"/>
+    <rect x="-92" y="-36" width="26" height="72" rx="12" fill="#163f99"/>
+    <rect x="-89" y="-31" width="20" height="62" rx="9" fill="#2f74ff"/>
+    <circle r="56" fill="none" stroke="#ffffff" stroke-width="20"/>
+    <circle r="56" fill="none" stroke="#7ee081" stroke-width="12"/>
+    <circle r="45" fill="#2f74ff" stroke="#123a8c" stroke-width="5"/>
+    <circle cx="-14" cy="-16" r="16" fill="#9cbcff" opacity="0.7"/>
+    <circle cx="-18" cy="-15" r="12" fill="#fff"/><circle cx="-18" cy="15" r="12" fill="#fff"/>
+    <path d="M-25 -22 l14 14 M-11 -22 l-14 14 M-25 8 l14 14 M-11 8 l-14 14" stroke="#2a1a10" stroke-width="4" stroke-linecap="round"/>
+    <g fill="#ffe14a" stroke="#8a5a00" stroke-width="3">
+      <path d="M-40 -95 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2z"/>
+      <path d="M30 -100 l6 12 13 2 -10 9 3 13 -12 -7 -12 7 3 -13 -10 -9 13 -2z"/>
+      <path d="M-2 -125 l5 10 11 2 -8 7 2 11 -10 -6 -10 6 2 -11 -8 -7 11 -2z"/>
+    </g>
+  </g>
+
+  <!-- painter: pink, small, bottom -->
+  <g transform="translate(700 760) scale(0.75)">
+    <ellipse cx="8" cy="22" rx="56" ry="30" fill="#3c2a14" opacity="0.28"/>
+    <path d="M0 -24 L0 -72" stroke="#5b4636" stroke-width="9" stroke-linecap="round"/>
+    <rect x="-36" y="-92" width="72" height="26" rx="12" fill="#a8243a"/>
+    <rect x="-31" y="-89" width="62" height="20" rx="9" fill="#ff5d73"/>
+    <circle r="56" fill="none" stroke="#ffffff" stroke-width="20"/>
+    <circle r="56" fill="none" stroke="#ffd23f" stroke-width="12"/>
+    <circle r="45" fill="#ff5d73" stroke="#8a1e30" stroke-width="5"/>
+    <circle cx="-15" cy="-18" r="12" fill="#fff"/><circle cx="15" cy="-18" r="12" fill="#fff"/>
+    <circle cx="-15" cy="-23" r="6" fill="#2a1a10"/><circle cx="15" cy="-23" r="6" fill="#2a1a10"/>
+  </g>
+
+  <rect width="1600" height="900" fill="url(#sun)"/>
+
+  <!-- title -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="900" text-anchor="middle">
+    <text x="800" y="138" font-size="124" fill="#5a2a0a" opacity="0.55" transform="translate(6 8)">Paint the Plaza</text>
+    <text x="800" y="138" font-size="124" fill="url(#title)" stroke="#5a2a0a" stroke-width="7" paint-order="stroke">Paint the Plaza</text>
+  </g>
+</svg>

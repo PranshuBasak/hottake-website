@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6a4a2c"/>
+      <stop offset="1" stop-color="#46301e"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e38a5b"/>
+      <stop offset="0.5" stop-color="#c8643a"/>
+      <stop offset="1" stop-color="#8e3f22"/>
+    </linearGradient>
+    <radialGradient id="moss" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#a6f08c"/>
+      <stop offset="0.6" stop-color="#7ccf4f"/>
+      <stop offset="1" stop-color="#4f9a33"/>
+    </radialGradient>
+    <radialGradient id="amber" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffe199"/>
+      <stop offset="0.6" stop-color="#f6b93b"/>
+      <stop offset="1" stop-color="#c98a1c"/>
+    </radialGradient>
+    <radialGradient id="ball" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#fffdf3"/>
+      <stop offset="0.55" stop-color="#f3e6c2"/>
+      <stop offset="1" stop-color="#c9b083"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3b0"/>
+      <stop offset="1" stop-color="#ffc93c"/>
+    </linearGradient>
+    <clipPath id="pitch"><rect x="60" y="210" width="1480" height="640" rx="90"/></clipPath>
+    <clipPath id="mshell"><ellipse cx="0" cy="0" rx="70" ry="60"/></clipPath>
+    <clipPath id="ashell"><ellipse cx="0" cy="0" rx="70" ry="60"/></clipPath>
+  </defs>
+  <rect width="1600" height="900" fill="url(#soil)"/>
+  <g fill="#9b8f84" stroke="#3b2a18" stroke-width="2" opacity="0.8">
+    <ellipse cx="40" cy="120" rx="18" ry="12"/><ellipse cx="1560" cy="80" rx="16" ry="11"/><ellipse cx="30" cy="880" rx="14" ry="9"/>
+  </g>
+  <rect x="48" y="198" width="1504" height="664" rx="100" fill="#2d5a22"/>
+  <g clip-path="url(#pitch)">
+    <rect x="60" y="210" width="1480" height="640" fill="#4b8235"/>
+    <g fill="#fffbe0" opacity="0.07">
+      <rect x="60" y="210" width="123" height="640"/><rect x="306" y="210" width="123" height="640"/><rect x="552" y="210" width="123" height="640"/>
+      <rect x="798" y="210" width="123" height="640"/><rect x="1044" y="210" width="123" height="640"/><rect x="1290" y="210" width="123" height="640"/>
+    </g>
+    <g stroke="#f8fff0" stroke-opacity="0.8" stroke-width="6" fill="none">
+      <line x1="800" y1="210" x2="800" y2="850"/>
+      <circle cx="800" cy="530" r="120"/>
+      <rect x="1290" y="330" width="260" height="400"/>
+      <rect x="50" y="330" width="260" height="400"/>
+    </g>
+  </g>
+  <rect x="62" y="212" width="1476" height="636" rx="88" fill="none" stroke="#f8fff0" stroke-opacity="0.8" stroke-width="6"/>
+  <!-- the flower-pot goal on the right -->
+  <g>
+    <path d="M1538 430 L1600 452 L1600 608 L1538 630 Z" fill="url(#pot)" stroke="#5a2612" stroke-width="4"/>
+    <rect x="1538" y="450" width="62" height="160" fill="#2a120a"/>
+    <g stroke="#f5eedc" stroke-opacity="0.6" stroke-width="3" fill="none">
+      <path d="M1538 470 Q1570 476 1600 472"/><path d="M1538 500 Q1570 506 1600 502"/><path d="M1538 530 Q1570 536 1600 532"/>
+      <path d="M1538 560 Q1570 566 1600 562"/><path d="M1538 590 Q1570 596 1600 592"/>
+      <path d="M1560 450 Q1566 530 1560 610"/><path d="M1582 450 Q1588 530 1582 610"/>
+    </g>
+    <circle cx="1538" cy="450" r="16" fill="#c8643a" stroke="#5a2612" stroke-width="4"/>
+    <circle cx="1538" cy="610" r="16" fill="#c8643a" stroke="#5a2612" stroke-width="4"/>
+  </g>
+  <!-- flowers -->
+  <g stroke="#3f7a2c" stroke-width="7" stroke-linecap="round" fill="none">
+    <path d="M1490 900 Q1478 820 1492 770"/><path d="M120 900 Q130 830 116 780"/>
+  </g>
+  <g fill="#ff7eb6"><circle cx="1492" cy="752" r="18"/><circle cx="1474" cy="770" r="18"/><circle cx="1510" cy="770" r="18"/><circle cx="1482" cy="790" r="16"/><circle cx="1504" cy="790" r="16"/></g>
+  <circle cx="1492" cy="773" r="12" fill="#ffb02e"/>
+  <g fill="#8fb8ff"><circle cx="116" cy="762" r="17"/><circle cx="99" cy="780" r="17"/><circle cx="133" cy="780" r="17"/><circle cx="106" cy="798" r="15"/><circle cx="127" cy="798" r="15"/></g>
+  <circle cx="116" cy="782" r="11" fill="#ffd34d"/>
+  <!-- motion streaks behind the ball -->
+  <g stroke="#fff6dc" stroke-linecap="round" opacity="0.6">
+    <line x1="840" y1="560" x2="980" y2="560" stroke-width="22" opacity="0.5"/>
+    <line x1="870" y1="530" x2="960" y2="530" stroke-width="8"/>
+    <line x1="870" y1="592" x2="950" y2="592" stroke-width="8"/>
+  </g>
+  <!-- the Moss beetle (stripes), kicking right -->
+  <g transform="translate(620 580) rotate(-8)">
+    <ellipse cx="8" cy="14" rx="96" ry="72" fill="#10200a" opacity="0.35"/>
+    <g stroke="#1d140b" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M30 -40 L62 -78 L104 -86"/><path d="M30 40 L62 78 L104 86"/>
+      <path d="M-4 -42 L-8 -88 L-40 -110"/><path d="M-4 42 L-8 88 L-40 110"/>
+      <path d="M-36 -40 L-70 -76 L-112 -78"/><path d="M-36 40 L-70 76 L-112 78"/>
+    </g>
+    <g transform="translate(-22 0)">
+      <ellipse cx="0" cy="0" rx="76" ry="64" fill="url(#moss)"/>
+      <g clip-path="url(#mshell)" fill="#2c6a1f">
+        <rect x="-90" y="-50" width="160" height="13"/><rect x="-90" y="-26" width="160" height="13"/>
+        <rect x="-90" y="13" width="160" height="13"/><rect x="-90" y="37" width="160" height="13"/>
+      </g>
+      <ellipse cx="0" cy="0" rx="76" ry="64" fill="none" stroke="#1d140b" stroke-width="7"/>
+      <line x1="-76" y1="0" x2="52" y2="0" stroke="#1d140b" stroke-width="5"/>
+      <path d="M-50 -30 Q-30 -54 0 -52" stroke="#fff" stroke-opacity="0.6" stroke-width="7" fill="none" stroke-linecap="round"/>
+    </g>
+    <ellipse cx="50" cy="0" rx="28" ry="46" fill="#4f8fe0" stroke="#1d140b" stroke-width="7"/>
+    <circle cx="84" cy="0" r="22" fill="#2a1d10"/>
+    <circle cx="92" cy="-11" r="7" fill="#fff"/><circle cx="92" cy="11" r="7" fill="#fff"/>
+    <circle cx="95" cy="-10" r="3.5" fill="#1d140b"/><circle cx="95" cy="12" r="3.5" fill="#1d140b"/>
+    <g stroke="#1d140b" stroke-width="6" fill="none" stroke-linecap="round"><path d="M98 -14 Q118 -22 128 -40"/><path d="M98 14 Q118 22 128 40"/></g>
+    <circle cx="128" cy="-40" r="7" fill="#1d140b"/><circle cx="128" cy="40" r="7" fill="#1d140b"/>
+  </g>
+  <!-- the seed ball -->
+  <g transform="translate(1010 560)">
+    <ellipse cx="8" cy="12" rx="40" ry="32" fill="#10200a" opacity="0.35"/>
+    <circle r="40" fill="url(#ball)"/>
+    <g stroke="#7a4e22" stroke-width="6" fill="none"><path d="M-22 -34 Q2 0 -22 34"/><path d="M8 -39 Q30 0 8 39"/></g>
+    <ellipse cx="-14" cy="-17" rx="11" ry="7" fill="#fff" opacity="0.7" transform="rotate(-35 -14 -17)"/>
+    <circle r="40" fill="none" stroke="#1d140b" stroke-width="6"/>
+  </g>
+  <!-- the Amber beetle (spots), charging in from the right -->
+  <g transform="translate(1290 470) rotate(200)">
+    <ellipse cx="8" cy="-14" rx="90" ry="68" fill="#10200a" opacity="0.35"/>
+    <g stroke="#1d140b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <path d="M28 -38 L60 -74 L98 -72"/><path d="M28 38 L60 74 L98 72"/>
+      <path d="M-4 -40 L-6 -84 L-36 -102"/><path d="M-4 40 L-6 84 L-36 102"/>
+      <path d="M-34 -38 L-66 -72 L-104 -72"/><path d="M-34 38 L-66 72 L-104 72"/>
+    </g>
+    <g transform="translate(-20 0)">
+      <ellipse cx="0" cy="0" rx="72" ry="60" fill="url(#amber)"/>
+      <g clip-path="url(#ashell)" fill="#8f5a0a">
+        <circle cx="-30" cy="-24" r="12"/><circle cx="-30" cy="24" r="12"/><circle cx="4" cy="-34" r="10"/><circle cx="4" cy="34" r="10"/>
+        <circle cx="0" cy="-12" r="9"/><circle cx="0" cy="12" r="9"/><circle cx="-56" cy="0" r="9"/><circle cx="30" cy="-20" r="8"/><circle cx="30" cy="20" r="8"/>
+      </g>
+      <ellipse cx="0" cy="0" rx="72" ry="60" fill="none" stroke="#1d140b" stroke-width="7"/>
+      <line x1="-72" y1="0" x2="48" y2="0" stroke="#1d140b" stroke-width="5"/>
+    </g>
+    <ellipse cx="46" cy="0" rx="26" ry="44" fill="#e8453c" stroke="#1d140b" stroke-width="7"/>
+    <circle cx="80" cy="0" r="21" fill="#2a1d10"/>
+    <circle cx="88" cy="-10" r="7" fill="#fff"/><circle cx="88" cy="10" r="7" fill="#fff"/>
+    <circle cx="91" cy="-9" r="3.5" fill="#1d140b"/><circle cx="91" cy="11" r="3.5" fill="#1d140b"/>
+    <g stroke="#1d140b" stroke-width="6" fill="none" stroke-linecap="round"><path d="M94 -12 Q114 -20 122 -36"/><path d="M94 12 Q114 20 122 36"/></g>
+  </g>
+  <!-- title -->
+  <g font-family="'Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" text-anchor="middle">
+    <text x="800" y="150" font-size="150" fill="#2a160a" stroke="#2a160a" stroke-width="22" stroke-linejoin="round">BEETLE BALL</text>
+    <text x="800" y="150" font-size="150" fill="url(#title)">BEETLE BALL</text>
+  </g>
+</svg>

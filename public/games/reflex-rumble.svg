@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.52" r="0.7">
+      <stop offset="0" stop-color="#ffd678" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#500a1e" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+  <!-- sunburst behind the stage -->
+  <rect width="1600" height="900" fill="#c2412f"/>
+  <path d="M800 470 L2200 470 L2188 653Z" fill="#e0683d"/>
+  <path d="M800 470 L2152 832 L2093 1006Z" fill="#d65537"/>
+  <path d="M800 470 L2012 1170 L1911 1322Z" fill="#e0683d"/>
+  <path d="M800 470 L1790 1460 L1652 1581Z" fill="#d65537"/>
+  <path d="M800 470 L1500 1682 L1336 1763Z" fill="#e0683d"/>
+  <path d="M800 470 L1162 1822 L983 1858Z" fill="#d65537"/>
+  <path d="M800 470 L800 1870 L617 1858Z" fill="#e0683d"/>
+  <path d="M800 470 L438 1822 L264 1763Z" fill="#d65537"/>
+  <path d="M800 470 L100 1682 L-52 1581Z" fill="#e0683d"/>
+  <path d="M800 470 L-190 1460 L-311 1322Z" fill="#d65537"/>
+  <path d="M800 470 L-412 1170 L-493 1006Z" fill="#e0683d"/>
+  <path d="M800 470 L-552 832 L-588 653Z" fill="#d65537"/>
+  <path d="M800 470 L-600 470 L-588 287Z" fill="#e0683d"/>
+  <path d="M800 470 L-552 108 L-493 -66Z" fill="#d65537"/>
+  <path d="M800 470 L-412 -230 L-311 -382Z" fill="#e0683d"/>
+  <path d="M800 470 L-190 -520 L-52 -641Z" fill="#d65537"/>
+  <path d="M800 470 L100 -742 L264 -823Z" fill="#e0683d"/>
+  <path d="M800 470 L438 -882 L617 -918Z" fill="#d65537"/>
+  <path d="M800 470 L800 -930 L983 -918Z" fill="#e0683d"/>
+  <path d="M800 470 L1162 -882 L1336 -823Z" fill="#d65537"/>
+  <path d="M800 470 L1500 -742 L1652 -641Z" fill="#e0683d"/>
+  <path d="M800 470 L1790 -520 L1911 -382Z" fill="#d65537"/>
+  <path d="M800 470 L2012 -230 L2093 -66Z" fill="#e0683d"/>
+  <path d="M800 470 L2152 108 L2188 287Z" fill="#d65537"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+
+  <!-- the stage floor -->
+  <rect y="760" width="1600" height="140" fill="#6b2346"/>
+  <rect y="760" width="1600" height="12" fill="#83305a"/>
+
+  <!-- the marquee screen -->
+  <rect x="236" y="236" width="1128" height="478" rx="48" fill="#ffb43c"/>
+  <rect x="252" y="252" width="1096" height="446" rx="40" fill="#e88a1f"/>
+  <rect x="280" y="280" width="1040" height="390" rx="30" fill="#fff4e2"/>
+  <circle cx="300" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="300" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="350" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="350" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="400" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="400" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="450" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="450" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="500" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="500" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="550" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="550" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="600" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="600" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="650" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="650" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="700" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="700" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="750" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="750" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="800" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="800" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="850" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="850" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="900" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="900" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="950" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="950" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="1000" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="1000" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="1050" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="1050" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="1100" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="1100" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="1150" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="1150" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="1200" cy="262" r="9" fill="#a65a17"/>
+  <circle cx="1200" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="1250" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="1250" cy="688" r="9" fill="#fff1a8"/>
+  <circle cx="1300" cy="262" r="9" fill="#fff1a8"/>
+  <circle cx="1300" cy="688" r="9" fill="#a65a17"/>
+  <circle cx="262" cy="310" r="9" fill="#a65a17"/>
+  <circle cx="1338" cy="310" r="9" fill="#fff1a8"/>
+  <circle cx="262" cy="360" r="9" fill="#fff1a8"/>
+  <circle cx="1338" cy="360" r="9" fill="#a65a17"/>
+  <circle cx="262" cy="410" r="9" fill="#fff1a8"/>
+  <circle cx="1338" cy="410" r="9" fill="#fff1a8"/>
+  <circle cx="262" cy="460" r="9" fill="#a65a17"/>
+  <circle cx="1338" cy="460" r="9" fill="#fff1a8"/>
+  <circle cx="262" cy="510" r="9" fill="#fff1a8"/>
+  <circle cx="1338" cy="510" r="9" fill="#a65a17"/>
+  <circle cx="262" cy="560" r="9" fill="#fff1a8"/>
+  <circle cx="1338" cy="560" r="9" fill="#fff1a8"/>
+  <circle cx="262" cy="610" r="9" fill="#a65a17"/>
+  <circle cx="1338" cy="610" r="9" fill="#fff1a8"/>
+
+  <!-- signal light, just turned green -->
+  <g transform="translate(470 475)">
+    <rect x="-92" y="-165" width="184" height="330" rx="70" fill="#3a1a2e"/>
+    <circle cx="0" cy="-78" r="62" fill="#5a2430"/>
+    <circle cx="0" cy="78" r="62" fill="#3fe06a"/>
+    <ellipse cx="-20" cy="54" rx="20" ry="12" fill="#fff" fill-opacity="0.4" transform="rotate(-30 -20 54)"/>
+    <g stroke="#3fe06a" stroke-width="10" stroke-linecap="round">
+      <path d="M118 78 h44 M106 20 l34 -24 M106 136 l34 24"/>
+    </g>
+  </g>
+
+  <!-- GO! -->
+  <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" text-anchor="middle" stroke-linejoin="round">
+    <text x="770" y="530" font-size="160" fill="none" stroke="#3a1a2e" stroke-width="26">GO!</text>
+    <text x="770" y="530" font-size="160" fill="#3fe06a">GO!</text>
+  </g>
+
+  <!-- the two colour cards -->
+  <g transform="translate(1150 475) rotate(6) scale(0.92)">
+    <rect x="-150" y="-120" width="140" height="210" rx="22" fill="#3a1a2e"/>
+    <rect x="-140" y="-110" width="120" height="190" rx="16" fill="#2f7de1"/>
+    <rect x="10" y="-120" width="140" height="210" rx="22" fill="#3a1a2e"/>
+    <rect x="20" y="-110" width="120" height="190" rx="16" fill="#f7c531"/>
+    <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" font-size="96" text-anchor="middle">
+      <text x="-80" y="22" fill="#fff">A</text>
+      <text x="80" y="22" fill="#3a1a2e">B</text>
+    </g>
+  </g>
+
+  <!-- buzzers in seat colours, one slammed down -->
+  <g transform="translate(360 800)">
+    <rect x="-88" y="-14" width="176" height="34" rx="12" fill="#3a1a2e"/>
+    <ellipse cx="0" cy="-10" rx="70" ry="24" fill="#a5302a"/>
+    <path d="M-70 -24 A70 48 0 0 1 70 -24 A70 18 0 0 1 -70 -24Z" fill="#ff5a4a"/>
+    <ellipse cx="-24" cy="-50" rx="18" ry="9" fill="#fff" fill-opacity="0.45" transform="rotate(-15 -24 -50)"/>
+  </g>
+  <g transform="translate(620 800)">
+    <rect x="-88" y="-14" width="176" height="34" rx="12" fill="#3a1a2e"/>
+    <ellipse cx="0" cy="4" rx="70" ry="24" fill="#2a7ba0"/>
+    <path d="M-70 -10 A70 48 0 0 1 70 -10 A70 18 0 0 1 -70 -10Z" fill="#4fc3f7"/>
+    <ellipse cx="-24" cy="-36" rx="18" ry="9" fill="#fff" fill-opacity="0.45" transform="rotate(-15 -24 -36)"/>
+  </g>
+  <g transform="translate(980 800)">
+    <rect x="-88" y="-14" width="176" height="34" rx="12" fill="#3a1a2e"/>
+    <ellipse cx="0" cy="-10" rx="70" ry="24" fill="#3f8a2c"/>
+    <path d="M-70 -24 A70 48 0 0 1 70 -24 A70 18 0 0 1 -70 -24Z" fill="#7ed957"/>
+    <ellipse cx="-24" cy="-50" rx="18" ry="9" fill="#fff" fill-opacity="0.45" transform="rotate(-15 -24 -50)"/>
+  </g>
+  <g transform="translate(1240 800)">
+    <rect x="-88" y="-14" width="176" height="34" rx="12" fill="#3a1a2e"/>
+    <ellipse cx="0" cy="-10" rx="70" ry="24" fill="#b08a10"/>
+    <path d="M-70 -24 A70 48 0 0 1 70 -24 A70 18 0 0 1 -70 -24Z" fill="#ffd23f"/>
+    <ellipse cx="-24" cy="-50" rx="18" ry="9" fill="#fff" fill-opacity="0.45" transform="rotate(-15 -24 -50)"/>
+  </g>
+  <g stroke="#fff4e2" stroke-width="9" stroke-linecap="round" fill="none">
+    <path d="M520 742 l-24 -22 M620 726 v-30 M720 742 l24 -22"/>
+  </g>
+
+  <!-- title at the top -->
+  <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" stroke-linejoin="round" text-anchor="middle">
+    <text x="800" y="180" font-size="150" fill="none" stroke="#3a1a2e" stroke-width="26">Reflex Rumble</text>
+    <text x="800" y="180" font-size="150" fill="#fff4e2">Reflex <tspan fill="#ffd23f">Rumble</tspan></text>
+  </g>
+  <!-- lightning bolts either side of the title -->
+  <path d="M110 50 l64 -8 -28 58 48 -6 -92 112 30 -80 -46 6z" fill="#ffd23f" stroke="#3a1a2e" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M1490 50 l-64 -8 28 58 -48 -6 92 112 -30 -80 46 6z" fill="#ffd23f" stroke="#3a1a2e" stroke-width="8" stroke-linejoin="round"/>
+</svg>

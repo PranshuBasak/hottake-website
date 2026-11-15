@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6dc"/>
+      <stop offset="1" stop-color="#ffc46a"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb36b"/>
+      <stop offset="1" stop-color="#ff8a5c"/>
+    </linearGradient>
+    <pattern id="stripes" width="120" height="900" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="60" height="900" fill="#59b968"/>
+    </pattern>
+  </defs>
+
+  <!-- sunset sky and sea -->
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1240" cy="250" r="120" fill="#ffd98a"/>
+  <rect y="300" width="1600" height="600" fill="#1d6f8c"/>
+  <g stroke="#ffffff" stroke-opacity="0.22" stroke-width="5" fill="none" stroke-linecap="round">
+    <path d="M60 340 q30 -12 60 0 t60 0"/><path d="M380 330 q30 -12 60 0 t60 0"/><path d="M1380 345 q30 -12 60 0 t60 0"/>
+    <path d="M1100 330 q30 -12 60 0 t60 0"/><path d="M700 338 q30 -12 60 0 t60 0"/>
+  </g>
+
+  <!-- boardwalk planks -->
+  <g>
+    <rect x="0" y="360" width="1600" height="540" fill="#7d5634"/>
+    <g fill="#c99561">
+      <rect x="0" y="364" width="520" height="52"/><rect x="526" y="364" width="610" height="52"/><rect x="1142" y="364" width="458" height="52"/>
+      <rect x="0" y="420" width="300" height="52"/><rect x="306" y="420" width="700" height="52"/><rect x="1012" y="420" width="588" height="52"/>
+    </g>
+    <g fill="#c08a56">
+      <rect x="0" y="476" width="640" height="52"/><rect x="646" y="476" width="500" height="52"/><rect x="1152" y="476" width="448" height="52"/>
+      <rect x="0" y="532" width="420" height="52"/><rect x="426" y="532" width="740" height="52"/><rect x="1172" y="532" width="428" height="52"/>
+      <rect x="0" y="588" width="560" height="52"/><rect x="566" y="588" width="520" height="52"/><rect x="1092" y="588" width="508" height="52"/>
+    </g>
+    <g fill="#d09f6b">
+      <rect x="0" y="644" width="360" height="52"/><rect x="366" y="644" width="640" height="52"/><rect x="1012" y="644" width="588" height="52"/>
+      <rect x="0" y="700" width="700" height="52"/><rect x="706" y="700" width="480" height="52"/><rect x="1192" y="700" width="408" height="52"/>
+      <rect x="0" y="756" width="480" height="52"/><rect x="486" y="756" width="600" height="52"/><rect x="1092" y="756" width="508" height="52"/>
+      <rect x="0" y="812" width="600" height="88"/><rect x="606" y="812" width="420" height="88"/><rect x="1032" y="812" width="568" height="88"/>
+    </g>
+  </g>
+
+  <!-- the green: shadow, turf, candy rail -->
+  <path d="M150 470 L1370 470 L1470 560 L1470 820 L150 820 Z" fill="#3a2410" opacity="0.35" transform="translate(14 18)"/>
+  <path d="M150 470 L1370 470 L1470 560 L1470 820 L150 820 Z" fill="#4fae5e"/>
+  <path d="M150 470 L1370 470 L1470 560 L1470 820 L150 820 Z" fill="url(#stripes)"/>
+  <path d="M150 470 L1370 470 L1470 560 L1470 820 L150 820 Z" fill="none" stroke="#fff3dc" stroke-width="22" stroke-linejoin="round"/>
+  <path d="M150 470 L1370 470 L1470 560 L1470 820 L150 820 Z" fill="none" stroke="#e2533f" stroke-width="22" stroke-dasharray="30 30" stroke-linejoin="round"/>
+
+  <!-- tee mat and the cup with its flag -->
+  <rect x="220" y="600" width="110" height="110" rx="18" fill="#3d8f4d" stroke="#ffffff" stroke-opacity="0.5" stroke-width="4" stroke-dasharray="10 10"/>
+  <circle cx="1300" cy="690" r="40" fill="#2f6b3a"/>
+  <circle cx="1300" cy="690" r="31" fill="#1b2a1c"/>
+  <line x1="1300" y1="690" x2="1300" y2="540" stroke="#f7f2e8" stroke-width="9" stroke-linecap="round"/>
+  <path d="M1300 540 Q1350 548 1392 566 Q1350 584 1300 592 Z" fill="#ff5a3c"/>
+
+  <!-- a pink buoy bumper -->
+  <circle cx="560" cy="560" r="52" fill="#d9507e"/>
+  <circle cx="555" cy="555" r="44" fill="#ff7fa8"/>
+  <circle cx="555" cy="555" r="26" fill="none" stroke="#fff6e6" stroke-width="9"/>
+
+  <!-- yellow slider -->
+  <rect x="1010" y="610" width="56" height="150" rx="10" fill="#d9a41f"/>
+  <rect x="1016" y="616" width="44" height="138" rx="8" fill="#ffcf3f"/>
+  <path d="M1016 640 L1038 656 L1060 640 M1016 680 L1038 696 L1060 680 M1016 720 L1038 736 L1060 720" stroke="#3a2a1a" stroke-width="10" fill="none"/>
+
+  <!-- the windmill: house and four sails -->
+  <circle cx="800" cy="650" r="54" fill="#3a2410" opacity="0.25" transform="translate(10 14)"/>
+  <g transform="translate(800 650) rotate(18)">
+    <g fill="#fff3dc" stroke="#b8452f" stroke-width="5" stroke-linejoin="round">
+      <path d="M14 -12 L150 -22 L150 22 L14 12 Z"/>
+      <path d="M14 -12 L150 -22 L150 22 L14 12 Z" transform="rotate(90)"/>
+      <path d="M14 -12 L150 -22 L150 22 L14 12 Z" transform="rotate(180)"/>
+      <path d="M14 -12 L150 -22 L150 22 L14 12 Z" transform="rotate(270)"/>
+    </g>
+  </g>
+  <circle cx="800" cy="650" r="46" fill="#2f9e9e"/>
+  <circle cx="800" cy="650" r="32" fill="#e2533f"/>
+  <circle cx="800" cy="650" r="11" fill="#fff3dc"/>
+
+  <!-- balls: one rolling for the cup with a dotted trail, two waiting -->
+  <g stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 22" fill="none" opacity="0.9">
+    <path d="M330 640 Q700 560 1130 700"/>
+  </g>
+  <ellipse cx="1188" cy="712" rx="22" ry="18" fill="#000" opacity="0.28"/>
+  <circle cx="1182" cy="704" r="22" fill="#ffd43b" stroke="#ffffff" stroke-width="5"/>
+  <circle cx="1175" cy="696" r="7" fill="#ffffff" opacity="0.7"/>
+  <circle cx="275" cy="630" r="22" fill="#4dabf7" stroke="#ffffff" stroke-width="5"/>
+  <circle cx="268" cy="622" r="7" fill="#ffffff" opacity="0.7"/>
+  <circle cx="300" cy="684" r="22" fill="#ff6b6b" stroke="#ffffff" stroke-width="5"/>
+  <circle cx="293" cy="676" r="7" fill="#ffffff" opacity="0.7"/>
+
+  <!-- title -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-weight="900" text-anchor="middle">
+    <text x="800" y="160" font-size="136" fill="#5a2a0a" opacity="0.55" transform="translate(6 8)">Putt Panic</text>
+    <text x="800" y="160" font-size="136" fill="url(#title)" stroke="#5a2a0a" stroke-width="7" paint-order="stroke">Putt Panic</text>
+  </g>
+</svg>

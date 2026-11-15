@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd08a"/>
+      <stop offset="0.3" stop-color="#f6a465"/>
+      <stop offset="0.5" stop-color="#a8607e"/>
+      <stop offset="0.7" stop-color="#3a3a78"/>
+      <stop offset="1" stop-color="#141a44"/>
+    </linearGradient>
+    <linearGradient id="oak" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b8783a"/>
+      <stop offset="0.5" stop-color="#9a6230"/>
+      <stop offset="1" stop-color="#7d4c22"/>
+    </linearGradient>
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f1c0e"/>
+      <stop offset="1" stop-color="#1c0f06"/>
+    </linearGradient>
+    <radialGradient id="sunTok" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#ffe9a0"/>
+      <stop offset="0.55" stop-color="#ffb81c"/>
+      <stop offset="1" stop-color="#c2620a"/>
+    </radialGradient>
+    <radialGradient id="moonTok" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#8794e6"/>
+      <stop offset="0.55" stop-color="#4656c2"/>
+      <stop offset="1" stop-color="#1f2766"/>
+    </radialGradient>
+    <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff6d0"/>
+      <stop offset="0.6" stop-color="#ffd36a"/>
+      <stop offset="1" stop-color="#ffbe5a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.55" stop-color="#fff0a8" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#fff0a8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffe27a"/>
+      <stop offset="1" stop-color="#c9d3ff"/>
+    </linearGradient>
+    <g id="sun">
+      <circle r="37" fill="url(#sunTok)" stroke="#7a3404" stroke-width="3"/>
+      <polygon points="13.1,-2.3 26.6,0.0 13.1,2.3" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="12.5,4.6 19.2,11.1 10.2,8.5" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="8.5,10.2 13.3,23.1 4.6,12.5" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="2.3,13.1 0.0,22.2 -2.3,13.1" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-4.6,12.5 -13.3,23.1 -8.5,10.2" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-10.2,8.5 -19.2,11.1 -12.5,4.6" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-13.1,2.3 -26.6,0.0 -13.1,-2.3" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-12.5,-4.6 -19.2,-11.1 -10.2,-8.5" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-8.5,-10.2 -13.3,-23.1 -4.6,-12.5" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="-2.3,-13.1 -0.0,-22.2 2.3,-13.1" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="4.6,-12.5 13.3,-23.1 8.5,-10.2" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <polygon points="10.2,-8.5 19.2,-11.1 12.5,-4.6" fill="#fff1b8" stroke="#c96a0a" stroke-width="1.3"/>
+      <circle r="13.3" fill="#ffe27a" stroke="#c96a0a" stroke-width="1.3"/>
+      <circle cx="-4.4" cy="-2.2" r="1.7" fill="#8a3f05"/><circle cx="4.4" cy="-2.2" r="1.7" fill="#8a3f05"/>
+      <path d="M-4.2,2.2 A5.2,5.2 0 0 0 4.2,2.2" fill="none" stroke="#8a3f05" stroke-width="1.5"/>
+    </g>
+    <clipPath id="moonClip"><circle cx="-3" r="20.7"/></clipPath>
+    <g id="moon">
+      <circle r="37" fill="url(#moonTok)" stroke="#11163f" stroke-width="3"/>
+      <path clip-path="url(#moonClip)" fill-rule="evenodd" fill="#eef1ff" d="M-40,-40 H40 V40 H-40 Z M-10.4,-5.2 a17,17 0 1,0 34,0 a17,17 0 1,0 -34,0"/>
+      <polygon points="13.3,1.3 14.5,5.3 18.5,6.6 14.5,7.9 13.3,11.9 12.1,7.9 8.1,6.6 12.1,5.3" fill="#fff8d6"/>
+      <polygon points="19.2,-14.6 19.9,-12.2 22.3,-11.5 19.9,-10.8 19.2,-8.4 18.5,-10.8 16.1,-11.5 18.5,-12.2" fill="#fff8d6"/>
+    </g>
+    <clipPath id="bigMoon"><circle cx="1420" cy="230" r="80"/></clipPath>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="190" cy="760" r="210" fill="url(#sunGlow)"/>
+  <circle cx="1112" cy="318" r="1.6" fill="#fffae6" opacity="0.26"/>
+  <circle cx="1347" cy="366" r="1.1" fill="#fffae6" opacity="0.52"/>
+  <circle cx="968" cy="490" r="1.4" fill="#fffae6" opacity="0.10"/>
+  <circle cx="1110" cy="582" r="1.8" fill="#fffae6" opacity="0.26"/>
+  <circle cx="1495" cy="279" r="2.0" fill="#fffae6" opacity="0.69"/>
+  <circle cx="1056" cy="371" r="2.4" fill="#fffae6" opacity="0.20"/>
+  <circle cx="1295" cy="434" r="2.1" fill="#fffae6" opacity="0.47"/>
+  <circle cx="1001" cy="444" r="1.9" fill="#fffae6" opacity="0.14"/>
+  <circle cx="1153" cy="18" r="2.4" fill="#fffae6" opacity="0.31"/>
+  <circle cx="1263" cy="421" r="2.4" fill="#fffae6" opacity="0.43"/>
+  <circle cx="1417" cy="539" r="1.6" fill="#fffae6" opacity="0.60"/>
+  <circle cx="1473" cy="260" r="2.5" fill="#fffae6" opacity="0.67"/>
+  <circle cx="1522" cy="57" r="1.2" fill="#fffae6" opacity="0.72"/>
+  <circle cx="1099" cy="565" r="1.7" fill="#fffae6" opacity="0.25"/>
+  <circle cx="1361" cy="176" r="1.8" fill="#fffae6" opacity="0.54"/>
+  <circle cx="1207" cy="205" r="1.9" fill="#fffae6" opacity="0.37"/>
+  <circle cx="1334" cy="529" r="2.1" fill="#fffae6" opacity="0.51"/>
+  <circle cx="1555" cy="501" r="2.6" fill="#fffae6" opacity="0.76"/>
+  <circle cx="1390" cy="95" r="2.4" fill="#fffae6" opacity="0.57"/>
+  <circle cx="1577" cy="529" r="1.9" fill="#fffae6" opacity="0.78"/>
+  <circle cx="1417" cy="124" r="2.3" fill="#fffae6" opacity="0.60"/>
+  <circle cx="1327" cy="167" r="1.1" fill="#fffae6" opacity="0.50"/>
+  <circle cx="1507" cy="579" r="1.1" fill="#fffae6" opacity="0.70"/>
+  <circle cx="1472" cy="240" r="1.2" fill="#fffae6" opacity="0.67"/>
+  <circle cx="1148" cy="450" r="2.4" fill="#fffae6" opacity="0.30"/>
+  <circle cx="988" cy="360" r="1.1" fill="#fffae6" opacity="0.12"/>
+  <circle cx="1420" cy="194" r="2.4" fill="#fffae6" opacity="0.61"/>
+  <circle cx="1588" cy="296" r="2.6" fill="#fffae6" opacity="0.80"/>
+  <circle cx="1158" cy="45" r="2.0" fill="#fffae6" opacity="0.31"/>
+  <circle cx="980" cy="115" r="1.7" fill="#fffae6" opacity="0.11"/>
+  <circle cx="1351" cy="91" r="1.1" fill="#fffae6" opacity="0.53"/>
+  <circle cx="1515" cy="184" r="2.5" fill="#fffae6" opacity="0.71"/>
+  <circle cx="1534" cy="221" r="1.7" fill="#fffae6" opacity="0.74"/>
+  <circle cx="1293" cy="377" r="2.0" fill="#fffae6" opacity="0.46"/>
+  <circle cx="1318" cy="363" r="2.5" fill="#fffae6" opacity="0.49"/>
+  <circle cx="1284" cy="252" r="2.2" fill="#fffae6" opacity="0.46"/>
+  <circle cx="1112" cy="176" r="2.6" fill="#fffae6" opacity="0.26"/>
+  <circle cx="1294" cy="321" r="1.0" fill="#fffae6" opacity="0.47"/>
+  <circle cx="1226" cy="339" r="1.0" fill="#fffae6" opacity="0.39"/>
+  <circle cx="1354" cy="370" r="1.1" fill="#fffae6" opacity="0.53"/>
+  <circle cx="1361" cy="273" r="2.1" fill="#fffae6" opacity="0.54"/>
+  <circle cx="1186" cy="414" r="2.2" fill="#fffae6" opacity="0.34"/>
+  <circle cx="974" cy="35" r="2.1" fill="#fffae6" opacity="0.11"/>
+  <circle cx="1577" cy="147" r="1.7" fill="#fffae6" opacity="0.78"/>
+  <circle cx="1339" cy="187" r="1.6" fill="#fffae6" opacity="0.52"/>
+  <circle cx="1160" cy="216" r="2.0" fill="#fffae6" opacity="0.32"/>
+  <circle cx="1152" cy="221" r="2.2" fill="#fffae6" opacity="0.31"/>
+  <circle cx="977" cy="333" r="2.2" fill="#fffae6" opacity="0.11"/>
+  <circle cx="1158" cy="130" r="2.3" fill="#fffae6" opacity="0.31"/>
+  <circle cx="1113" cy="110" r="1.7" fill="#fffae6" opacity="0.26"/>
+  <circle cx="1407" cy="60" r="1.5" fill="#fffae6" opacity="0.59"/>
+  <circle cx="1174" cy="488" r="1.7" fill="#fffae6" opacity="0.33"/>
+  <circle cx="1508" cy="99" r="1.5" fill="#fffae6" opacity="0.71"/>
+  <circle cx="1376" cy="518" r="1.7" fill="#fffae6" opacity="0.56"/>
+  <circle cx="1104" cy="71" r="1.8" fill="#fffae6" opacity="0.25"/>
+  <circle cx="1082" cy="472" r="2.3" fill="#fffae6" opacity="0.23"/>
+  <circle cx="1077" cy="163" r="2.3" fill="#fffae6" opacity="0.22"/>
+  <circle cx="1371" cy="472" r="1.6" fill="#fffae6" opacity="0.55"/>
+  <circle cx="1043" cy="171" r="2.3" fill="#fffae6" opacity="0.18"/>
+  <circle cx="1134" cy="203" r="1.7" fill="#fffae6" opacity="0.29"/>
+  <circle cx="1229" cy="240" r="2.5" fill="#fffae6" opacity="0.39"/>
+  <circle cx="1060" cy="3" r="2.5" fill="#fffae6" opacity="0.20"/>
+  <circle cx="1523" cy="577" r="1.7" fill="#fffae6" opacity="0.72"/>
+  <circle cx="1568" cy="543" r="1.4" fill="#fffae6" opacity="0.77"/>
+  <circle cx="1437" cy="489" r="2.1" fill="#fffae6" opacity="0.63"/>
+  <circle cx="1292" cy="169" r="1.5" fill="#fffae6" opacity="0.46"/>
+  <circle cx="1106" cy="40" r="1.9" fill="#fffae6" opacity="0.25"/>
+  <circle cx="1144" cy="474" r="1.1" fill="#fffae6" opacity="0.30"/>
+  <circle cx="1538" cy="406" r="2.5" fill="#fffae6" opacity="0.74"/>
+  <circle cx="1534" cy="526" r="1.9" fill="#fffae6" opacity="0.74"/>
+  <path clip-path="url(#bigMoon)" fill-rule="evenodd" fill="#eef1ff" d="M1330,140 H1510 V320 H1330 Z M1386,206 a70,70 0 1,0 140,0 a70,70 0 1,0 -140,0"/>
+  <path d="M0,760 C200,700 420,780 640,740 C860,700 1100,790 1320,730 C1450,700 1540,740 1600,720 V900 H0 Z" fill="#8f6a2c"/>
+  <path d="M0,830 C260,800 520,850 800,820 C1080,790 1340,850 1600,810 V900 H0 Z" fill="#5d4a2a"/>
+  <rect x="498" y="880" width="96" height="58" rx="14" fill="#4a2a10"/>
+  <rect x="1006" y="880" width="96" height="58" rx="14" fill="#4a2a10"/>
+  <rect x="472" y="312" width="656" height="564" fill="url(#back)"/>
+  <use href="#sun" x="524" y="824"/>
+  <use href="#moon" x="616" y="824"/>
+  <use href="#sun" x="708" y="824"/>
+  <use href="#sun" x="800" y="824"/>
+  <use href="#moon" x="892" y="824"/>
+  <use href="#moon" x="984" y="824"/>
+  <use href="#sun" x="616" y="732"/>
+  <use href="#moon" x="708" y="732"/>
+  <use href="#moon" x="800" y="732"/>
+  <use href="#moon" x="984" y="732"/>
+  <use href="#sun" x="708" y="640"/>
+  <use href="#moon" x="800" y="640"/>
+  <use href="#sun" x="800" y="548"/>
+  <mask id="holes"><rect width="1600" height="900" fill="#fff"/>
+    <circle cx="524" cy="824" r="39" fill="#000"/>
+    <circle cx="616" cy="824" r="39" fill="#000"/>
+    <circle cx="708" cy="824" r="39" fill="#000"/>
+    <circle cx="800" cy="824" r="39" fill="#000"/>
+    <circle cx="892" cy="824" r="39" fill="#000"/>
+    <circle cx="984" cy="824" r="39" fill="#000"/>
+    <circle cx="1076" cy="824" r="39" fill="#000"/>
+    <circle cx="524" cy="732" r="39" fill="#000"/>
+    <circle cx="616" cy="732" r="39" fill="#000"/>
+    <circle cx="708" cy="732" r="39" fill="#000"/>
+    <circle cx="800" cy="732" r="39" fill="#000"/>
+    <circle cx="892" cy="732" r="39" fill="#000"/>
+    <circle cx="984" cy="732" r="39" fill="#000"/>
+    <circle cx="1076" cy="732" r="39" fill="#000"/>
+    <circle cx="524" cy="640" r="39" fill="#000"/>
+    <circle cx="616" cy="640" r="39" fill="#000"/>
+    <circle cx="708" cy="640" r="39" fill="#000"/>
+    <circle cx="800" cy="640" r="39" fill="#000"/>
+    <circle cx="892" cy="640" r="39" fill="#000"/>
+    <circle cx="984" cy="640" r="39" fill="#000"/>
+    <circle cx="1076" cy="640" r="39" fill="#000"/>
+    <circle cx="524" cy="548" r="39" fill="#000"/>
+    <circle cx="616" cy="548" r="39" fill="#000"/>
+    <circle cx="708" cy="548" r="39" fill="#000"/>
+    <circle cx="800" cy="548" r="39" fill="#000"/>
+    <circle cx="892" cy="548" r="39" fill="#000"/>
+    <circle cx="984" cy="548" r="39" fill="#000"/>
+    <circle cx="1076" cy="548" r="39" fill="#000"/>
+    <circle cx="524" cy="456" r="39" fill="#000"/>
+    <circle cx="616" cy="456" r="39" fill="#000"/>
+    <circle cx="708" cy="456" r="39" fill="#000"/>
+    <circle cx="800" cy="456" r="39" fill="#000"/>
+    <circle cx="892" cy="456" r="39" fill="#000"/>
+    <circle cx="984" cy="456" r="39" fill="#000"/>
+    <circle cx="1076" cy="456" r="39" fill="#000"/>
+    <circle cx="524" cy="364" r="39" fill="#000"/>
+    <circle cx="616" cy="364" r="39" fill="#000"/>
+    <circle cx="708" cy="364" r="39" fill="#000"/>
+    <circle cx="800" cy="364" r="39" fill="#000"/>
+    <circle cx="892" cy="364" r="39" fill="#000"/>
+    <circle cx="984" cy="364" r="39" fill="#000"/>
+    <circle cx="1076" cy="364" r="39" fill="#000"/>
+  </mask>
+  <rect x="448" y="288" width="704" height="612" rx="26" fill="url(#oak)" stroke="#4a2a10" stroke-width="5" mask="url(#holes)"/>
+  <path d="M456,300 q176,8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,374 q176,-8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,447 q176,8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,520 q176,-8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,594 q176,8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,668 q176,-8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,741 q176,8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,814 q176,-8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <path d="M456,888 q176,8 352,0 t336,0" fill="none" stroke="#4a2410" stroke-opacity="0.18" stroke-width="2" mask="url(#holes)"/>
+  <circle cx="464" cy="304" r="7" fill="#e4b75a" stroke="#8a5a14" stroke-width="2"/>
+  <circle cx="1136" cy="304" r="7" fill="#e4b75a" stroke="#8a5a14" stroke-width="2"/>
+  <circle cx="464" cy="884" r="7" fill="#e4b75a" stroke="#8a5a14" stroke-width="2"/>
+  <circle cx="1136" cy="884" r="7" fill="#e4b75a" stroke="#8a5a14" stroke-width="2"/>
+  <circle cx="524" cy="824" r="55" fill="url(#halo)"/><circle cx="524" cy="824" r="39" fill="none" stroke="#fff" stroke-width="5"/>
+  <circle cx="616" cy="732" r="55" fill="url(#halo)"/><circle cx="616" cy="732" r="39" fill="none" stroke="#fff" stroke-width="5"/>
+  <circle cx="708" cy="640" r="55" fill="url(#halo)"/><circle cx="708" cy="640" r="39" fill="none" stroke="#fff" stroke-width="5"/>
+  <circle cx="800" cy="548" r="55" fill="url(#halo)"/><circle cx="800" cy="548" r="39" fill="none" stroke="#fff" stroke-width="5"/>
+  <line x1="524" y1="824" x2="800" y2="548" stroke="#fff6c8" stroke-opacity="0.75" stroke-width="12" stroke-linecap="round"/>
+  <g opacity="0.55"><line x1="966" y1="168" x2="966" y2="196" stroke="#c9d3ff" stroke-width="5" stroke-linecap="round"/><line x1="1002" y1="156" x2="1002" y2="192" stroke="#c9d3ff" stroke-width="5" stroke-linecap="round"/></g>
+  <circle cx="984" cy="248" r="45" fill="none" stroke="#7ce0c3" stroke-width="7"/>
+  <use href="#moon" x="984" y="248"/>
+  <text x="800" y="150" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="900" font-size="150" fill="url(#title)" stroke="#2a160a" stroke-width="14" paint-order="stroke" letter-spacing="6">DROP LINE</text>
+  <text x="800" y="222" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="44" fill="#fff4e2" stroke="#2a160a" stroke-width="6" paint-order="stroke">Suns against moons. Line up four.</text>
+</svg>

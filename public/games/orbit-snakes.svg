@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241238"/>
+      <stop offset="0.55" stop-color="#3f1a4c"/>
+      <stop offset="1" stop-color="#7a2c4e"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6dc"/>
+      <stop offset="1" stop-color="#ffc98a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+
+  <!-- flat stars -->
+  <g fill="#ffe9c4">
+    <circle cx="90" cy="70" r="4"/><circle cx="260" cy="210" r="3"/><circle cx="1480" cy="90" r="5"/>
+    <circle cx="1350" cy="250" r="3"/><circle cx="120" cy="520" r="3"/><circle cx="1530" cy="560" r="4"/>
+    <circle cx="700" cy="250" r="3"/><circle cx="980" cy="230" r="3"/><circle cx="420" cy="820" r="3"/>
+    <circle cx="1220" cy="840" r="4"/><circle cx="1560" cy="380" r="3"/><circle cx="40" cy="300" r="3"/>
+  </g>
+  <g fill="#ffe9c4" opacity="0.5">
+    <circle cx="520" cy="130" r="3"/><circle cx="1150" cy="140" r="3"/><circle cx="330" cy="400" r="2.5"/>
+    <circle cx="1440" cy="700" r="2.5"/><circle cx="60" cy="760" r="2.5"/><circle cx="880" cy="860" r="2.5"/>
+  </g>
+
+  <!-- the warped grid, sagging into the two wells -->
+  <g fill="none" stroke="#ffb27a" stroke-width="3" opacity="0.18">
+    <path d="M0 330 C300 330 420 520 560 520 C700 520 860 380 1000 420 C1140 460 1240 600 1600 600"/>
+    <path d="M0 450 C260 450 420 600 560 600 C720 600 880 520 1020 540 C1160 560 1260 680 1600 690"/>
+    <path d="M0 210 C320 210 440 410 560 430 C700 450 880 300 1020 320 C1170 340 1300 470 1600 480"/>
+    <path d="M300 900 C300 700 470 600 520 500 C560 420 520 300 520 0"/>
+    <path d="M760 900 C760 720 640 620 600 540 C570 470 700 300 760 0"/>
+    <path d="M1120 900 C1120 760 1100 640 1060 560 C1020 480 1060 300 1100 0"/>
+  </g>
+
+  <!-- well A -->
+  <g transform="translate(560 540)">
+    <circle r="250" fill="#ff7a59" opacity="0.10"/>
+    <circle r="190" fill="#ff7a59" opacity="0.14"/>
+    <circle r="140" fill="none" stroke="#ffb27a" stroke-width="6" stroke-dasharray="18 22" opacity="0.6"/>
+    <ellipse rx="104" ry="96" fill="none" stroke="#ffd29a" stroke-width="8" opacity="0.75" transform="rotate(-18)"/>
+    <circle r="72" fill="#ffcf8a"/>
+    <circle r="60" fill="#1a0c22"/>
+  </g>
+  <!-- well B -->
+  <g transform="translate(1060 470)">
+    <circle r="200" fill="#ff5c9a" opacity="0.10"/>
+    <circle r="150" fill="#ff5c9a" opacity="0.14"/>
+    <circle r="112" fill="none" stroke="#ff9cc4" stroke-width="6" stroke-dasharray="16 20" opacity="0.6"/>
+    <ellipse rx="84" ry="78" fill="none" stroke="#ffc2da" stroke-width="7" opacity="0.75" transform="rotate(22)"/>
+    <circle r="58" fill="#ffb0cf"/>
+    <circle r="48" fill="#1a0c22"/>
+  </g>
+
+  <!-- orbs on their orbits -->
+  <g>
+    <circle cx="560" cy="350" r="22" fill="#fff27a" opacity="0.35"/><circle cx="560" cy="350" r="11" fill="#fff7c0"/>
+    <circle cx="745" cy="610" r="22" fill="#7dfcff" opacity="0.35"/><circle cx="745" cy="610" r="11" fill="#d8feff"/>
+    <circle cx="1180" cy="330" r="20" fill="#9dff8a" opacity="0.35"/><circle cx="1180" cy="330" r="10" fill="#e2ffd8"/>
+    <circle cx="1240" cy="560" r="20" fill="#fff27a" opacity="0.35"/><circle cx="1240" cy="560" r="10" fill="#fff7c0"/>
+    <circle cx="380" cy="690" r="20" fill="#ff9be8" opacity="0.35"/><circle cx="380" cy="690" r="10" fill="#ffe0f7"/>
+  </g>
+
+  <!-- snakes: a coral one slinging round well A, a teal one round well B, a yellow one cutting between -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 720 C260 560 330 420 440 380 C560 336 700 380 720 500 C736 600 660 690 560 700" stroke="#3a1426" stroke-width="40" opacity="0.35" transform="translate(6 10)"/>
+    <path d="M150 720 C260 560 330 420 440 380 C560 336 700 380 720 500 C736 600 660 690 560 700" stroke="#ff6f61" stroke-width="34"/>
+    <path d="M150 720 C260 560 330 420 440 380 C560 336 700 380 720 500 C736 600 660 690 560 700" stroke="#ffb4a6" stroke-width="10"/>
+
+    <path d="M1480 780 C1380 700 1300 640 1230 560 C1160 480 1150 360 1060 330 C960 300 900 380 900 450" stroke="#3a1426" stroke-width="38" opacity="0.35" transform="translate(6 10)"/>
+    <path d="M1480 780 C1380 700 1300 640 1230 560 C1160 480 1150 360 1060 330 C960 300 900 380 900 450" stroke="#2fd3c4" stroke-width="32"/>
+    <path d="M1480 780 C1380 700 1300 640 1230 560 C1160 480 1150 360 1060 330 C960 300 900 380 900 450" stroke="#a6fff5" stroke-width="9"/>
+
+    <path d="M760 860 C800 760 820 700 860 640" stroke="#3a1426" stroke-width="34" opacity="0.35" transform="translate(6 10)"/>
+    <path d="M760 860 C800 760 820 700 860 640" stroke="#ffd04a" stroke-width="28"/>
+    <path d="M760 860 C800 760 820 700 860 640" stroke="#fff0b0" stroke-width="8"/>
+  </g>
+
+  <!-- heads -->
+  <g transform="translate(560 700) rotate(180)">
+    <ellipse rx="34" ry="28" fill="#ff8a7d"/>
+    <circle cx="12" cy="-12" r="9" fill="#fff"/><circle cx="16" cy="-12" r="4.5" fill="#1a0c22"/>
+    <circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="16" cy="12" r="4.5" fill="#1a0c22"/>
+  </g>
+  <g transform="translate(900 450) rotate(95)">
+    <ellipse rx="32" ry="26" fill="#55e2d6"/>
+    <circle cx="11" cy="-11" r="8.5" fill="#fff"/><circle cx="15" cy="-11" r="4.2" fill="#1a0c22"/>
+    <circle cx="11" cy="11" r="8.5" fill="#fff"/><circle cx="15" cy="11" r="4.2" fill="#1a0c22"/>
+  </g>
+  <g transform="translate(860 640) rotate(-55)">
+    <ellipse rx="28" ry="23" fill="#ffdc6e"/>
+    <circle cx="10" cy="-10" r="7.5" fill="#fff"/><circle cx="13" cy="-10" r="3.8" fill="#1a0c22"/>
+    <circle cx="10" cy="10" r="7.5" fill="#fff"/><circle cx="13" cy="10" r="3.8" fill="#1a0c22"/>
+  </g>
+
+  <!-- title -->
+  <g font-family="'Arial Black', 'Segoe UI', sans-serif" font-weight="900" text-anchor="middle">
+    <text x="806" y="168" font-size="128" fill="#12061c" opacity="0.5" letter-spacing="4">ORBIT SNAKES</text>
+    <text x="800" y="160" font-size="128" fill="url(#title)" stroke="#1a0c22" stroke-width="12" paint-order="stroke" letter-spacing="4">ORBIT SNAKES</text>
+  </g>
+</svg>

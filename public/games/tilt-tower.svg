@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb36b"/>
+      <stop offset="0.55" stop-color="#ffd59a"/>
+      <stop offset="1" stop-color="#ffe9c2"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fa6b8"/>
+      <stop offset="1" stop-color="#1d5f7a"/>
+    </linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8d5a3c"/>
+      <stop offset="0.6" stop-color="#a86d48"/>
+      <stop offset="1" stop-color="#6e432c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sunset sky, sun and far islands -->
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1220" cy="560" r="170" fill="#fff1c9"/>
+  <circle cx="1220" cy="560" r="130" fill="#ffe08a"/>
+  <path d="M0 640 C120 600 210 610 300 640 L300 660 L0 660Z" fill="#d98d6a"/>
+  <path d="M1280 650 C1380 600 1480 610 1600 630 L1600 660 L1280 660Z" fill="#d98d6a"/>
+  <g fill="#fff6e6" fill-opacity="0.8">
+    <ellipse cx="260" cy="420" rx="110" ry="26"/>
+    <ellipse cx="330" cy="400" rx="70" ry="30"/>
+    <ellipse cx="1390" cy="330" rx="120" ry="24"/>
+    <ellipse cx="1450" cy="312" rx="64" ry="26"/>
+  </g>
+
+  <!-- the sea -->
+  <rect y="650" width="1600" height="250" fill="url(#sea)"/>
+  <g stroke="#bfeaf0" stroke-width="7" stroke-linecap="round" fill="none" stroke-opacity="0.7">
+    <path d="M90 720 q30 -14 60 0 t60 0"/>
+    <path d="M330 800 q30 -14 60 0 t60 0"/>
+    <path d="M1100 760 q30 -14 60 0 t60 0"/>
+    <path d="M1330 840 q30 -14 60 0 t60 0"/>
+    <path d="M1000 700 q30 -14 60 0 t60 0"/>
+  </g>
+  <path d="M1080 640 h280" stroke="#fff3c4" stroke-width="10" stroke-linecap="round" stroke-opacity="0.6"/>
+  <path d="M1130 676 h180" stroke="#fff3c4" stroke-width="8" stroke-linecap="round" stroke-opacity="0.5"/>
+
+  <!-- the sea stack -->
+  <path d="M640 900 L668 700 L655 640 L945 640 L932 700 L960 900Z" fill="url(#rock)"/>
+  <path d="M640 640 h320 v26 h-320z" fill="#6aa84f"/>
+  <path d="M640 662 h320 v10 h-320z" fill="#4e8a3a"/>
+  <path d="M700 720 l40 30 M860 760 l-30 40 M760 830 l30 30" stroke="#5a3522" stroke-width="8" stroke-linecap="round"/>
+  <path d="M600 880 q100 -40 200 -10 q100 -30 200 10 L1000 900 L600 900Z" fill="#e6f6f8" fill-opacity="0.7"/>
+
+  <!-- the leaning tower, each piece in a player's colour -->
+  <g stroke="#3b2414" stroke-width="7" stroke-linejoin="round">
+    <g transform="rotate(-2 800 600)">
+      <rect x="690" y="574" width="220" height="66" rx="8" fill="#ff6b5b"/>
+      <path d="M700 596 h200" stroke="#fff" stroke-opacity="0.35" stroke-width="6"/>
+    </g>
+    <g transform="rotate(3 790 540)">
+      <rect x="740" y="482" width="110" height="94" rx="8" fill="#ffc93c"/>
+      <path d="M746 488 l98 82 M844 488 l-98 82" stroke="#3b2414" stroke-opacity="0.35" stroke-width="7"/>
+    </g>
+    <g transform="rotate(6 800 460)">
+      <rect x="670" y="442" width="270" height="42" rx="8" fill="#4fc3f7"/>
+    </g>
+    <g transform="rotate(9 820 400)">
+      <rect x="770" y="350" width="80" height="96" rx="8" fill="#7ed957"/>
+    </g>
+    <g transform="rotate(13 830 330)">
+      <rect x="730" y="318" width="210" height="40" rx="8" fill="#c792ea"/>
+    </g>
+  </g>
+
+  <!-- the next piece, hovering on its hook -->
+  <path d="M1090 0 V250" stroke="#5a3522" stroke-width="6" stroke-dasharray="14 10"/>
+  <g stroke="#3b2414" stroke-width="7" stroke-linejoin="round">
+    <rect x="1010" y="250" width="160" height="56" rx="8" fill="#ff8fd1"/>
+    <path d="M1020 270 h140" stroke="#fff" stroke-opacity="0.35" stroke-width="6"/>
+  </g>
+
+  <!-- a gust swirling in from the left -->
+  <g fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-opacity="0.9">
+    <path d="M150 400 H470 c60 0 70 -80 10 -80 c-40 0 -40 46 -6 46"/>
+    <path d="M220 470 H560"/>
+    <path d="M120 530 H430 c50 0 56 60 6 60 c-30 0 -30 -34 -4 -34"/>
+  </g>
+
+  <!-- title at the top -->
+  <g font-family="'Segoe UI Rounded','Arial Rounded MT Bold','Segoe UI',sans-serif" font-weight="900" stroke-linejoin="round" text-anchor="middle">
+    <text x="800" y="190" font-size="170" fill="none" stroke="#5a2a10" stroke-width="26">Tilt Tower</text>
+    <text x="800" y="190" font-size="170" fill="#fff6e0">Tilt <tspan fill="#ff6b5b">Tower</tspan></text>
+  </g>
+</svg>
