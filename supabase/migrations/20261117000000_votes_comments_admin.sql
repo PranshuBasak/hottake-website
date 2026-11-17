@@ -4,7 +4,7 @@
 
 -- ───────────── tables ─────────────
 
-create table public.game_votes (
+create table if not exists public.game_votes (
   game_id text not null check (game_id ~ '^[a-z0-9-]{2,40}$'),
   author_hash text not null check (author_hash ~ '^[0-9a-f]{64}$'),
   value smallint not null check (value in (-1, 1)),
@@ -13,9 +13,9 @@ create table public.game_votes (
   updated_at timestamptz not null default now(),
   primary key (game_id, author_hash)
 );
-create index game_votes_updated_idx on public.game_votes (updated_at);
+create index if not exists game_votes_updated_idx on public.game_votes (updated_at);
 
-create table public.game_comments (
+create table if not exists public.game_comments (
   id bigint generated always as identity primary key,
   game_id text not null check (game_id ~ '^[a-z0-9-]{2,40}$'),
   author_hash text not null check (author_hash ~ '^[0-9a-f]{64}$'),
@@ -26,18 +26,18 @@ create table public.game_comments (
   created_at timestamptz not null default now(),
   edited_at timestamptz
 );
-create index game_comments_game_idx on public.game_comments (game_id, id desc);
-create index game_comments_author_idx on public.game_comments (author_hash, created_at);
-create index game_comments_ip_idx on public.game_comments (ip, created_at);
-create index game_comments_created_idx on public.game_comments (created_at);
+create index if not exists game_comments_game_idx on public.game_comments (game_id, id desc);
+create index if not exists game_comments_author_idx on public.game_comments (author_hash, created_at);
+create index if not exists game_comments_ip_idx on public.game_comments (ip, created_at);
+create index if not exists game_comments_created_idx on public.game_comments (created_at);
 
-create table public.admin_login_attempts (
+create table if not exists public.admin_login_attempts (
   id bigint generated always as identity primary key,
   ip inet,
   ok boolean not null,
   created_at timestamptz not null default now()
 );
-create index admin_login_attempts_ip_idx on public.admin_login_attempts (ip, created_at);
+create index if not exists admin_login_attempts_ip_idx on public.admin_login_attempts (ip, created_at);
 
 alter table public.game_votes enable row level security;
 alter table public.game_comments enable row level security;
@@ -241,7 +241,7 @@ as $$
     'daily', coalesce((
       select jsonb_agg(jsonb_build_object('day', g.day, 'downloads', coalesce(x.n, 0)) order by g.day)
       from generate_series(date_trunc('day', p_from), date_trunc('day', p_to - interval '1 second'), interval '1 day') as g(day)
-      left join (select date_trunc('day', created_at) day, count(*) n from d group by 1) x on x.day = g.day
+      left join (select date_trunc('day', created_at) as day, count(*) n from d group by 1) x on x.day = g.day
     ), '[]'::jsonb),
     'countries', coalesce((select jsonb_agg(jsonb_build_object('label', k, 'value', n) order by n desc) from (select coalesce(country, 'unknown') k, count(*) n from d group by 1 order by n desc limit 15) t), '[]'::jsonb),
     'releases', coalesce((select jsonb_agg(jsonb_build_object('label', k, 'value', n) order by n desc) from (select coalesce(r.version, 'unknown') k, count(*) n from d left join public.releases r on r.id = d.release_id group by 1 order by n desc) t), '[]'::jsonb)
@@ -261,7 +261,7 @@ as $$
     'daily', coalesce((
       select jsonb_agg(jsonb_build_object('day', g.day, 'signups', coalesce(x.n, 0)) order by g.day)
       from generate_series(date_trunc('day', p_from), date_trunc('day', p_to - interval '1 second'), interval '1 day') as g(day)
-      left join (select date_trunc('day', created_at) day, count(*) n from s group by 1) x on x.day = g.day
+      left join (select date_trunc('day', created_at) as day, count(*) n from s group by 1) x on x.day = g.day
     ), '[]'::jsonb),
     'rows', coalesce((
       select jsonb_agg(jsonb_build_object('email', email, 'created_at', created_at, 'source', source, 'unsubscribed', unsubscribed_at is not null) order by created_at desc)
