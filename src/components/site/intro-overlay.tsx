@@ -28,6 +28,21 @@ export function IntroOverlay() {
 
     const n = { v: 0 };
     let done = false;
+    let closed = false;
+    const close = () => {
+      if (closed) return;
+      closed = true;
+      clearTimeout(bail);
+      try {
+        localStorage.setItem(INTRO_KEY, "1");
+      } catch {}
+      document.documentElement.classList.remove("intro-on");
+      document.documentElement.classList.add("intro-seen");
+      document.documentElement.style.overflow = "";
+      setShow(false);
+    };
+    // Never trap anyone: timers keep running when animation frames stall (background tab, busy GPU).
+    const bail = setTimeout(close, 6000);
     const finish = () => {
       if (done) return;
       done = true;
@@ -36,14 +51,7 @@ export function IntroOverlay() {
       } catch {}
       tl.kill();
       gsap
-        .timeline({
-          onComplete: () => {
-            document.documentElement.classList.remove("intro-on");
-            document.documentElement.classList.add("intro-seen");
-            document.documentElement.style.overflow = "";
-            setShow(false);
-          },
-        })
+        .timeline({ onComplete: close })
         .to(el.querySelector("[data-intro-card]"), { scale: 0.92, autoAlpha: 0, duration: 0.35, ease: "power2.in" })
         .to(el, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.75, ease: "power4.inOut" }, "<0.15");
     };
@@ -62,7 +70,7 @@ export function IntroOverlay() {
           if (bar.current) bar.current.style.transform = `scaleX(${v / 100})`;
         },
       }, "<");
-    // Leave once the count is done and the page has loaded (or after 4s, whichever is first).
+    // Leave once the count has finished and the page has loaded (waiting at most 2.5s for the load).
     Promise.all([tl.then(), Promise.race([loaded, new Promise((r) => setTimeout(r, 2500))])]).then(finish);
 
     const skip = (e: Event) => {
@@ -73,6 +81,7 @@ export function IntroOverlay() {
     addEventListener("keydown", skip);
     el.addEventListener("pointerdown", skip);
     return () => {
+      clearTimeout(bail);
       removeEventListener("keydown", skip);
       el.removeEventListener("pointerdown", skip);
       document.documentElement.style.overflow = "";
