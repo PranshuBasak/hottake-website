@@ -29,6 +29,19 @@ const cookies = [
     duration: "12 months",
   },
   {
+    name: "ht_author",
+    purpose:
+      "A random key set only when you vote or comment on a game, so you can change your vote and edit your own comments. HttpOnly. We store only a hash of it.",
+    type: "Essential",
+    duration: "12 months",
+  },
+  {
+    name: "ht_admin",
+    purpose: "Keeps the site owner signed in to the private admin area. Never set for visitors. HttpOnly.",
+    type: "Essential",
+    duration: "12 hours",
+  },
+  {
     name: "ht_vid",
     purpose: "A random visitor ID, so visits from the same browser can be grouped. HttpOnly.",
     type: "Analytics",
@@ -53,7 +66,7 @@ export default function CookiesPage() {
   return (
     <LegalPage
       title="Cookies"
-      intro={`The ${site.name} website uses four first-party cookies at most, and only one unless you say yes.`}
+      intro={`The ${site.name} website uses a handful of first-party cookies. Without your yes, it sets only the ones a feature you use needs.`}
       sections={sections}
     >
       <section id="overview">
@@ -63,8 +76,8 @@ export default function CookiesPage() {
           advertising cookies and no third-party trackers.
         </p>
         <p>
-          We always set one essential cookie to remember your choice. The three analytics cookies are set only after
-          you choose &quot;Accept all&quot;. What we record with them is explained in the{" "}
+          We always set one essential cookie to remember your choice, and one more only if you vote or comment on a
+          game. The three analytics cookies are set only after you choose &quot;Accept all&quot;. What we record with them is explained in the{" "}
           <Link href="/privacy">privacy policy</Link>.
         </p>
       </section>
@@ -135,10 +148,15 @@ export default function CookiesPage() {
       </section>
 
       <section id="no-storage">
-        <h2>What uses no cookies</h2>
+        <h2>Local storage and what uses no cookies</h2>
         <p>
-          The page transitions, ASCII animations and shader background are purely visual. They use no cookies, local
-          storage or other browser storage. Fonts are bundled with the site, so no font service sets cookies either.
+          A few small preferences stay in your browser&apos;s local storage and are never sent to us: whether you&apos;ve
+          seen the intro screen (<code>ht_intro_seen</code>), whether interface sounds are on (<code>ht_sound</code>),
+          and the name you last used for a comment (<code>ht_comment_name</code>). Clearing site data removes them.
+        </p>
+        <p>
+          The page transitions, ASCII animations, sounds and shader background use no cookies. Fonts are bundled with
+          the site, so no font service sets cookies either.
         </p>
       </section>
     </LegalPage>

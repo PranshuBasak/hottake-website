@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Download, ExternalLink, Gamepad2, Users } from "lucide-react";
 import { GameCard } from "@/components/games/catalogue";
+import { GameFeedback } from "@/components/games/game-feedback";
 import { Reveal, SplitHeading } from "@/components/site/reveal";
 import { ShaderBg } from "@/components/site/shader-bg";
 import { controlsLabel, getGame, getGames, playersLabel } from "@/lib/games";
@@ -156,6 +157,8 @@ export default async function GamePage({ params }: PageProps<"/games/[id]">) {
           )}
         </Reveal>
       </section>
+
+      <GameFeedback gameId={g.id} gameName={g.name} />
 
       <section className="container-site pb-10" aria-labelledby="more-title">
         <h2 id="more-title" className="mb-6 text-2xl font-bold">

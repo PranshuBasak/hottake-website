@@ -23,7 +23,7 @@ export const site = {
     email: "hello@pranshubasak.site",
   },
   legal: {
-    updated: "15 November 2026",
+    updated: "18 November 2026",
     jurisdiction: "India",
   },
   keywords: [

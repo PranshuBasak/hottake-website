@@ -17,6 +17,7 @@ const sections = [
   { id: "without-consent", label: "Without consent" },
   { id: "with-consent", label: "With consent" },
   { id: "email", label: "Email sign-up" },
+  { id: "votes-comments", label: "Votes and comments" },
   { id: "legal-bases", label: "Legal bases" },
   { id: "sharing", label: "Who processes data" },
   { id: "retention", label: "How long we keep it" },
@@ -134,6 +135,25 @@ export default function PrivacyPage() {
         </p>
       </section>
 
+      <section id="votes-comments">
+        <h2>Votes and comments on game pages</h2>
+        <p>
+          You can give each game a thumbs up or down and leave a comment. When you do, we store your vote or comment,
+          the name you typed, the time, the country your request came from (worked out by our host from your IP
+          address) and, for comments, your IP address to stop spam. Comments and the names on them are public.
+        </p>
+        <p>
+          To let you change your vote and edit your own comments, your browser gets a random key in the{" "}
+          <code>ht_author</code> cookie. We store only a scrambled (hashed) version of it, which can&apos;t be traced back
+          to you. If the cookie is deleted, nobody can edit those comments from the website again, including you.
+        </p>
+        <p>
+          Comments can&apos;t be deleted from the website, by you or by us. If a comment needs to come down for a legal
+          reason, or you want yours removed, email <a href={`mailto:${email}`}>{email}</a> with the game and the text
+          and we&apos;ll remove it by hand.
+        </p>
+      </section>
+
       <section id="legal-bases">
         <h2>Why we are allowed to use your data</h2>
         <p>
@@ -147,8 +167,8 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Legitimate interest</strong> (or, under Indian law, a legitimate use) for keeping the site secure
-            and preventing abuse, such as storing the sign-up IP address, and for the essential cookie that remembers
-            your choice.
+            and preventing abuse, such as storing the sign-up IP address, for the essential cookie that remembers
+            your choice, and for storing votes and comments you choose to post.
           </li>
         </ul>
       </section>
@@ -163,7 +183,7 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Supabase</strong> provides our database and file storage. It stores analytics, mailing-list
-            subscribers and download records, and serves the installer file.
+            subscribers, download records, votes and comments, and serves the installer file.
           </li>
         </ul>
         <p>
@@ -175,7 +195,8 @@ export default function PrivacyPage() {
       <section id="retention">
         <h2>How long we keep it</h2>
         <ul>
-          <li>Raw IP addresses and full user-agent strings, including sign-up IPs: deleted after 90 days.</li>
+          <li>Raw IP addresses and full user-agent strings, including sign-up and comment IPs: deleted after 90 days.</li>
+          <li>Votes and comments: kept while the site runs, unless you ask us to remove them.</li>
           <li>Events, sessions and visitor records: deleted after 13 months.</li>
           <li>
             Mailing-list subscribers: kept until you unsubscribe. After that we keep the record marked as unsubscribed

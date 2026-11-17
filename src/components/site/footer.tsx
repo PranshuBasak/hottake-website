@@ -5,6 +5,7 @@ import { site } from "@/lib/site";
 import { AsciiArt } from "./ascii-art";
 import { useConsent } from "./consent";
 import { Logo } from "./logo";
+import { SoundToggle } from "./sound-toggle";
 
 const columns = [
   {
@@ -82,7 +83,10 @@ export function Footer() {
         <p>
           © 2026 {site.creator.name}. Ported games keep their original licences and credits.
         </p>
-        <p>Made with too much coffee and eight phones on one sofa.</p>
+        <div className="flex flex-wrap items-center gap-4">
+          <p>Made with too much coffee and eight phones on one sofa.</p>
+          <SoundToggle />
+        </div>
       </div>
     </footer>
   );

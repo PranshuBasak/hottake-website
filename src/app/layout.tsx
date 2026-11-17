@@ -5,7 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConsentProvider } from "@/components/site/consent";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
+import { HideOnAdmin } from "@/components/site/hide-on-admin";
+import { IntroScreen } from "@/components/site/intro-screen";
 import { PageTransition } from "@/components/site/page-transition";
+import { SoundEffects } from "@/components/site/sound-effects";
 import { ServiceWorkerRegister } from "@/components/site/sw-register";
 import { Tracker } from "@/components/site/tracker";
 import { JsonLd, organizationLd, softwareLd, websiteLd } from "@/lib/seo";
@@ -60,8 +63,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`dark ${head.variable} ${body.variable} ${mono.variable} antialiased`}>
+    <html lang="en" className={`dark ${head.variable} ${body.variable} ${mono.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-dvh bg-background font-sans text-foreground">
+        <IntroScreen />
         <a
           href="#main"
           className="sr-only z-[200] rounded-full bg-ember px-4 py-2 font-semibold text-[#1a120d] focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
@@ -71,11 +75,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={[websiteLd(), organizationLd(), softwareLd()]} />
         <ConsentProvider>
           <TooltipProvider>
-            <Header />
+            <HideOnAdmin>
+              <Header />
+            </HideOnAdmin>
             <main id="main">{children}</main>
-            <Footer />
+            <HideOnAdmin>
+              <Footer />
+            </HideOnAdmin>
             <PageTransition />
-            <Tracker />
+            <HideOnAdmin>
+              <Tracker />
+            </HideOnAdmin>
+            <SoundEffects />
             <ServiceWorkerRegister />
             <Toaster theme="dark" position="bottom-center" richColors />
           </TooltipProvider>

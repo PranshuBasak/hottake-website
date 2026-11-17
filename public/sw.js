@@ -1,9 +1,9 @@
 /* HotTake website service worker.
  * - Pages: network first, fall back to the last cached copy, then to /offline.
  * - Static assets (Next chunks, fonts, covers, icons, ASCII runtime): stale-while-revalidate.
- * - Never touches /api/* or cross-origin requests (analytics, downloads and Supabase stay live).
+ * - Never touches /api/*, the private /admin area or cross-origin requests (analytics, downloads and Supabase stay live).
  */
-const VERSION = "ht-v1";
+const VERSION = "ht-v2";
 const PAGES = `${VERSION}-pages`;
 const ASSETS = `${VERSION}-assets`;
 const PRECACHE = ["/offline", "/icons/icon-192.png", "/icons/icon-512.png", "/icon.svg"];
@@ -31,7 +31,7 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin || url.pathname.startsWith("/api/")) return;
+  if (url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin")) return;
 
   if (req.mode === "navigate") {
     event.respondWith(

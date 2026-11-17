@@ -25,8 +25,13 @@ npm run build
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PUBLISHABLE_KEY` | `sb_publishable_…` |
 | `SUPABASE_SECRET_KEY` | `sb_secret_…`, server only (tracking, sign-ups, downloads, health) |
 | `NEXT_PUBLIC_SITE_URL` | the public URL, e.g. `https://hottake.example` (canonical links, sitemap, OG) |
+| `ADMIN_USERNAME` | username for `/admin` |
+| `ADMIN_PASSWORD_HASH` | scrypt hash of the admin password, from `npm run admin:hash` |
+| `ADMIN_SESSION_SECRET` | random string that signs the admin cookie, also printed by `npm run admin:hash` |
+| `AUTHOR_PEPPER` | optional; mixed into the hash of the `ht_author` key (falls back to the secret key) |
 
-Without the secret key the site still works; it just records nothing.
+Without the secret key the site still works; it just records nothing. Without the three `ADMIN_*` values the
+admin area stays locked for everyone.
 
 ## Supabase setup (once)
 
@@ -43,7 +48,28 @@ Without the secret key the site still works; it just records nothing.
    This computes size + SHA-256, uploads to `releases/v0.1.0/…` and inserts the `releases` row.
    `/download` and `/api/download` pick it up within 10 minutes (cached).
 
-Metrics are read in the Supabase dashboard: views `metrics_daily`, `metrics_top_pages`, `metrics_countries`,
+3. Run `supabase/setup-2.sql` once (the `20261117000000_votes_comments_admin` migration). It adds game votes,
+   comments, the admin login lockout and the read-only reporting functions the admin dashboard uses.
+4. Create the admin login: `npm run admin:hash` asks for a password (12+ characters) and prints
+   `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`. Put them, plus `ADMIN_USERNAME`, in `.env.local` and in
+   the Vercel project, then redeploy. Changing `ADMIN_SESSION_SECRET` signs everyone out.
+
+## Admin dashboard
+
+`/admin` (not linked anywhere, not indexed) shows page views, visitors, audience, downloads, sign-ups, votes and
+comments, with date range, country, device, page, game and search filters kept in the URL. It is read-only:
+nothing can be edited or deleted from it. Five wrong passwords from one IP lock sign-in for 15 minutes; a
+session lasts 12 hours.
+
+## Votes and comments
+
+Every game page has thumbs up / down and comments. Games stay static; the section loads from the API after
+the page. The `ht_author` cookie (random key, HttpOnly, 12 months, stored only as a hash) lets a browser
+change its vote and edit its own comments. Nobody can delete a comment from the site. To remove one for legal
+reasons, delete the row from `game_comments` in Supabase. Limits: 3 comments per browser per 10 minutes, 20
+per IP per hour, names up to 40 characters, comments up to 1000, plain text only.
+
+Metrics are also in the Supabase dashboard: views `metrics_daily`, `metrics_top_pages`, `metrics_countries`,
 `metrics_devices`, `metrics_downloads_daily`, `metrics_subscribers_daily`, plus the raw `sessions`, `events`,
 `subscribers` and `downloads` tables.
 
@@ -51,9 +77,13 @@ Metrics are read in the Supabase dashboard: views `metrics_daily`, `metrics_top_
 
 | Route | What |
 |---|---|
-| `GET /api/health` | Open, no auth. Checks config, catalogue, database (read + write), storage bucket and the release file; increments a counter and returns `check_count`, `checked_at`, `previous_checked_at`. 200 when ok/degraded, 503 when the database is down. |
+| `GET /api/health` | Open, no auth. Checks config, catalogue, database (read + write), storage bucket, the release file and votes/comments; increments a counter and returns `check_count`, `checked_at`, `previous_checked_at`. 200 when ok/degraded, 503 when the database is down. |
 | `POST /api/track` | Page views and events from the site. Stores IP, location, device and IDs only when the `ht_consent` cookie is `all`; otherwise an anonymous count. |
 | `GET /api/download` | Logs the download, then redirects to the installer in Supabase Storage. |
+| `GET /api/games/[id]/feedback` | Vote counts, your vote and the newest 20 comments (`?before=<id>` for older ones). |
+| `POST /api/games/[id]/vote` | `{ value: 1 | -1 | 0 }`: thumbs up, thumbs down or take your vote back. |
+| `POST /api/games/[id]/comments` | `{ name, body }`. 201 on success, 429 when rate limited. |
+| `PATCH /api/games/[id]/comments/[commentId]` | Edit your own comment; 403 without the author cookie that posted it. |
 
 ## Content
 

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Cookie } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,8 @@ function readConsent(): Snapshot {
 export function ConsentProvider({ children }: { children: React.ReactNode }) {
   const snap = useSyncExternalStore<Snapshot>(subscribeConsent, readConsent, () => "pending");
   const ready = snap !== "pending";
+  const path = usePathname();
+  const isAdmin = path === "/admin" || !!path?.startsWith("/admin/");
   const consent: Consent | null = snap === "all" || snap === "essential" ? snap : null;
   const [prefsOpen, setPrefsOpen] = useState(false);
 
@@ -74,7 +77,7 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
   return (
     <ConsentContext.Provider value={value}>
       {children}
-      {ready && consent === null && <ConsentBanner onChoose={choose} onCustomize={() => setPrefsOpen(true)} />}
+      {ready && consent === null && !isAdmin && <ConsentBanner onChoose={choose} onCustomize={() => setPrefsOpen(true)} />}
       {prefsOpen && <PreferencesDialog open={prefsOpen} onOpenChange={setPrefsOpen} current={consent} onSave={choose} />}
     </ConsentContext.Provider>
   );

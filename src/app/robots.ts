@@ -2,8 +2,9 @@ import type { MetadataRoute } from "next";
 import { absoluteUrl, site } from "@/lib/site";
 
 /**
- * Every crawler, search engines and AI alike, may read the whole site. Only two paths are excluded because they
- * have nothing to index: /api/* (JSON endpoints) and /unsubscribe (one-time links with a private token).
+ * Every crawler, search engines and AI alike, may read the whole site. Only three paths are excluded because they
+ * have nothing to index: /api/* (JSON endpoints), /unsubscribe (one-time links with a private token) and the
+ * private /admin area.
  */
 const AI_CRAWLERS = [
   "GPTBot",
@@ -29,7 +30,7 @@ const AI_CRAWLERS = [
   "YouBot",
 ];
 
-const DISALLOW = ["/api/", "/unsubscribe"];
+const DISALLOW = ["/api/", "/unsubscribe", "/admin"];
 
 export default function robots(): MetadataRoute.Robots {
   return {

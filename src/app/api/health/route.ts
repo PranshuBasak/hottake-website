@@ -9,7 +9,7 @@ const CRITICAL = ["database"] as const;
 
 /**
  * GET /api/health: open (no auth), safe to open in a browser.
- * Checks the database, storage, the published release, the catalogue and configuration,
+ * Checks the database, storage, the published release, votes and comments, the catalogue and configuration,
  * then records the check (count + time) and returns the result.
  */
 export async function GET() {
@@ -29,8 +29,9 @@ export async function GET() {
     checks.database = { status: "down", detail: "not configured" };
     checks.storage = { status: "down", detail: "not configured" };
     checks.release = { status: "down", detail: "not configured" };
+    checks.feedback = { status: "down", detail: "not configured" };
   } else {
-    const [storage, release] = await Promise.all([
+    const [storage, release, feedback] = await Promise.all([
       timed(async () => {
         const { data, error } = await admin.storage.getBucket("releases");
         if (error) return { status: "down", detail: error.message };
@@ -43,9 +44,16 @@ export async function GET() {
         const head = await fetch(data.url, { method: "HEAD", cache: "no-store" });
         return { status: head.ok ? "ok" : "down", detail: `v${data.version} file ${head.ok ? "reachable" : `HTTP ${head.status}`}` };
       }),
+      timed(async () => {
+        // Votes and comments: proves the feedback functions exist and answer.
+        const { error } = await admin.rpc("vote_counts", { p_game: "health-check" });
+        if (error) return { status: "degraded", detail: "votes and comments unavailable (run supabase/setup-2.sql)" };
+        return { status: "ok", detail: "votes and comments reachable" };
+      }),
     ]);
     checks.storage = storage;
     checks.release = release;
+    checks.feedback = feedback;
   }
 
   const status = overallStatus(checks, CRITICAL.filter((c) => c !== "database"));
