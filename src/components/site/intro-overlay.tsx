@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { INTRO_KEY } from "@/lib/intro";
 import { gsap, registerGsap } from "@/lib/motion";
 import { playSound } from "@/lib/sound";
 import { AsciiArt } from "./ascii-art";
 import { Logo } from "./logo";
-
-export const INTRO_KEY = "ht_intro_seen";
 
 const noSubscribe = () => () => {};
 const introOn = () => document.documentElement.classList.contains("intro-on");

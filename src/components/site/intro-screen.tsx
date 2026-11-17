@@ -1,4 +1,5 @@
-import { IntroOverlay, INTRO_KEY } from "./intro-overlay";
+import { INTRO_KEY } from "@/lib/intro";
+import { IntroOverlay } from "./intro-overlay";
 
 /**
  * One-time intro on a visitor's very first load. The overlay is in the server HTML so it covers
