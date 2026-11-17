@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { INTRO_KEY } from "@/lib/intro";
 import { gsap, registerGsap } from "@/lib/motion";
 import { playSound } from "@/lib/sound";
-import { AsciiArt } from "./ascii-art";
 import { Logo } from "./logo";
 
 const noSubscribe = () => () => {};
@@ -97,7 +96,8 @@ export function IntroOverlay() {
       aria-label="Loading HotTake"
       className="fixed inset-0 z-[150] grid cursor-pointer place-items-center overflow-hidden bg-bg-0"
     >
-      {active && <AsciiArt eager cover piece="pixel-fire" size={14} speed={1.2} className="absolute inset-0 overflow-hidden opacity-60" />}
+      {/* CSS embers: the ASCII flame player is too heavy to run during the first load. */}
+      <div aria-hidden className="intro-embers absolute inset-x-0 bottom-0 h-[70%]" />
       <div className="absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_50%,rgba(18,13,11,0.92),rgba(18,13,11,0.35)_70%,transparent)]" />
       <div data-intro-card className="relative flex w-[min(88vw,22rem)] flex-col items-center gap-5 rounded-3xl border border-white/10 bg-bg-0/80 px-8 py-8 shadow-2xl backdrop-blur-md">
         <span data-intro-logo className="inline-block scale-[1.6]">
