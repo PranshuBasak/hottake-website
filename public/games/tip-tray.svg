@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+<rect width="1600" height="900" fill="#15112e"/>
+<rect width="800" height="900" fill="#1d1536"/>
+<rect x="800" width="800" height="900" fill="#10173a"/>
+<circle cx="822" cy="472" r="372" fill="#0a0820"/>
+<defs><linearGradient id="low" gradientUnits="userSpaceOnUse" x1="560" y1="0" x2="1040" y2="0"><stop offset="0" stop-color="#2a1d4a" stop-opacity="0"/><stop offset="1" stop-color="#2a1d4a" stop-opacity=".42"/></linearGradient></defs>
+<circle cx="800" cy="450" r="360" fill="#f3eee2"/>
+<circle cx="800" cy="450" r="360" fill="url(#low)"/>
+<circle cx="800" cy="450" r="346" fill="none" stroke="#d9d2c1" stroke-width="14"/>
+<path d="M 478.7 285.9 A 360 360 0 0 0 478.7 614.1" fill="none" stroke="#ff6a5c" stroke-width="30" stroke-linecap="butt"/>
+<path d="M 1121.3 285.9 A 360 360 0 0 1 1121.3 614.1" fill="none" stroke="#14a89c" stroke-width="30" stroke-linecap="butt"/>
+<path d="M 800 450 L 1010 450" stroke="#15112e" stroke-width="22" stroke-linecap="round" opacity=".85"/>
+<path d="M 1000 418 L 1050 450 L 1000 482 Z" fill="#15112e" opacity=".85"/>
+<circle cx="1000" cy="450" r="60" fill="none" stroke="#14a89c" stroke-width="12"/>
+<circle cx="1000" cy="450" r="46" fill="#ffd23f"/>
+<circle cx="1000" cy="560" r="60" fill="none" stroke="#14a89c" stroke-width="12" stroke-dasharray="26 14"/>
+<circle cx="1000" cy="560" r="46" fill="#7c5cff"/>
+<circle cx="620" cy="400" r="60" fill="none" stroke="#ff6a5c" stroke-width="12"/>
+<circle cx="620" cy="400" r="46" fill="#3ad07a"/>
+<circle cx="720" cy="520" r="60" fill="none" stroke="#ff6a5c" stroke-width="12"/>
+<circle cx="720" cy="520" r="46" fill="#ff9f1c"/>
+<circle cx="860" cy="402" r="42" fill="#15112e"/>
+<text x="1000" y="468" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#15112e">2</text>
+<text x="1000" y="578" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#fff">4</text>
+<text x="620" y="418" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#15112e">1</text>
+<text x="720" y="538" font-family="Arial, sans-serif" font-weight="900" font-size="52" text-anchor="middle" fill="#15112e">3</text>
+<text x="150" y="500" font-family="Arial, sans-serif" font-weight="900" font-size="260" text-anchor="middle" fill="#ff6a5c">3</text>
+<text x="1450" y="500" font-family="Arial, sans-serif" font-weight="900" font-size="260" text-anchor="middle" fill="#14a89c">2</text>
+</svg>

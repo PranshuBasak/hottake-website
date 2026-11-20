@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="warm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1e4"/><stop offset="0.5" stop-color="#ffd1b3"/><stop offset="1" stop-color="#ffb9a3"/></linearGradient>
+    <linearGradient id="cool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eefcf6"/><stop offset="0.5" stop-color="#bff0de"/><stop offset="1" stop-color="#d6cdff"/></linearGradient>
+    <linearGradient id="tileW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa391"/><stop offset="1" stop-color="#f27b69"/></linearGradient>
+    <linearGradient id="tileC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfc0ff"/><stop offset="1" stop-color="#a893f0"/></linearGradient>
+    <radialGradient id="solid" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#ff9a8f"/><stop offset="0.65" stop-color="#e8453c"/><stop offset="1" stop-color="#a22b3a"/></radialGradient>
+    <radialGradient id="glass" cx="0.35" cy="0.3" r="0.9"><stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ff9a8f" stop-opacity="0.4"/><stop offset="1" stop-color="#e8453c" stop-opacity="0.5"/></radialGradient>
+    <linearGradient id="seam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8453c" stop-opacity="0"/><stop offset="1" stop-color="#e8453c" stop-opacity="0.35"/></linearGradient>
+  </defs>
+  <rect width="800" height="900" fill="url(#warm)"/>
+  <rect x="800" width="800" height="900" fill="url(#cool)"/>
+  <g opacity="0.75">
+    <rect x="80" y="260" width="260" height="120" rx="60" fill="#ffc8ad"/><rect x="520" y="540" width="240" height="110" rx="55" fill="#ffe0cc"/>
+    <rect x="1000" y="220" width="280" height="124" rx="62" fill="#c9bdfa"/><rect x="1260" y="600" width="240" height="110" rx="55" fill="#d9f7ea"/>
+  </g>
+  <g fill="#fff" opacity="0.3"><circle cx="190" cy="640" r="46"/><circle cx="640" cy="200" r="30"/><circle cx="1130" cy="760" r="52"/><circle cx="1480" cy="260" r="36"/></g>
+  <rect x="40" y="690" width="720" height="170" rx="44" fill="url(#tileW)"/>
+  <rect x="840" y="690" width="720" height="170" rx="44" fill="url(#tileC)"/>
+  <rect x="120" y="500" width="250" height="22" rx="11" fill="url(#tileW)"/><rect x="460" y="360" width="240" height="22" rx="11" fill="url(#tileW)"/>
+  <rect x="900" y="360" width="240" height="22" rx="11" fill="url(#tileC)"/><rect x="1230" y="500" width="250" height="22" rx="11" fill="url(#tileC)"/>
+  <rect x="750" width="100" height="900" fill="url(#seam)"/><rect x="798" width="4" height="900" fill="#fff" opacity="0.8"/>
+  <!-- pads and beams -->
+  <rect x="520" y="240" width="100" height="120" fill="url(#beam)"/><rect x="1280" y="380" width="100" height="120" fill="url(#beam)"/>
+  <ellipse cx="570" cy="358" rx="60" ry="17" fill="#e8453c" stroke="#3b2a4a" stroke-width="4"/><ellipse cx="1330" cy="498" rx="60" ry="17" fill="#e8453c" stroke="#3b2a4a" stroke-width="4"/>
+  <ellipse cx="570" cy="358" rx="70" ry="26" fill="none" stroke="#fff" stroke-width="8"/><ellipse cx="1330" cy="498" rx="70" ry="26" fill="none" stroke="#fff" stroke-width="8" stroke-dasharray="120 80"/>
+  <circle cx="570" cy="300" r="22" fill="#e8453c" stroke="#fff" stroke-width="4"/><text x="570" y="309" font-family="sans-serif" font-weight="800" font-size="26" text-anchor="middle" fill="#fff">1</text>
+  <circle cx="1330" cy="440" r="22" fill="#e8453c" stroke="#fff" stroke-width="4"/><text x="1330" y="449" font-family="sans-serif" font-weight="800" font-size="26" text-anchor="middle" fill="#fff">1</text>
+  <!-- twins -->
+  <g transform="translate(300 600)"><ellipse rx="86" ry="82" fill="url(#solid)" stroke="#5c1a28" stroke-width="8"/><ellipse cx="-30" cy="-50" rx="28" ry="12" fill="#fff" opacity="0.5" transform="rotate(-30 -30 -50)"/>
+    <ellipse cx="-30" cy="-6" rx="22" ry="26" fill="#fff" stroke="#3b2a4a" stroke-width="4"/><ellipse cx="32" cy="-6" rx="22" ry="26" fill="#fff" stroke="#3b2a4a" stroke-width="4"/>
+    <circle cx="-22" cy="0" r="11" fill="#2b1d33"/><circle cx="40" cy="0" r="11" fill="#2b1d33"/><circle cx="-18" cy="-5" r="4" fill="#fff"/><circle cx="44" cy="-5" r="4" fill="#fff"/>
+    <path d="M-18 40 Q0 56 18 40" fill="none" stroke="#3b2a4a" stroke-width="6" stroke-linecap="round"/></g>
+  <g transform="translate(1300 600)"><ellipse rx="86" ry="82" fill="url(#glass)" stroke="#ff9a8f" stroke-width="9"/><ellipse rx="78" ry="74" fill="none" stroke="#fff" stroke-width="4" opacity="0.75"/><ellipse cx="-30" cy="-50" rx="28" ry="12" fill="#fff" opacity="0.7" transform="rotate(-30 -30 -50)"/>
+    <ellipse cx="-30" cy="-6" rx="22" ry="26" fill="#fff" opacity="0.9" stroke="#ffb0a6" stroke-width="4"/><ellipse cx="32" cy="-6" rx="22" ry="26" fill="#fff" opacity="0.9" stroke="#ffb0a6" stroke-width="4"/>
+    <circle cx="-38" cy="0" r="11" fill="#7a2330"/><circle cx="24" cy="0" r="11" fill="#7a2330"/><circle cx="-34" cy="-5" r="4" fill="#fff"/><circle cx="28" cy="-5" r="4" fill="#fff"/>
+    <path d="M-18 40 Q0 56 18 40" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g>
+  <circle cx="300" cy="490" r="24" fill="#e8453c" stroke="#fff" stroke-width="4"/><text x="300" y="500" font-family="sans-serif" font-weight="800" font-size="28" text-anchor="middle" fill="#fff">1</text>
+  <circle cx="1300" cy="490" r="24" fill="#e8453c" stroke="#fff" stroke-width="4"/><text x="1300" y="500" font-family="sans-serif" font-weight="800" font-size="28" text-anchor="middle" fill="#fff">1</text>
+  <!-- mirrored arrows -->
+  <path d="M390 720 H520 M486 690 L522 720 L486 750" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <path d="M1210 720 H1080 M1114 690 L1078 720 L1114 750" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <text x="800" y="150" font-family="system-ui, sans-serif" font-weight="900" font-size="104" text-anchor="middle" fill="#fff" stroke="#e0634f" stroke-width="14" paint-order="stroke" stroke-linejoin="round">Mirror Mayhem</text>
+</svg>

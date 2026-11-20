@@ -100,6 +100,31 @@
     "credit": null
   },
   {
+    "id": "cannon-crew",
+    "name": "Cannon Crew",
+    "tagline": "Fire yourselves onto the high switches and take the castle in 150 seconds.",
+    "description": "A co-op siege in a bold cartoon castle. Climb into a cannon, aim with the stick and launch yourselves onto the high switches. Hold every switch at once for one second to open the gate. Three courtyards, 150 seconds, twelve launches each, and a bigger crew gets a third cannon and wooden barriers with levers.",
+    "tags": [
+      "party",
+      "co-op",
+      "platformer",
+      "puzzle"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "Joystick",
+    "buttons": [
+      "Jump",
+      "Use"
+    ],
+    "cover": "/games/cannon-crew.svg",
+    "thumb": "/games/thumbs/cannon-crew.webp",
+    "credit": null
+  },
+  {
     "id": "cartastrophe",
     "name": "Cartastrophe",
     "tagline": "Run one chaotic supermarket shift together: restock, ring up, mop, survive.",
@@ -226,6 +251,62 @@
     "credit": null
   },
   {
+    "id": "echo-crew",
+    "name": "Echo Crew",
+    "tagline": "Record 3 s of yourself, snap back, and let your ghost hold the plate.",
+    "description": "A co-op puzzle in a painted dusk observatory. Tap Record to copy three seconds of yourself, snap back, and your ghost replays it once and freezes where it ends: solid to stand on, heavy enough to hold a purple plate while you stand on a blue one. Hold every glowing plate together for 1.5 seconds to restore each of three rooms in 180 seconds, run through timed doors, and with a bigger party build a staircase of ghosts to a high ledge.",
+    "tags": [
+      "party",
+      "co-op",
+      "platformer",
+      "puzzle"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Record"
+    ],
+    "cover": "/games/echo-crew.svg",
+    "thumb": "/games/thumbs/echo-crew.webp",
+    "credit": {
+      "author": "Ethan Holm (cubicobelus)",
+      "url": "https://github.com/cubicobelus/afterglow",
+      "license": "MIT",
+      "notes": "The record, replay and freeze logic is derived from afterglow by Ethan Holm (MIT, commit 6c5a95e, used with the author's permission) and rewritten as echo.js (LICENSE). Rooms, plates, rendering, sound and multi-player are HotTake's own. See CREDITS.md."
+    }
+  },
+  {
+    "id": "elemental-duel",
+    "name": "Elemental Duel",
+    "tagline": "Freeze rivals, bridge the shafts with ice, melt it all with fire: 90 seconds.",
+    "description": "A versus fight in a spell-lit tower, for up to eight mages. Frost freezes a rival right in front of you for a moment, or builds a short-lived ice bridge over the open shafts. Flame is a short cone of fire that scores, hits twice as hard on a frozen rival, and melts ice. Knock a rival down a shaft for a bonus point. 90 seconds, most points wins.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "fighting"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Frost",
+      "Flame"
+    ],
+    "cover": "/games/elemental-duel.svg",
+    "thumb": "/games/thumbs/elemental-duel.webp",
+    "credit": null
+  },
+  {
     "id": "flock-off",
     "name": "Flock Off",
     "tagline": "Hide in a flock of identical penguins. Find the fish holes, peck the impostors.",
@@ -273,6 +354,79 @@
     "credit": null
   },
   {
+    "id": "ghost-snap",
+    "name": "Ghost Snap",
+    "tagline": "Fit a ghost in your frame and Snap.",
+    "description": "Slide your photo frame round a haunted hallway and snap the ghosts that fit.",
+    "tags": [
+      "party",
+      "arena",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Snap"
+    ],
+    "cover": "/games/ghost-snap.svg",
+    "thumb": "/games/thumbs/ghost-snap.webp",
+    "credit": null
+  },
+  {
+    "id": "gravity-grudge",
+    "name": "Gravity Grudge",
+    "tagline": "Touch your runes in order and flip gravity on everyone else.",
+    "description": "A neon chamber, up to eight astronauts and four runes: Moon, Star, Sun and Comet. Everyone has their own order of three runes to touch, worth 3 points when finished, and anyone can press Flip to reverse gravity for the whole arena after a short warning. Floors and ceilings are both safe, so it is a race, not a fight. Most points in 90 seconds wins.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "race"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Flip"
+    ],
+    "cover": "/games/gravity-grudge.svg",
+    "thumb": "/games/thumbs/gravity-grudge.webp",
+    "credit": null
+  },
+  {
+    "id": "hook-havoc",
+    "name": "Hook Havoc",
+    "tagline": "Hook, zip and yank rivals into the fog: most points in 75 seconds wins.",
+    "description": "A grappling brawl on rusty scaffolding over a fog-filled pit, for up to eight climbers. Aim with the stick and fire the hook: zip to a gold anchor to swing across the gaps, or yank a rival 240 pixels your way. Hooking a rival in mid-air is worth double, and a hooked climber who drops into the fog gives you a bonus point. 75 seconds, most points wins.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "fighting"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Jump",
+      "Hook"
+    ],
+    "cover": "/games/hook-havoc.svg",
+    "thumb": "/games/thumbs/hook-havoc.webp",
+    "credit": null
+  },
+  {
     "id": "lantern-sneak",
     "name": "Lantern Sneak",
     "tagline": "Creep to the shrine. Move in the lantern's light and you turn to stone.",
@@ -293,6 +447,29 @@
     ],
     "cover": "/games/lantern-sneak.svg",
     "thumb": "/games/thumbs/lantern-sneak.webp",
+    "credit": null
+  },
+  {
+    "id": "laser-dodge",
+    "name": "Laser Dodge",
+    "tagline": "Dodge the lasers. Last skater rolling wins.",
+    "description": "Roller-skate around a spinning laser prism. Blink through beams. Last skater rolling wins.",
+    "tags": [
+      "party",
+      "arena",
+      "survival"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Blink"
+    ],
+    "cover": "/games/laser-dodge.svg",
+    "thumb": "/games/thumbs/laser-dodge.webp",
     "credit": null
   },
   {
@@ -363,6 +540,77 @@
     ],
     "cover": "/games/lob-squad.svg",
     "thumb": "/games/thumbs/lob-squad.webp",
+    "credit": null
+  },
+  {
+    "id": "magnet-grab",
+    "name": "Magnet Grab",
+    "tagline": "Hold Magnet to pull bolts in. Most bolts wins.",
+    "description": "Roll your bot around the junkyard, hold Magnet to pull in bolts and steal them.",
+    "tags": [
+      "party",
+      "arena",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Magnet"
+    ],
+    "cover": "/games/magnet-grab.svg",
+    "thumb": "/games/thumbs/magnet-grab.webp",
+    "credit": null
+  },
+  {
+    "id": "meteor-split",
+    "name": "Meteor Split",
+    "tagline": "Slice the meteors before they hit the town.",
+    "description": "Team up as star-sprites and dash through falling meteors to save the village.",
+    "tags": [
+      "party",
+      "co-op",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "Joystick",
+    "buttons": [
+      "Slice"
+    ],
+    "cover": "/games/meteor-split.svg",
+    "thumb": "/games/thumbs/meteor-split.webp",
+    "credit": null
+  },
+  {
+    "id": "mirror-mayhem",
+    "name": "Mirror Mayhem",
+    "tagline": "Steer two mirrored twins at once and land both on your pads.",
+    "description": "Everyone steers two pebble twins at once: a solid one in a warm world on the left and a glassy one in a cool world on the right. Press right and the left twin goes right while the right twin goes left, and Jump jumps both. Land both twins on your two pads for three quarters of a second to score. First to 10 points, or the most at 90 seconds.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "puzzle"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Reset"
+    ],
+    "cover": "/games/mirror-mayhem.svg",
+    "thumb": "/games/thumbs/mirror-mayhem.webp",
     "credit": null
   },
   {
@@ -472,6 +720,55 @@
     "credit": null
   },
   {
+    "id": "parachute-panic",
+    "name": "Parachute Panic",
+    "tagline": "Catch the chicks. Hold Toss to send them to the barn.",
+    "description": "Run under falling chicks with a hay trampoline and bounce them into the barn basket.",
+    "tags": [
+      "party",
+      "co-op",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "Joystick",
+    "buttons": [
+      "Toss"
+    ],
+    "cover": "/games/parachute-panic.svg",
+    "thumb": "/games/thumbs/parachute-panic.webp",
+    "credit": null
+  },
+  {
+    "id": "parry-party",
+    "name": "Parry Party",
+    "tagline": "Slash, parry and counter: land the most hits in 90 seconds.",
+    "description": "A torchlit sword fight for up to eight knights. Slash to hit, but a well-timed parry blocks a frontal slash and leaves your rival stunned. Three health each, a quick respawn from the torch flames, and 90 seconds to land the most hits. The knock-out hit is worth the most.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "fighting"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Slash",
+      "Parry"
+    ],
+    "cover": "/games/parry-party.svg",
+    "thumb": "/games/thumbs/parry-party.webp",
+    "credit": null
+  },
+  {
     "id": "putt-panic",
     "name": "Putt Panic",
     "tagline": "Mini golf against the clock. Windmills, sliders and everyone's balls in the way.",
@@ -541,6 +838,29 @@
     ],
     "cover": "/games/rhythm-rowers.svg",
     "thumb": "/games/thumbs/rhythm-rowers.webp",
+    "credit": null
+  },
+  {
+    "id": "ricochet-dodgeball",
+    "name": "Ricochet Dodgeball",
+    "tagline": "Grab a ball, throw it, don't get hit.",
+    "description": "Pick up dodgeballs and fire them off the walls. Get hit and you're out.",
+    "tags": [
+      "party",
+      "arena",
+      "sports"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Throw"
+    ],
+    "cover": "/games/ricochet-dodgeball.svg",
+    "thumb": "/games/thumbs/ricochet-dodgeball.webp",
     "credit": null
   },
   {
@@ -640,6 +960,52 @@
     ],
     "cover": "/games/shard-rink.svg",
     "thumb": "/games/thumbs/shard-rink.webp",
+    "credit": null
+  },
+  {
+    "id": "sheep-sweep",
+    "name": "Sheep Sweep",
+    "tagline": "Herd sheep into your pen. Most sheep wins.",
+    "description": "Run your sheepdog around the meadow and bark sheep into your pen.",
+    "tags": [
+      "party",
+      "arena",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Bark"
+    ],
+    "cover": "/games/sheep-sweep.svg",
+    "thumb": "/games/thumbs/sheep-sweep.webp",
+    "credit": null
+  },
+  {
+    "id": "sky-pop",
+    "name": "Sky Pop",
+    "tagline": "Pop everyone's balloons. Keep yours.",
+    "description": "Flap your pigeon, pop rival balloons, keep your own. Last one aloft wins.",
+    "tags": [
+      "party",
+      "arena",
+      "action"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Flap"
+    ],
+    "cover": "/games/sky-pop.svg",
+    "thumb": "/games/thumbs/sky-pop.webp",
     "credit": null
   },
   {
@@ -749,6 +1115,31 @@
     }
   },
   {
+    "id": "switch-sync",
+    "name": "Switch Sync",
+    "tagline": "Everyone on a plate at once: three temple rooms in 150 seconds.",
+    "description": "A co-op puzzle in a carved jungle temple. Every room has glowing plates that must all be held at the same time for 1.5 seconds. Spread out, ride the lifts, pull the levers and stand your ground together. Three rooms, 150 seconds, and a bigger party gets lift jobs too.",
+    "tags": [
+      "party",
+      "co-op",
+      "platformer",
+      "puzzle"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": true,
+    "stick": "D-pad",
+    "buttons": [
+      "Jump",
+      "Use"
+    ],
+    "cover": "/games/switch-sync.svg",
+    "thumb": "/games/thumbs/switch-sync.webp",
+    "credit": null
+  },
+  {
     "id": "tangle",
     "name": "Tangle",
     "tagline": "Steer your growing line, dodge every trail, be the last curve alive.",
@@ -778,6 +1169,29 @@
     }
   },
   {
+    "id": "tile-drop",
+    "name": "Tile Drop",
+    "tagline": "Tiles crumble where you step. Don't fall in.",
+    "description": "Knights on crumbling toy-block tiles over lava. Shove rivals, keep moving, last one standing wins.",
+    "tags": [
+      "party",
+      "arena",
+      "survival"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Shove"
+    ],
+    "cover": "/games/tile-drop.svg",
+    "thumb": "/games/thumbs/tile-drop.webp",
+    "credit": null
+  },
+  {
     "id": "tilt-tower",
     "name": "Tilt Tower",
     "tagline": "Stack it high, drop it true, and pray the wind is kind.",
@@ -799,6 +1213,51 @@
     ],
     "cover": "/games/tilt-tower.svg",
     "thumb": "/games/thumbs/tilt-tower.webp",
+    "credit": null
+  },
+  {
+    "id": "tip-tray",
+    "name": "Tip Tray",
+    "tagline": "Stand where you want the ball to roll.",
+    "description": "Stand on the tilting tray so the ball rolls into the rival team's goal.",
+    "tags": [
+      "party",
+      "teams",
+      "arena"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [],
+    "cover": "/games/tip-tray.svg",
+    "thumb": "/games/thumbs/tip-tray.webp",
+    "credit": null
+  },
+  {
+    "id": "trap-draft",
+    "name": "Trap Draft",
+    "tagline": "Place a trap, then race the course you all booby-trapped: three rounds.",
+    "description": "A party race on a toy-box workbench for up to eight wind-up toys. Every round each player places one trap on the course (a mattress spring, a cardboard floor that folds away, or a wind-up boxing glove), then everyone races the course they just booby-trapped. Reach the toy box for 4 points, first there for 1 more, and earn a point whenever a rival trips on your trap and falls. Three rounds, traps stay, most points wins.",
+    "tags": [
+      "party",
+      "versus",
+      "platformer",
+      "racing"
+    ],
+    "players": {
+      "min": 2,
+      "max": 8
+    },
+    "coop": false,
+    "stick": "Joystick",
+    "buttons": [
+      "Jump"
+    ],
+    "cover": "/games/trap-draft.svg",
+    "thumb": "/games/thumbs/trap-draft.webp",
     "credit": null
   }
 ]

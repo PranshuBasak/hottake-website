@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { allTags, fitsPlayers, getGame, getGames, playersLabel } from "./games";
+import { gameCount } from "./site";
 
-const PORTS = ["bombermoji", "tangle", "ricochet-tanks", "sushi-paws", "cartastrophe", "night-siege", "nebula-knockout", "star-convoy"];
+const PORTS = ["bombermoji", "tangle", "ricochet-tanks", "sushi-paws", "cartastrophe", "night-siege", "nebula-knockout", "star-convoy", "echo-crew"];
 
 describe("catalogue", () => {
-  it("has all 32 built-in games", () => expect(getGames()).toHaveLength(32));
+  it("has all 51 built-in games", () => expect(getGames()).toHaveLength(51));
+  it("keeps the site-wide game count in step with the catalogue", () => expect(gameCount).toBe(getGames().length));
   it("reads players from the manifest", () => expect(getGame("coin-clash")?.players).toEqual({ min: 1, max: 8 }));
   it("keeps credits for every ported game", () => {
     for (const id of PORTS) expect(getGame(id)?.credit?.url, id).toBeTruthy();

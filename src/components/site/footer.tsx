@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { Coffee } from "lucide-react";
+import { gameCount, site } from "@/lib/site";
 import { AsciiArt } from "./ascii-art";
 import { useConsent } from "./consent";
 import { Logo } from "./logo";
@@ -11,7 +12,7 @@ const columns = [
   {
     title: "Play",
     links: [
-      { href: "/games", label: "All 32 games" },
+      { href: "/games", label: `All ${gameCount} games` },
       { href: "/how-to-play", label: "How to play" },
       { href: "/how-to-play#troubleshooting", label: "Troubleshooting" },
       { href: "/download", label: "Download" },
@@ -50,6 +51,15 @@ export function Footer() {
           <Logo />
           <p className="max-w-xs text-sm text-muted-foreground">{site.tagline}</p>
           <p className="text-xs text-muted-foreground">Windows 10/11 · free · v{site.version}</p>
+          <a
+            href={site.creator.coffee}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#ffdd00] px-4 py-2 text-sm font-bold text-[#1a120d] transition-[transform,filter] hover:brightness-105 active:scale-[0.97]"
+          >
+            <Coffee className="size-4" aria-hidden />
+            Buy me a coffee
+          </a>
         </div>
         {columns.map((col) => (
           <div key={col.title}>

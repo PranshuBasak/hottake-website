@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a0a26"/>
+      <stop offset="1" stop-color="#13113a"/>
+    </linearGradient>
+    <pattern id="check" width="160" height="160" patternUnits="userSpaceOnUse" x="80" y="80">
+      <rect width="160" height="160" fill="#161a52"/>
+      <rect width="80" height="80" fill="#1c2160"/>
+      <rect x="80" y="80" width="80" height="80" fill="#1c2160"/>
+    </pattern>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#a07dff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#0a0a28" stop-opacity="0.2"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#c8a8ff" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#c8a8ff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="rink"><rect x="120" y="120" width="1360" height="660" rx="110"/></clipPath>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
+    <radialGradient id="ball" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g clip-path="url(#rink)">
+    <rect x="120" y="120" width="1360" height="660" fill="url(#check)"/>
+    <rect x="120" y="120" width="1360" height="660" fill="url(#glow)"/>
+    <!-- beams -->
+    <g stroke-linecap="butt">
+      <g transform="translate(800 450) rotate(-26)">
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#ff4636" stroke-opacity="0.3" stroke-width="64" filter="url(#soft)"/>
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#ff6a4a" stroke-width="26"/>
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#fff3e4" stroke-width="8"/>
+        <line x1="0" y1="0" x2="-1100" y2="0" stroke="#ff4636" stroke-opacity="0.3" stroke-width="64" filter="url(#soft)"/>
+        <line x1="0" y1="0" x2="-1100" y2="0" stroke="#ff6a4a" stroke-width="26"/>
+        <line x1="0" y1="0" x2="-1100" y2="0" stroke="#fff3e4" stroke-width="8"/>
+      </g>
+      <g transform="translate(800 450) rotate(64)">
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#ff4636" stroke-opacity="0.3" stroke-width="64" filter="url(#soft)"/>
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#ff6a4a" stroke-width="26"/>
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="#fff3e4" stroke-width="8"/>
+        <line x1="0" y1="0" x2="-1100" y2="0" stroke="#ff8a6e" stroke-opacity="0.45" stroke-width="5" stroke-dasharray="22 16"/>
+      </g>
+    </g>
+  </g>
+  <!-- rails -->
+  <rect x="94" y="94" width="1412" height="712" rx="136" fill="none" stroke="#ff4fb8" stroke-width="14" filter="url(#soft)"/>
+  <rect x="94" y="94" width="1412" height="712" rx="136" fill="none" stroke="#ff4fb8" stroke-width="14"/>
+  <rect x="94" y="94" width="1412" height="712" rx="136" fill="none" stroke="#ffe3f5" stroke-opacity="0.7" stroke-width="4"/>
+  <rect x="112" y="112" width="1376" height="676" rx="118" fill="none" stroke="#3de6ff" stroke-width="9" filter="url(#soft)"/>
+  <rect x="112" y="112" width="1376" height="676" rx="118" fill="none" stroke="#3de6ff" stroke-width="9"/>
+  <rect x="112" y="112" width="1376" height="676" rx="118" fill="none" stroke="#e6fdff" stroke-opacity="0.7" stroke-width="3"/>
+  <!-- prism -->
+  <circle cx="800" cy="450" r="150" fill="url(#halo)"/>
+  <g transform="translate(800 450)" stroke-linejoin="round">
+    <polygon points="0,0 0,-62 54,-31" fill="#ff9bd2"/>
+    <polygon points="0,0 54,-31 54,31" fill="#9bf2ff"/>
+    <polygon points="0,0 54,31 0,62" fill="#c7a8ff"/>
+    <polygon points="0,0 0,62 -54,31" fill="#fff2a8"/>
+    <polygon points="0,0 -54,31 -54,-31" fill="#8fffd0"/>
+    <polygon points="0,0 -54,-31 0,-62" fill="#ffb38f"/>
+    <polygon points="0,-62 54,-31 54,31 0,62 -54,31 -54,-31" fill="none" stroke="#fff" stroke-width="5"/>
+  </g>
+  <!-- skaters -->
+  <g id="s1" transform="translate(1180 250)">
+    <ellipse cx="0" cy="58" rx="62" ry="20" fill="#00001e" fill-opacity="0.4"/>
+    <rect x="-46" y="38" width="38" height="26" rx="9" fill="#2d9e6a"/><rect x="8" y="38" width="38" height="26" rx="9" fill="#2d9e6a"/>
+    <circle cx="-34" cy="68" r="7" fill="#f4f1ff"/><circle cx="-14" cy="68" r="7" fill="#f4f1ff"/><circle cx="14" cy="68" r="7" fill="#f4f1ff"/><circle cx="34" cy="68" r="7" fill="#f4f1ff"/>
+    <circle cx="-66" cy="4" r="13" fill="#7ee7b0"/><circle cx="66" cy="4" r="13" fill="#7ee7b0"/>
+    <circle r="62" fill="#4be08f" stroke="#1b1a46" stroke-width="6"/>
+    <circle r="62" fill="url(#ball)" opacity="0.7"/>
+    <line x1="0" y1="-60" x2="0" y2="-82" stroke="#1b1a46" stroke-width="5"/><circle cy="-88" r="9" fill="#4be08f" stroke="#1b1a46" stroke-width="5"/>
+    <rect x="-42" y="-44" width="84" height="46" rx="21" fill="#161440"/>
+    <rect x="-24" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/><rect x="10" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/>
+    <circle cy="30" r="24" fill="#4be08f" stroke="#1b1a46" stroke-width="4"/>
+    <text x="0" y="40" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="34" text-anchor="middle" fill="#000">2</text>
+  </g>
+  <g transform="translate(420 640)">
+    <ellipse cx="0" cy="58" rx="62" ry="20" fill="#00001e" fill-opacity="0.4"/>
+    <rect x="-46" y="38" width="38" height="26" rx="9" fill="#b58a1a"/><rect x="8" y="38" width="38" height="26" rx="9" fill="#b58a1a"/>
+    <circle cx="-34" cy="68" r="7" fill="#f4f1ff"/><circle cx="-14" cy="68" r="7" fill="#f4f1ff"/><circle cx="14" cy="68" r="7" fill="#f4f1ff"/><circle cx="34" cy="68" r="7" fill="#f4f1ff"/>
+    <circle cx="-66" cy="4" r="13" fill="#ffe27a"/><circle cx="66" cy="4" r="13" fill="#ffe27a"/>
+    <circle r="62" fill="#ffd23f" stroke="#1b1a46" stroke-width="6"/>
+    <circle r="62" fill="url(#ball)" opacity="0.7"/>
+    <line x1="0" y1="-60" x2="0" y2="-82" stroke="#1b1a46" stroke-width="5"/><circle cy="-88" r="9" fill="#ffd23f" stroke="#1b1a46" stroke-width="5"/>
+    <rect x="-42" y="-44" width="84" height="46" rx="21" fill="#161440"/>
+    <rect x="-24" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/><rect x="10" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/>
+    <circle cy="30" r="24" fill="#ffd23f" stroke="#1b1a46" stroke-width="4"/>
+    <text x="0" y="40" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="34" text-anchor="middle" fill="#000">4</text>
+  </g>
+  <g transform="translate(1100 640)" opacity="0.6">
+    <circle r="62" fill="#ff7ab8" stroke="#9ff6ff" stroke-width="6"/>
+    <rect x="-42" y="-44" width="84" height="46" rx="21" fill="#161440"/>
+    <rect x="-24" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/><rect x="10" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/>
+    <circle cy="30" r="24" fill="#ff7ab8" stroke="#1b1a46" stroke-width="4"/>
+    <text x="0" y="40" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="34" text-anchor="middle" fill="#000">6</text>
+  </g>
+  <g transform="translate(500 260)">
+    <ellipse cx="0" cy="58" rx="62" ry="20" fill="#00001e" fill-opacity="0.4"/>
+    <circle r="62" fill="#6ab8ff" stroke="#1b1a46" stroke-width="6"/>
+    <circle r="62" fill="url(#ball)" opacity="0.7"/>
+    <rect x="-42" y="-44" width="84" height="46" rx="21" fill="#161440"/>
+    <rect x="-24" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/><rect x="10" y="-36" width="14" height="19" rx="7" fill="#6ff3ff"/>
+    <circle cy="30" r="24" fill="#6ab8ff" stroke="#1b1a46" stroke-width="4"/>
+    <text x="0" y="40" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="34" text-anchor="middle" fill="#000">1</text>
+  </g>
+  <text x="800" y="860" font-family="Segoe UI, Arial, sans-serif" font-weight="900" font-size="64" text-anchor="middle" fill="#fff" stroke="#0a0a26" stroke-width="10" paint-order="stroke">LASER DODGE</text>
+</svg>

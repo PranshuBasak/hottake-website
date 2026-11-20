@@ -5,14 +5,14 @@ import { SplitHeading } from "@/components/site/reveal";
 import { ShaderBg } from "@/components/site/shader-bg";
 import { allTags, getGames } from "@/lib/games";
 import { JsonLd, breadcrumbLd } from "@/lib/seo";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, gameCount } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "All 32 party games",
+  title: `All ${gameCount} party games`,
   description:
     "Every game that ships with HotTake: platform brawls, bluffing dice, rhythm races, mini golf and co-op survival for 1–8 players, all controlled from your phones.",
   alternates: { canonical: "/games" },
-  ...share({ path: "/games", title: "All 32 HotTake party games", description: "Brawls, bluffs, rhythm races, mini golf and co-op survival for 1 to 8 players, played on your phones." }),
+  ...share({ path: "/games", title: `All ${gameCount} HotTake party games`, description: "Brawls, bluffs, rhythm races, mini golf and co-op survival for 1 to 8 players, played on your phones." }),
 };
 
 export default function GamesPage() {

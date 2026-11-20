@@ -10,12 +10,13 @@ import { ShaderBg } from "@/components/site/shader-bg";
 import { formatBytes } from "@/lib/download";
 import { fallbackRelease, getLatestRelease } from "@/lib/releases";
 import { JsonLd, breadcrumbLd, softwareLd } from "@/lib/seo";
+import { gameCount } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Download HotTake for Windows (free)",
   description: "Download the free HotTake installer for Windows 10 and 11. Version, file size, SHA-256 checksum and what to expect on first launch.",
   alternates: { canonical: "/download" },
-  ...share({ path: "/download", title: "Download HotTake for Windows", description: "Free for Windows 10 and 11. One installer, 32 party games, phones as controllers." }),
+  ...share({ path: "/download", title: "Download HotTake for Windows", description: `Free for Windows 10 and 11. One installer, ${gameCount} party games, phones as controllers.` }),
 };
 
 export default async function DownloadPage({ searchParams }: PageProps<"/download">) {
@@ -36,7 +37,7 @@ export default async function DownloadPage({ searchParams }: PageProps<"/downloa
               Download HotTake.
             </SplitHeading>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              One installer, 32 games inside. Phones need nothing: they join through the browser.
+              One installer, {gameCount} games inside. Phones need nothing: they join through the browser.
             </p>
             <Suspense fallback={null}>
               <UnavailableNotice searchParams={searchParams} />

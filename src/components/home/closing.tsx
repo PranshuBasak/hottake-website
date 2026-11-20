@@ -9,7 +9,7 @@ import { Reveal, SplitHeading } from "@/components/site/reveal";
 import { ShaderBg } from "@/components/site/shader-bg";
 import { SubscribeForm } from "@/components/site/subscribe-form";
 import { gsap, registerGsap, shouldAnimate, useGSAP } from "@/lib/motion";
-import { site } from "@/lib/site";
+import { gameCount, site } from "@/lib/site";
 
 registerGsap();
 
@@ -28,7 +28,7 @@ export function CreatorTeaser() {
           <p data-reveal className="mt-4 max-w-2xl text-lg text-muted-foreground">
             I built HotTake because every party game I liked needed everyone to buy something, install something or sign up for
             something. HotTake needs a laptop and the phones already in your pockets. The Rust host, the phone controller, the SDK and most of the
-            32 games are mine; the rest are open-source ports, credited on every page.
+            {gameCount} games are mine; the rest are open-source ports, credited on every page.
           </p>
           <div data-reveal className="mt-6 flex flex-wrap gap-3">
             <Link href="/creator" className="group inline-flex h-11 items-center gap-2 rounded-full bg-secondary px-5 font-semibold hover:bg-bg-3">

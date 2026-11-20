@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" shape-rendering="crispEdges">
+  <rect width="1600" height="900" fill="#000"/>
+  <!-- the chamber: dim blocks with bright neon rims -->
+  <rect x="0" y="0" width="1600" height="80" fill="#08333b"/><rect x="0" y="76" width="1600" height="6" fill="#19e6ff"/>
+  <rect x="0" y="820" width="1600" height="80" fill="#08333b"/><rect x="0" y="818" width="1600" height="6" fill="#19e6ff"/>
+  <rect x="0" y="0" width="50" height="900" fill="#08333b"/><rect x="48" y="0" width="6" height="900" fill="#19e6ff"/>
+  <rect x="1550" y="0" width="50" height="900" fill="#08333b"/><rect x="1546" y="0" width="6" height="900" fill="#19e6ff"/>
+  <rect x="740" y="290" width="120" height="320" fill="#08333b"/><rect x="740" y="290" width="6" height="320" fill="#19e6ff"/><rect x="854" y="290" width="6" height="320" fill="#19e6ff"/><rect x="740" y="290" width="120" height="6" fill="#19e6ff"/><rect x="740" y="604" width="120" height="6" fill="#19e6ff"/>
+  <!-- hatched one-way slabs, a pair per station -->
+  <g fill="#19e6ff"><rect x="150" y="610" width="260" height="4"/><rect x="150" y="650" width="260" height="4"/><rect x="150" y="250" width="260" height="4"/><rect x="150" y="290" width="260" height="4"/>
+  <rect x="1190" y="610" width="260" height="4"/><rect x="1190" y="650" width="260" height="4"/><rect x="1190" y="250" width="260" height="4"/><rect x="1190" y="290" width="260" height="4"/></g>
+  <!-- runes: Moon, Star, Sun, Comet -->
+  <path d="M300 380 a70 70 0 1 0 0 140 a56 56 0 1 1 0 -140 z" fill="#8fe3ff" transform="translate(-20 10)"/>
+  <path d="M1300 380 l22 70 l70 0 l-56 42 l22 70 l-58 -42 l-58 42 l22 -70 l-56 -42 l70 0 z" fill="#ffe94d" transform="translate(10 -10)"/>
+  <circle cx="560" cy="450" r="38" fill="#ff9a1f"/><g fill="#ff9a1f"><rect x="552" y="380" width="16" height="30"/><rect x="552" y="490" width="16" height="30"/><rect x="490" y="442" width="30" height="16"/><rect x="600" y="442" width="30" height="16"/></g>
+  <g fill="#ff4fd8"><circle cx="1060" cy="430" r="34"/><polygon points="1040,405 1000,360 1010,460 1040,470 960,500 1040,450"/><polygon points="1030,400 930,340 960,440 1020,470"/></g>
+  <!-- two astronauts, one standing, one hanging upside down -->
+  <g><rect x="620" y="738" width="60" height="70" fill="#e8453c"/><rect x="628" y="720" width="44" height="34" fill="#e6f0ff"/><rect x="636" y="728" width="34" height="18" fill="#0a1030"/><rect x="644" y="730" width="14" height="14" fill="#7dffff"/><rect x="610" y="742" width="14" height="40" fill="#2b3150"/><rect x="630" y="808" width="14" height="10" fill="#2b3150"/><rect x="656" y="808" width="14" height="10" fill="#2b3150"/></g>
+  <g><rect x="880" y="100" width="60" height="70" fill="#3c8de8"/><rect x="888" y="156" width="44" height="34" fill="#e6f0ff"/><rect x="896" y="164" width="34" height="18" fill="#0a1030"/><rect x="904" y="166" width="14" height="14" fill="#7dffff"/><rect x="870" y="118" width="14" height="40" fill="#2b3150"/><rect x="890" y="82" width="14" height="10" fill="#2b3150"/><rect x="916" y="82" width="14" height="10" fill="#2b3150"/></g>
+  <!-- warning chevrons -->
+  <g fill="#ff3df0"><polygon points="88,500 120,460 152,500 140,500 120,476 100,500"/><polygon points="88,420 120,380 152,420 140,420 120,396 100,420"/><polygon points="1448,500 1480,460 1512,500 1500,500 1480,476 1460,500"/><polygon points="1448,420 1480,380 1512,420 1500,420 1480,396 1460,420"/></g>
+</svg>

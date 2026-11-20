@@ -9,6 +9,7 @@ import { track } from "@/components/site/tracker";
 import { controlsLabel, fitsPlayers, playersLabel, type Game } from "@/lib/games";
 import { Flip, gsap, registerGsap, shouldAnimate, useGSAP } from "@/lib/motion";
 import { cn } from "@/lib/utils";
+import { gameCount } from "@/lib/site";
 
 registerGsap();
 
@@ -98,7 +99,7 @@ export function Catalogue({ games, tags }: { games: Game[]; tags: string[] }) {
               type="search"
               value={query}
               onChange={(e) => change(() => setQuery(e.target.value), "search")}
-              placeholder="Search 32 games"
+              placeholder={`Search ${gameCount} games`}
               className="h-10 w-full rounded-full border border-border bg-bg-1 pr-4 pl-9 text-sm outline-none focus:border-amber"
             />
           </label>

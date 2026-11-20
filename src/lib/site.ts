@@ -1,17 +1,22 @@
+import catalogue from "@/data/game-count.json";
+
+/** Number of built-in games, written by `npm run sync:games` next to games.json. */
+export const gameCount: number = catalogue.count;
+
 export const site = {
   name: "HotTake",
   tagline: "Your laptop is the console. Every phone is a controller.",
   /** Search snippet (≤ 160). Social previews use shareDescription. */
   description:
-    "Turn a Windows laptop into a party-game console. Friends scan a QR code and play 32 built-in games with their phones as controllers. No app install.",
-  shareDescription: "Your laptop is the console, every phone a controller. 32 party games, no app to install.",
+    `Turn a Windows laptop into a party-game console. Friends scan a QR code and play ${gameCount} built-in games with their phones as controllers. No app install.`,
+  shareDescription: `Your laptop is the console, every phone a controller. ${gameCount} party games, no app to install.`,
   url: (
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000")
   ).replace(/\/$/, ""),
-  version: "0.1.0",
-  installerName: "HotTake_0.1.0_x64-setup.exe",
-  installerSizeMb: 12.5,
+  version: "0.2.0",
+  installerName: "HotTake_0.2.0_x64-setup.exe",
+  installerSizeMb: 13.4,
   creator: {
     name: "Pranshu Basak",
     linkedin: "https://www.linkedin.com/in/pranshubasak/",
@@ -19,6 +24,7 @@ export const site = {
     website: "https://basakspeaks.pranshubasak.site",
     x: "https://x.com/pranshu_basak",
     xHandle: "@pranshu_basak",
+    coffee: "https://buymeacoffee.com/pranshubasak",
     // Public contact address on Pranshu's own domain (forward it to a real inbox, e.g. Cloudflare Email Routing).
     email: "hello@pranshubasak.site",
   },

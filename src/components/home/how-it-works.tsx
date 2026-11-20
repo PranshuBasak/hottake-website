@@ -5,6 +5,7 @@ import { Gamepad2, Laptop, QrCode } from "lucide-react";
 import { AsciiArt } from "@/components/site/ascii-art";
 import { gsap, registerGsap, shouldAnimate, useGSAP } from "@/lib/motion";
 import { PhonePad } from "./phone-pad";
+import { gameCount } from "@/lib/site";
 
 registerGsap();
 
@@ -25,7 +26,7 @@ const steps = [
     icon: Gamepad2,
     kicker: "03 · Play",
     title: "Pick a game and go",
-    body: "The leader picks from 32 games, or starts a tournament. Phones become d-pads, joysticks and buttons, and change for every game.",
+    body: `The leader picks from ${gameCount} games, or starts a tournament. Phones become d-pads, joysticks and buttons, and change for every game.`,
   },
 ];
 

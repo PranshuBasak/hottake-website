@@ -8,7 +8,7 @@ import { Reveal, SplitHeading } from "@/components/site/reveal";
 import { ShaderBg } from "@/components/site/shader-bg";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
-import { site } from "@/lib/site";
+import { gameCount, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "How to play: set up a HotTake party in 2 minutes",
@@ -40,7 +40,7 @@ const setup = [
 
 const faq = [
   { q: "Do my friends need to install anything?", a: "No. The controller is a web page served by your laptop. Any modern phone browser works: scan the QR code and you're in." },
-  { q: "Is HotTake free?", a: "Yes. HotTake and all 32 built-in games are free to download and play." },
+  { q: "Is HotTake free?", a: `Yes. HotTake and all ${gameCount} built-in games are free to download and play.` },
   { q: "Does it need the internet?", a: "Not for local play. Everything runs on your laptop and phones talk to it over your Wi-Fi. Internet is only used for optional online play." },
   { q: "How many people can play?", a: "Up to 8 players at once, depending on the game. Some games work solo, and three are co-op." },
   { q: "Does it work on Mac or Linux?", a: "Not yet. The host app is Windows 10/11 only. Phones can be iPhone or Android." },

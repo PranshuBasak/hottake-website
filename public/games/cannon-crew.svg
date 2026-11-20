@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fd3ff"/>
+      <stop offset="1" stop-color="#cdeeff"/>
+    </linearGradient>
+    <g id="soldier" stroke="#2b1b17" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+      <ellipse cx="-14" cy="38" rx="14" ry="9" fill="#3a2a22"/>
+      <ellipse cx="14" cy="38" rx="14" ry="9" fill="#3a2a22"/>
+      <rect x="-26" y="-4" width="52" height="42" rx="14" fill="#2a7de1"/>
+      <rect x="-24" y="22" width="48" height="8" fill="#e0a93b" stroke-width="4"/>
+      <ellipse cx="0" cy="-14" rx="19" ry="14" fill="#f3c9a0" stroke-width="5"/>
+      <path d="M-32 -18 A32 32 0 0 1 32 -18 Z" fill="#2a7de1"/>
+      <rect x="-38" y="-22" width="76" height="12" rx="6" fill="#e0a93b" stroke-width="5"/>
+      <circle cx="0" cy="-42" r="18" fill="#fff3d6" stroke-width="4"/>
+      <text x="0" y="-33" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="26" fill="#2b1b17" stroke="none">3</text>
+      <circle cx="-8" cy="-14" r="3" fill="#2b1b17" stroke="none"/>
+      <circle cx="8" cy="-14" r="3" fill="#2b1b17" stroke="none"/>
+    </g>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1330" cy="170" r="74" fill="#ffe48a" stroke="#e0b43e" stroke-width="6"/>
+  <g fill="#fff" stroke="#bfe3f7" stroke-width="6">
+    <path d="M140 230a40 40 0 0 1 60-34a52 52 0 0 1 96 14a38 38 0 0 1 8 74H150a40 40 0 0 1-10-54z"/>
+    <path d="M760 130a34 34 0 0 1 52-28a44 44 0 0 1 82 12a32 32 0 0 1 6 62H770a34 34 0 0 1-10-46z"/>
+  </g>
+  <path d="M0 700 Q200 600 420 680 T860 650 T1300 690 T1600 640 V780 H0z" fill="#8fd9a0" stroke="#3f8c43" stroke-width="6"/>
+  <!-- castle -->
+  <g stroke="#2b1b17" stroke-width="8" stroke-linejoin="round">
+    <rect x="360" y="400" width="880" height="360" fill="#b0b3bd"/>
+    <path d="M360 400h50v-34h50v34h50v-34h50v34h50v-34h50v34h50v-34h50v34h50v-34h50v34h50v-34h50v34h50v-34h50v34h40" fill="none"/>
+    <rect x="300" y="290" width="150" height="470" fill="#c8553d"/>
+    <rect x="1150" y="290" width="150" height="470" fill="#c8553d"/>
+    <path d="M300 290h30v-36h30v36h30v-36h30v36h30v-36h0" fill="none"/>
+    <path d="M1150 290h30v-36h30v36h30v-36h30v36h30v-36" fill="none"/>
+    <path d="M700 760v-150a100 100 0 0 1 200 0v150z" fill="#1d1420"/>
+    <path d="M722 760v-140M800 760v-150M878 760v-140M706 650h188M706 700h188" stroke="#666a75" stroke-width="10" fill="none"/>
+    <path d="M375 330a24 24 0 0 1 48 0v70h-48zM1177 330a24 24 0 0 1 48 0v70h-48z" fill="#3a2a35"/>
+    <path d="M375 500a24 24 0 0 1 48 0v70h-48zM1177 500a24 24 0 0 1 48 0v70h-48z" fill="#3a2a35"/>
+  </g>
+  <!-- two switch slabs with glowing buttons -->
+  <g stroke="#2b1b17" stroke-width="8" stroke-linejoin="round">
+    <rect x="470" y="300" width="230" height="52" rx="10" fill="#c8553d"/>
+    <rect x="462" y="290" width="246" height="16" rx="7" fill="#e0a93b"/>
+    <rect x="900" y="300" width="230" height="52" rx="10" fill="#c8553d"/>
+    <rect x="892" y="290" width="246" height="16" rx="7" fill="#e0a93b"/>
+    <ellipse cx="585" cy="284" rx="34" ry="10" fill="#ffe27a"/>
+    <ellipse cx="1015" cy="284" rx="34" ry="10" fill="#ffe27a"/>
+  </g>
+  <circle cx="585" cy="196" r="30" fill="#fff3d6" stroke="#2b1b17" stroke-width="8"/>
+  <circle cx="1015" cy="196" r="30" fill="#ffe27a" stroke="#2b1b17" stroke-width="8"/>
+  <!-- flight arc -->
+  <path d="M250 700 C 300 470 480 230 585 250" fill="none" stroke="#fff" stroke-width="12" stroke-dasharray="4 28" stroke-linecap="round"/>
+  <path d="M250 700 C 300 470 480 230 585 250" fill="none" stroke="#2b1b17" stroke-width="22" stroke-dasharray="4 28" stroke-linecap="round" opacity="0.35"/>
+  <!-- the cannon -->
+  <g stroke="#2b1b17" stroke-width="8" stroke-linejoin="round">
+    <rect x="70" y="758" width="270" height="28" rx="10" fill="#6e4624"/>
+    <path d="M110 758l24-90h130l30 90z" fill="#9a6a3c"/>
+    <g transform="translate(205 660) rotate(-52)">
+      <path d="M-50 -34 L190 -30 L190 30 L-50 38 Z" fill="#e0a93b"/>
+      <rect x="150" y="-42" width="40" height="84" rx="12" fill="#a97620"/>
+      <rect x="50" y="-44" width="22" height="90" rx="9" fill="#a97620"/>
+      <ellipse cx="196" cy="0" rx="8" ry="24" fill="#1d1420"/>
+    </g>
+    <circle cx="205" cy="660" r="20" fill="#a97620"/>
+    <circle cx="190" cy="722" r="62" fill="#9a6a3c"/>
+    <path d="M190 722l0-52M190 722l52 8M190 722l-12 54M190 722l-52-10" stroke-width="7"/>
+    <circle cx="190" cy="722" r="14" fill="#e0a93b"/>
+  </g>
+  <!-- smoke -->
+  <g fill="#e9e6f0" stroke="#b9b4c4" stroke-width="5">
+    <circle cx="300" cy="590" r="40"/><circle cx="342" cy="555" r="30"/><circle cx="270" cy="545" r="26"/>
+  </g>
+  <!-- the soldier in flight, curled, and one waving a flag on a slab -->
+  <g transform="translate(430 340) rotate(-20) scale(1.5)"><use href="#soldier"/></g>
+  <g stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.9">
+    <path d="M300 400h70M290 440h90M310 480h60"/>
+  </g>
+  <g transform="translate(1015 250) scale(1.2)">
+    <g stroke="#2b1b17" stroke-width="6" stroke-linejoin="round">
+      <path d="M40 -30 V-110" stroke-width="10"/>
+      <path d="M44 -108 q40 -14 70 4 v46 q-34 -12 -70 6z" fill="#e8453c"/>
+    </g>
+    <use href="#soldier" transform="scale(0.9)"/>
+  </g>
+  <!-- floor -->
+  <rect x="0" y="780" width="1600" height="120" fill="#8c8f99"/>
+  <rect x="0" y="780" width="1600" height="16" fill="#5cb85c"/>
+  <path d="M0 796H1600" stroke="#2b1b17" stroke-width="8"/>
+  <path d="M0 830H1600M0 880H1600" stroke="#2b1b17" stroke-width="4" opacity="0.4"/>
+  <text x="800" y="120" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="104" fill="#fff3d6" stroke="#2b1b17" stroke-width="16" paint-order="stroke" stroke-linejoin="round">CANNON CREW</text>
+</svg>

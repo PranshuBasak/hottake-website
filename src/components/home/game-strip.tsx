@@ -7,6 +7,7 @@ import { SplitHeading } from "@/components/site/reveal";
 import { gsap, registerGsap, ScrollTrigger, shouldAnimate, useGSAP } from "@/lib/motion";
 import type { Game } from "@/lib/games";
 import { playersLabel } from "@/lib/games";
+import { gameCount } from "@/lib/site";
 
 registerGsap();
 
@@ -94,7 +95,7 @@ export function GameStrip({ games }: { games: StripGame[] }) {
         <div>
           <p className="eyebrow mb-4">The shelf</p>
           <SplitHeading className="max-w-2xl text-4xl font-extrabold sm:text-6xl">
-            <span id="shelf-title">32 games, preloaded. Brawls, bluffs, races and co-op.</span>
+            <span id="shelf-title">{gameCount} games, preloaded. Brawls, bluffs, races and co-op.</span>
           </SplitHeading>
         </div>
         <Link href="/games" className="group inline-flex items-center gap-2 font-semibold text-amber hover:text-foreground">

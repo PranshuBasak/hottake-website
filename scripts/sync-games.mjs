@@ -61,4 +61,6 @@ await Promise.all(
 );
 
 writeFileSync(join(site, "src", "data", "games.json"), JSON.stringify(games, null, 2) + "\n");
+// Just the count, so site-wide copy (header, footer, hero) can say it without shipping the whole catalogue to browsers.
+writeFileSync(join(site, "src", "data", "game-count.json"), JSON.stringify({ count: games.length }) + "\n");
 console.log(`synced ${games.length} games`);

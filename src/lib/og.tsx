@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { site } from "./site";
+import { gameCount, site } from "./site";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
@@ -223,7 +223,7 @@ export function HomeOg({ covers }: { covers: string[] }) {
             Every phone is a controller.
           </div>
           <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
-            <Chip color={C.seats[0]}>32 games</Chip>
+            <Chip color={C.seats[0]}>{gameCount} games</Chip>
             <Chip color={C.seats[1]}>1–8 players</Chip>
             <Chip color={C.seats[3]}>No app to install</Chip>
           </div>

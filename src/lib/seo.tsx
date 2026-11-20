@@ -1,5 +1,5 @@
 import type { Game } from "./games";
-import { absoluteUrl, site } from "./site";
+import { absoluteUrl, gameCount, site } from "./site";
 
 type Ld = Record<string, unknown>;
 
@@ -84,7 +84,7 @@ export const softwareLd = (): Ld => ({
   publisher: { "@id": ids.org },
   featureList: [
     "Phones are the controllers, no app install",
-    "32 built-in party games for 1–8 players",
+    `${gameCount} built-in party games for 1–8 players`,
     "Low-latency WebRTC input",
     "Tournament mode",
     "Online play through your own tunnel",
