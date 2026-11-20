@@ -36,13 +36,13 @@ Nothing has been created on Product Hunt yet.
 ### Tagline (max 60 characters)
 
 1. `Your laptop is the console. Every phone is a controller.` (56, the site's own line; recommended)
-2. `32 party games, played with the phones in your pocket` (53)
+2. `51 party games, played with the phones in your pocket` (53)
 3. `Turn any Windows laptop into a party-game console` (49)
 
 ### Description (231 characters)
 
 > Turn a Windows laptop into a party-game console. Friends scan a QR code and their phones become the controllers.
-> No app, no account, no cloud server. 32 games for up to 8 players are built in: brawls, bluffs, races and co-op. Free.
+> No app, no account, no cloud server. 51 games for up to 8 players are built in: brawls, bluffs, races and co-op. Free.
 
 ### First comment (posted by you as the maker)
 
@@ -53,7 +53,7 @@ Nothing has been created on Product Hunt yet.
 > dice games. There's no app to install, no accounts, and nothing goes through a cloud server: the laptop hosts
 > everything on your own Wi-Fi.
 >
-> 32 games ship in the installer, for 1 to 8 players: bluffing, racing, golf, tanks, zombie co-op and more. A few
+> 51 games ship in the installer, for 1 to 8 players: bluffing, racing, golf, tanks, zombie co-op and more. A few
 > are ports that keep their original licences and credits. Want to play with friends who aren't in the room? The
 > docs show how to do that with your own tunnel.
 >
@@ -68,7 +68,7 @@ Gallery (2540×1520, Product Hunt's 1270×760 ratio at 2× for sharpness), in th
 | File | Shows |
 |---|---|
 | `gallery-01-home.jpg` | Hero: "Your laptop is the console. Every phone is a controller." with the TV and phone controllers |
-| `gallery-05-games-shelf.jpg` | "32 games, preloaded. Brawls, bluffs, races and co-op." with game covers |
+| `gallery-05-games-shelf.jpg` | "51 games, preloaded. Brawls, bluffs, races and co-op." with game covers |
 | `gallery-02-games.jpg` | The full catalogue with player-count and genre filters |
 | `gallery-03-game-page.jpg` | A game page (Beetle Ball): players, phone controls, cover art |
 | `gallery-04-how-to-play.jpg` | "From download to first round in two minutes" setup guide |
